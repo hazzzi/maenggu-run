@@ -287,3 +287,29 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass
+## 2025-01-19 - prd-sync
+
+**PRD**: Sync prd.json with actual progress
+
+**Completed**:
+- Updated prd.json: marked 6 completed tasks as passes=true
+  - window-mouse-renderer
+  - save-error
+  - save-debounce
+  - sprite-loader
+  - anim-state
+  - assets-sprites
+- Verified sprite assets exist in ./assets/ (9 PNG files, 32x32, organized by state)
+- Confirmed sprite-loader.ts matches actual sprite filenames
+
+**Files**:
+- prd.json (updated 6 task entries)
+
+**Decisions**:
+- Sprite assets already complete with proper structure
+- All feedback loops pass (typecheck, lint, test)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (9 tests in 2 files)

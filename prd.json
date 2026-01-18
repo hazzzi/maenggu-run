@@ -39,7 +39,7 @@
         "renderer: mousemove로 in/out 판정",
         "renderer: in/out 변화 시 IPC 송신"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "save-schema",
@@ -69,7 +69,7 @@
         "로드 실패 시 오류 대화창 표시",
         "오류 후 앱 종료 처리"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "save-debounce",
@@ -79,7 +79,7 @@
         "snack 변경 시 debounce 저장 호출",
         "저장 완료 시 최신 상태 반영"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "snack-state",
@@ -162,7 +162,7 @@
         "스프라이트 로딩 헬퍼 구현",
         "idle/walk/eat/happy 프레임 로딩"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "maenggu-init",
@@ -218,7 +218,7 @@
         "상태 전환 로직 추가",
         "동시 애니메이션 방지 처리"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "movement-idle-timer",
@@ -336,7 +336,7 @@
         "idle/walk/eat/happy PNG 제작 (32x32)",
         "각 상태 2-3프레임 확보"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "assets-rendering",
