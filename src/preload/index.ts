@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-import { IPC_CHANNELS } from '../src/shared/types'
+import { IPC_CHANNELS } from '../shared/types'
 
 export type MaengguApi = {
   mouse: {

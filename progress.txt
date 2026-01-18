@@ -71,3 +71,40 @@
 - renderer: 맹구 콜라이더 영역 계산 로직
 - renderer: mousemove로 in/out 판정
 - renderer: in/out 변화 시 IPC 송신
+
+## 2025-01-18 - setup (프로젝트 구조 마이그레이션)
+
+**PRD**: setup (프로젝트 초기 설정)
+
+**Completed**:
+- electron-vite 프로젝트 구조로 마이그레이션
+  - electron/main.ts → src/main/index.ts
+  - electron/preload.ts → src/preload/index.ts
+  - src/*.tsx → src/renderer/
+- 불필요한 템플릿 파일 제거
+  - public/electron-vite.*.svg, public/vite.svg
+  - src/assets/react.svg
+  - src/App.css (템플릿 스타일)
+  - index.html (루트) → src/renderer/index.html
+- 오버레이 앱용 최소 CSS (transparent background)
+- vite.config.ts 경로 수정
+- tsconfig.json 업데이트 (include: src, types: node)
+- @types/node 설치
+
+**Files**:
+- src/main/index.ts (new)
+- src/preload/index.ts (new)
+- src/renderer/index.tsx (new)
+- src/renderer/App.tsx (new, minimal)
+- src/renderer/index.css (new, overlay-ready)
+- src/renderer/index.html (new)
+- src/renderer/env.d.ts (new, Window.maenggu 타입)
+- vite.config.ts (수정)
+- tsconfig.json (수정)
+- package.json (main entry 수정)
+- 삭제: electron/, src/App.*, src/main.tsx, src/index.css, src/vite-env.d.ts, src/assets/, public/*.svg, index.html
+
+**Decisions**:
+- 구조 마이그레이션만 진행, vite-plugin-electron 유지
+- 템플릿 데모 코드 완전 제거, 빈 App 컴포넌트로 시작
+- preload → renderer 타입 참조를 src/renderer/env.d.ts에서 처리

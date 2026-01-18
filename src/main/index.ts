@@ -1,36 +1,29 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron'
-
-import { IPC_CHANNELS } from '../src/shared/types'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { IPC_CHANNELS } from '../shared/types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.mjs
-// │
-process.env.APP_ROOT = path.join(__dirname, '..')
+process.env.APP_ROOT = path.join(__dirname, '../..')
 
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
+  ? path.join(process.env.APP_ROOT, 'public')
+  : RENDERER_DIST
 
 let win: BrowserWindow | null
 
-/**
- * Calculate bounding box that encompasses all displays.
- * Returns union rectangle of all display bounds.
- */
-function calculateCombinedDisplayBounds(): { x: number; y: number; width: number; height: number } {
+function calculateCombinedDisplayBounds(): {
+  x: number
+  y: number
+  width: number
+  height: number
+} {
   const displays = screen.getAllDisplays()
 
   let minX = Infinity
@@ -70,20 +63,14 @@ function createWindow(): void {
     skipTaskbar: true,
     focusable: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
+      preload: path.join(__dirname, '../preload/index.mjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },
   })
 
-  // Enable click-through by default
-  // Mouse events pass through the window to underlying apps
   win.setIgnoreMouseEvents(true, { forward: true })
-
-  // macOS: Set window level above screen saver for true overlay
-  // kCGScreenSaverWindowLevel is level 1000 in macOS
   win.setAlwaysOnTop(true, 'screen-saver')
-
   win.setContentProtection(true)
 
   if (VITE_DEV_SERVER_URL) {
@@ -93,9 +80,6 @@ function createWindow(): void {
   }
 }
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -104,8 +88,6 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
