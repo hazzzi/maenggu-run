@@ -354,7 +354,7 @@
         "트레이 생성",
         "Quit 메뉴 항목 추가"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "tray-stats",

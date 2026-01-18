@@ -367,3 +367,26 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (9 tests)
+## 2025-01-19 - tray-quit
+
+**PRD**: tray-quit (트레이 종료 메뉴)
+
+**Completed**:
+- Tray creation with icon from idle sprite (mangoo_defatult.png)
+- nativeImage.createFromPath + resize to 16x16 for tray
+- Menu.buildFromTemplate with Quit item
+- Quit calls app.quit() directly
+- Tooltip: "Maenggu Run"
+
+**Files**:
+- src/main/index.ts (added Tray, Menu, nativeImage imports, createTray function)
+
+**Decisions**:
+- Reuse idle sprite as tray icon (16x16 resize)
+- Single Quit menu item (minimal, focused)
+- createTray called after createWindow in whenReady
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (9 tests)

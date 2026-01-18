@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, screen, Tray } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -22,6 +22,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST
 
 let win: BrowserWindow | null
+let tray: Tray | null = null
 
 function calculateCombinedDisplayBounds(): {
   x: number
@@ -85,6 +86,25 @@ function createWindow(): void {
   }
 }
 
+function createTray(): void {
+  const iconPath = path.join(process.env.VITE_PUBLIC!, 'assets/idle/mangoo_defatult.png')
+  const icon = nativeImage.createFromPath(iconPath)
+  
+  tray = new Tray(icon.resize({ width: 16, height: 16 }))
+  tray.setToolTip('Maenggu Run')
+  
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Quit',
+      click: () => {
+        app.quit()
+      },
+    },
+  ])
+  
+  tray.setContextMenu(contextMenu)
+}
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -137,4 +157,5 @@ app.whenReady().then(async () => {
   }
 
   createWindow()
+  createTray()
 })
