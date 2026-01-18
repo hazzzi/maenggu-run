@@ -22,4 +22,25 @@
 - IPC 채널명을 상수로 중앙 관리
 
 **Blockers**:
-- oxlint 실행 불가 (Node ESM 호환성 문제) - 추후 수정 필요
+- oxlint 실행 불가 (Node ESM 호환성 문제) - 수정됨 (pnpm reinstall)
+
+## 2025-01-18 - window-core
+
+**PRD**: window-core (오버레이 창 기본 설정)
+
+**Completed**:
+- BrowserWindow 옵션 정의 (transparent, frame:false, alwaysOnTop, hasShadow:false, resizable:false)
+- calculateCombinedDisplayBounds() - 모든 디스플레이 합산 영역 계산
+- 오버레이 창 크기/위치에 합산 영역 적용
+- setIgnoreMouseEvents(true, { forward: true }) 기본 적용
+- setAlwaysOnTop('screen-saver') - macOS 최상위 레벨
+- setContentProtection(true) - 스크린샷/녹화 보호
+- contextIsolation: true, nodeIntegration: false - 보안 설정
+
+**Files**:
+- electron/main.ts (수정)
+
+**Decisions**:
+- screen.getAllDisplays() 사용하여 멀티모니터 bounding box 계산
+- skipTaskbar: true, focusable: false로 시스템 UI 최소화
+- DIP 좌표계 사용 (Retina 스케일링 자동 처리)
