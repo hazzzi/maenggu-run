@@ -241,3 +241,26 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ⚠️ no tests yet (expected)
+## 2025-01-18 - anim-state
+
+**PRD**: anim-state (애니메이션 상태 머신)
+
+**Completed**:
+- getNextAnimationState(): state transition guard + event mapping
+- Defined AnimationEvent union for idle/walk/eat/happy transitions
+- Added STATE_TRANSITIONS and EVENT_TO_STATE maps
+- Unit tests for all transitions including invalid/force-idle
+
+**Files**:
+- src/renderer/animation/state-machine.ts (new)
+- src/renderer/animation/state-machine.test.ts (new)
+
+**Decisions**:
+- Pure function + lookup tables for deterministic transitions
+- Invalid events return current state (no-op)
+- force-idle provides global override
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass
