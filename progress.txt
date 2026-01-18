@@ -165,3 +165,31 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ⚠️ no tests yet (expected)
+
+## 2025-01-18 - save-debounce
+
+**PRD**: save-debounce (저장 debounce)
+
+**Completed**:
+- debounce() utility function in src/shared/utils.ts (generic, typed, with cancel)
+- save-scheduler.ts module: scheduleSave(), cancelPendingSave(), flushSave()
+- scheduleSave() called after snack:add and snack:spend (on success only)
+- flushSave() on app before-quit event to persist pending changes
+- 500ms debounce delay from SAVE_DEBOUNCE_MS constant
+
+**Files**:
+- src/shared/utils.ts (new)
+- src/main/save-scheduler.ts (new)
+- src/main/ipc/snack.ts (modified, added scheduleSave calls)
+- src/main/index.ts (modified, added flushSave on before-quit)
+
+**Decisions**:
+- Debounce util in shared/ for potential renderer reuse
+- Only schedule save on successful spend (not failed attempts)
+- flushSave cancels pending debounce then saves immediately on quit
+- Error logging in performSave but non-blocking
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ⚠️ no tests yet (expected)

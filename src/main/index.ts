@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { IPC_CHANNELS } from '../shared/types'
 import { registerSaveIpcHandlers } from './ipc/save'
 import { registerSnackIpcHandlers } from './ipc/snack'
+import { flushSave } from './save-scheduler'
 import { getSnackState } from './snack-state'
 import { loadSaveData } from './save'
 
@@ -89,6 +90,12 @@ app.on('window-all-closed', () => {
     app.quit()
     win = null
   }
+})
+
+app.on('before-quit', async (event) => {
+  event.preventDefault()
+  await flushSave()
+  app.exit()
 })
 
 app.on('activate', () => {
