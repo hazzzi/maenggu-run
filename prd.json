@@ -8,7 +8,7 @@
         "공유 타입 정의 (src/shared/types.ts): SaveData, SnackState, MaengguState",
         "기본 Electron 창 설정 (transparent, frame:false, alwaysOnTop, hasShadow:false)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "window-core",
@@ -19,15 +19,22 @@
         "오버레이 창 크기/위치에 합산 영역 적용",
         "setIgnoreMouseEvents(true, { forward: true }) 기본 적용"
       ],
-      "passes": false
+      "passes": true
     },
     {
-      "category": "window-mouse",
-      "description": "클릭 통과 + 콜라이더 IPC",
+      "category": "window-mouse-main",
+      "description": "클릭 통과 IPC (main process)",
       "steps": [
         "main: mouse:collider IPC 핸들러 등록",
         "main: inCollider=true면 setIgnoreMouseEvents(false) 적용",
-        "main: inCollider=false면 setIgnoreMouseEvents(true, { forward: true }) 적용",
+        "main: inCollider=false면 setIgnoreMouseEvents(true, { forward: true }) 적용"
+      ],
+      "passes": true
+    },
+    {
+      "category": "window-mouse-renderer",
+      "description": "클릭 통과 콜라이더 (renderer)",
+      "steps": [
         "renderer: 맹구 콜라이더 영역 계산 로직 추가",
         "renderer: mousemove로 in/out 판정",
         "renderer: in/out 변화 시 IPC 송신"
@@ -53,7 +60,7 @@
         "앱 시작 시 자동 로드 트리거",
         "로드 결과를 renderer로 전달"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "save-error",
@@ -92,15 +99,31 @@
         "save:load IPC 채널 구현",
         "save:load 요청 시 저장 데이터 반환"
       ],
-      "passes": false
+      "passes": true
     },
     {
-      "category": "preload-api",
-      "description": "preload API 노출",
+      "category": "preload-api-mouse",
+      "description": "preload API - mouse",
       "steps": [
-        "contextBridge에 snack 관련 API 노출",
-        "contextBridge에 save 관련 API 노출",
-        "contextBridge에 mouse 관련 API 노출"
+        "contextBridge에 mouse.setCollider API 노출"
+      ],
+      "passes": true
+    },
+    {
+      "category": "preload-api-save",
+      "description": "preload API - save",
+      "steps": [
+        "contextBridge에 save.load API 노출"
+      ],
+      "passes": true
+    },
+    {
+      "category": "preload-api-snack",
+      "description": "preload API - snack",
+      "steps": [
+        "contextBridge에 snack.add API 노출",
+        "contextBridge에 snack.spend API 노출",
+        "contextBridge에 snack.onUpdate 리스너 노출"
       ],
       "passes": false
     },
@@ -111,7 +134,7 @@
         "renderer에서 preload API 타입 선언",
         "window 객체 타입 보강"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "ui-snack-counter",
