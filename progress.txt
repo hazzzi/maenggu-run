@@ -1,1 +1,25 @@
 === Ralph Loop Progress ===
+
+## 2025-01-18 - save-schema
+
+**PRD**: save-schema (저장 스키마/경로)
+
+**Completed**:
+- SaveData, SaveDataStats 타입 정의
+- MaengguState, Position 타입 정의
+- IPC_CHANNELS 상수 정의
+- DEFAULT_SAVE_DATA 기본값 정의
+- 게임 상수 정의 (SAVE_DEBOUNCE_MS, IDLE_TIME_RANGE, MOVE_SPEED_RANGE 등)
+
+**Files**:
+- src/shared/types.ts (new)
+- src/shared/constants.ts (new)
+- electron/main.ts (unused import 제거)
+
+**Decisions**:
+- 기존 vite-plugin-electron 구조 유지 (electron-vite로 마이그레이션 안함)
+- readonly 타입 사용으로 불변성 보장
+- IPC 채널명을 상수로 중앙 관리
+
+**Blockers**:
+- oxlint 실행 불가 (Node ESM 호환성 문제) - 추후 수정 필요
