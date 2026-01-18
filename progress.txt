@@ -264,3 +264,26 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass
+## 2025-01-18 - sprite-loader
+
+**PRD**: sprite-loader (스프라이트 로딩)
+
+**Completed**:
+- Sprite manifest for idle/walk/eat/happy frames
+- getSpriteManifest() returns readonly frame lists
+- getSpriteFrameUrls(basePath) builds full URLs with base path
+- Unit tests for manifest and URL generation
+
+**Files**:
+- src/renderer/animation/sprite-loader.ts (new)
+- src/renderer/animation/sprite-loader.test.ts (new)
+
+**Decisions**:
+- Manifest stored in code, not loaded dynamically (fast, deterministic)
+- Base path normalized with trailing slash handling
+- assets/ prefix assumed for sprite folder
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass
