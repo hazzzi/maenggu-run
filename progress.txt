@@ -193,3 +193,25 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ⚠️ no tests yet (expected)
+## 2025-01-18 - save-error
+
+**PRD**: save-error (저장 손상 처리)
+
+**Completed**:
+- dialog.showMessageBox on load failure (type: error)
+- Show error message with detail from saveResult.error
+- app.quit() after dialog dismissed
+- Blocking error: prevents window creation and app startup
+
+**Files**:
+- src/main/index.ts (added dialog import, error handling in app.whenReady)
+
+**Decisions**:
+- Block app startup on corrupted save (fail-fast principle)
+- Single "Quit" button in error dialog (no recovery option)
+- Error detail shown in dialog for debugging
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ⚠️ no tests yet (expected)

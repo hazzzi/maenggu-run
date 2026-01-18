@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, screen } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -124,6 +124,16 @@ app.whenReady().then(async () => {
   const saveResult = await loadSaveData()
   if (saveResult.success) {
     getSnackState().initializeFromSave(saveResult.data)
+  } else {
+    await dialog.showMessageBox({
+      type: 'error',
+      title: 'Save Data Error',
+      message: 'Failed to load save data',
+      detail: saveResult.error,
+      buttons: ['Quit'],
+    })
+    app.quit()
+    return
   }
 
   createWindow()
