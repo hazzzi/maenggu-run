@@ -215,3 +215,29 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ⚠️ no tests yet (expected)
+## 2025-01-18 - window-mouse-renderer
+
+**PRD**: window-mouse-renderer (클릭 통과 콜라이더 - renderer)
+
+**Completed**:
+- useMouseCollider hook: tracks mouse position via window mousemove
+- Bounds checking: getBoundingClientRect() collision detection
+- State change optimization: only sends IPC when in/out state changes (via ref)
+- Cleanup: resets collider state on unmount
+- Placeholder Maenggu element: 64x64 semi-transparent div for testing
+- pointerEvents: auto on Maenggu element (container remains none)
+
+**Files**:
+- src/renderer/hooks/useMouseCollider.ts (new)
+- src/renderer/App.tsx (modified: added useRef, useMouseCollider, placeholder element)
+
+**Decisions**:
+- Custom hook pattern for reusability and separation of concerns
+- useRef to track isInside state (avoids re-renders, only IPC on change)
+- Placeholder styling inline (will be replaced by actual sprite rendering)
+- Cleanup resets collider to false on unmount (prevents stuck state)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ⚠️ no tests yet (expected)
