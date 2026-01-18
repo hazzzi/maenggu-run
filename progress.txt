@@ -313,3 +313,32 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (9 tests in 2 files)
+## 2025-01-19 - maenggu-init + assets-rendering
+
+**PRD**: maenggu-init (맹구 초기화), assets-rendering (픽셀 렌더링 설정)
+
+**Completed**:
+- Maenggu component: forwardRef, sprite rendering via <img>
+- useMaengguState hook: animState (idle), position (viewport center)
+- Initial state 'idle' via useState default
+- Initial position: window.innerWidth/2, window.innerHeight/2
+- image-rendering: pixelated for crisp pixels
+- SPRITE_SIZE * scale for fixed display size (64x64 at 2x scale)
+- Symlinked public/assets -> ../assets for Vite serving
+
+**Files**:
+- src/renderer/components/Maenggu.tsx (new)
+- src/renderer/hooks/useMaengguState.ts (new)
+- src/renderer/App.tsx (modified: use Maenggu component)
+- public/assets -> ../assets (symlink)
+
+**Decisions**:
+- forwardRef for collider detection compatibility
+- Scale=2 (32px sprites → 64px display)
+- Position is center-relative (left/top - size/2)
+- Separate state hook for future movement integration
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (9 tests)

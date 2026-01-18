@@ -172,7 +172,7 @@
         "맹구 DOM 요소 생성",
         "초기 상태 idle 설정"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "anim-idle",
@@ -345,7 +345,7 @@
         "image-rendering: pixelated 적용",
         "스프라이트 크기 고정 확인"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "tray-quit",

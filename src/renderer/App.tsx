@@ -1,26 +1,21 @@
 import { useRef } from 'react'
 
+import { Maenggu } from './components/Maenggu'
 import { useMouseCollider } from './hooks/useMouseCollider'
+import { useMaengguState } from './hooks/useMaengguState'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
+  const { animState, position } = useMaengguState()
 
   useMouseCollider(maengguRef)
 
   return (
     <div id="maenggu-container">
-      <div
+      <Maenggu
         ref={maengguRef}
-        id="maenggu"
-        style={{
-          position: 'absolute',
-          left: '100px',
-          top: '100px',
-          width: '64px',
-          height: '64px',
-          backgroundColor: 'rgba(255, 100, 100, 0.5)',
-          pointerEvents: 'auto',
-        }}
+        animState={animState}
+        position={position}
       />
     </div>
   )
