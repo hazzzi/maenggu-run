@@ -108,3 +108,28 @@
 - 구조 마이그레이션만 진행, vite-plugin-electron 유지
 - 템플릿 데모 코드 완전 제거, 빈 App 컴포넌트로 시작
 - preload → renderer 타입 참조를 src/renderer/env.d.ts에서 처리
+
+## 2025-01-18 - save-load
+
+**PRD**: save-load (저장 로드 흐름)
+
+**Completed**:
+- loadSaveData(): fs/promises로 저장 파일 읽기
+- JSON 파싱 + ENOENT시 DEFAULT_SAVE_DATA 반환
+- isValidSaveData(): 스키마 검증 (version, snacks, stats 필드)
+- saveSaveData(): 저장 파일 쓰기 (mkdir recursive)
+- IPC handler: save:load → ipcMain.handle로 등록
+- preload: save.load() API 노출
+- SaveLoadResult 타입 shared로 이동
+
+**Files**:
+- src/main/save.ts (new)
+- src/main/ipc/save.ts (new)
+- src/main/index.ts (registerSaveIpcHandlers 호출)
+- src/preload/index.ts (save.load API 추가)
+- src/shared/types.ts (SaveLoadResult 타입 추가)
+
+**Decisions**:
+- AGENTS.md 권장대로 IPC handlers를 src/main/ipc/ 분리
+- 파일 없으면 에러 아닌 기본값 반환 (첫 실행 시나리오)
+- schema validation 실패 시 error 반환 (save-error 카테고리에서 처리)

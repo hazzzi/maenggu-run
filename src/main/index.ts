@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { IPC_CHANNELS } from '../shared/types'
+import { registerSaveIpcHandlers } from './ipc/save'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -107,5 +108,6 @@ function registerMouseIpcHandlers(): void {
 
 app.whenReady().then(() => {
   registerMouseIpcHandlers()
+  registerSaveIpcHandlers()
   createWindow()
 })

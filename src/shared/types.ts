@@ -38,3 +38,7 @@ export const IPC_CHANNELS = {
 } as const
 
 export type IpcChannels = typeof IPC_CHANNELS
+
+export type SaveLoadResult =
+  | { success: true; data: SaveData }
+  | { success: false; error: string }
