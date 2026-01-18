@@ -44,3 +44,30 @@
 - screen.getAllDisplays() 사용하여 멀티모니터 bounding box 계산
 - skipTaskbar: true, focusable: false로 시스템 UI 최소화
 - DIP 좌표계 사용 (Retina 스케일링 자동 처리)
+
+## 2025-01-18 - window-mouse + preload-api (partial)
+
+**PRD**: window-mouse (클릭 통과 + 콜라이더 IPC)
+
+**Completed**:
+- main: mouse:collider IPC 핸들러 등록
+- main: inCollider=true면 setIgnoreMouseEvents(false) 적용
+- main: inCollider=false면 setIgnoreMouseEvents(true, { forward: true }) 적용
+- preload: typed MaengguApi with mouse.setCollider exposed via contextBridge
+- electron-env.d.ts: Window.maenggu 타입 선언
+
+**Files**:
+- electron/main.ts (ipcMain handler 추가)
+- electron/preload.ts (MaengguApi 정의, contextBridge 노출)
+- electron/electron-env.d.ts (Window 타입 보강)
+- src/main.tsx (dead ipcRenderer code 제거)
+- package.json (lint script 수정: --init → .)
+
+**Decisions**:
+- ipcRenderer 직접 노출 대신 typed API 노출 (보안/유지보수)
+- MaengguApi 타입을 preload에서 export하여 type-safe window 접근
+
+**Remaining (next iteration)**:
+- renderer: 맹구 콜라이더 영역 계산 로직
+- renderer: mousemove로 in/out 판정
+- renderer: in/out 변화 시 IPC 송신

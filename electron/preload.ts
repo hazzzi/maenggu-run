@@ -1,24 +1,19 @@
-import { ipcRenderer, contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
-// --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
-  on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
-    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
-  },
-  off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
-  },
-  send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
-  },
-  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
-  },
+import { IPC_CHANNELS } from '../src/shared/types'
 
-  // You can expose other APTs you need here.
-  // ...
-})
+export type MaengguApi = {
+  mouse: {
+    setCollider: (inCollider: boolean) => void
+  }
+}
+
+const maengguApi: MaengguApi = {
+  mouse: {
+    setCollider: (inCollider: boolean) => {
+      ipcRenderer.send(IPC_CHANNELS.MOUSE_COLLIDER, inCollider)
+    },
+  },
+}
+
+contextBridge.exposeInMainWorld('maenggu', maengguApi)

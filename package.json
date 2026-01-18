@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
-    "lint": "oxlint --init",
+    "lint": "oxlint .",
     "fmt": "oxfmt",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",

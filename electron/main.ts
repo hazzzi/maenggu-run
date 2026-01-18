@@ -1,4 +1,6 @@
-import { app, BrowserWindow, screen } from 'electron'
+import { app, BrowserWindow, ipcMain, screen } from 'electron'
+
+import { IPC_CHANNELS } from '../src/shared/types'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
@@ -109,4 +111,19 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+function registerMouseIpcHandlers(): void {
+  ipcMain.on(IPC_CHANNELS.MOUSE_COLLIDER, (_event, inCollider: boolean) => {
+    if (!win) return
+
+    if (inCollider) {
+      win.setIgnoreMouseEvents(false)
+    } else {
+      win.setIgnoreMouseEvents(true, { forward: true })
+    }
+  })
+}
+
+app.whenReady().then(() => {
+  registerMouseIpcHandlers()
+  createWindow()
+})
