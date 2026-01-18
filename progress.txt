@@ -133,3 +133,35 @@
 - AGENTS.md 권장대로 IPC handlers를 src/main/ipc/ 분리
 - 파일 없으면 에러 아닌 기본값 반환 (첫 실행 시나리오)
 - schema validation 실패 시 error 반환 (save-error 카테고리에서 처리)
+## 2025-01-18 - snack-state + preload-api-snack
+
+**PRD**: snack-state (간식 상태 관리), preload-api-snack (preload API - snack)
+
+**Completed**:
+- SnackStateManager: in-memory state with add/spend/broadcast
+- createSnackStateManager(): snacks counter + stats tracking
+- getSnackState(): singleton pattern
+- snack:add IPC handler (fire-and-forget)
+- snack:spend IPC handler (returns boolean success)
+- snack:update broadcast to all renderer windows
+- preload: snack.add(), snack.spend(), snack.onUpdate() exposed
+- main: initialize snack state from save on app start
+- stats: totalClicks, totalFeedings, peakSnacks auto-updated
+
+**Files**:
+- src/main/snack-state.ts (new)
+- src/main/ipc/snack.ts (new)
+- src/main/index.ts (registerSnackIpcHandlers, loadSaveData → initializeFromSave)
+- src/preload/index.ts (snack API added to MaengguApi)
+
+**Decisions**:
+- Singleton pattern for snack state (getSnackState)
+- Broadcast pattern for state updates (IPC_CHANNELS.SNACK_UPDATE)
+- onUpdate returns cleanup function (removeListener)
+- add() increments totalClicks, spend() increments totalFeedings
+- peakSnacks auto-tracked on add()
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ⚠️ no tests yet (expected)

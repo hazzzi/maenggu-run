@@ -4,6 +4,9 @@ import { fileURLToPath } from 'node:url'
 
 import { IPC_CHANNELS } from '../shared/types'
 import { registerSaveIpcHandlers } from './ipc/save'
+import { registerSnackIpcHandlers } from './ipc/snack'
+import { getSnackState } from './snack-state'
+import { loadSaveData } from './save'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -106,8 +109,15 @@ function registerMouseIpcHandlers(): void {
   })
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   registerMouseIpcHandlers()
   registerSaveIpcHandlers()
+  registerSnackIpcHandlers()
+
+  const saveResult = await loadSaveData()
+  if (saveResult.success) {
+    getSnackState().initializeFromSave(saveResult.data)
+  }
+
   createWindow()
 })

@@ -90,7 +90,7 @@
         "snack:spend 처리 로직",
         "snack:update 브로드캐스트 구현"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "ipc-save",
@@ -125,7 +125,7 @@
         "contextBridge에 snack.spend API 노출",
         "contextBridge에 snack.onUpdate 리스너 노출"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "renderer-types",

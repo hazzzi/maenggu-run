@@ -9,6 +9,11 @@ export type MaengguApi = {
   save: {
     load: () => Promise<SaveLoadResult>
   }
+  snack: {
+    add: (amount?: number) => void
+    spend: (amount?: number) => Promise<boolean>
+    onUpdate: (callback: (snacks: number) => void) => () => void
+  }
 }
 
 const maengguApi: MaengguApi = {
@@ -19,6 +24,21 @@ const maengguApi: MaengguApi = {
   },
   save: {
     load: () => ipcRenderer.invoke(IPC_CHANNELS.SAVE_LOAD),
+  },
+  snack: {
+    add: (amount?: number) => {
+      ipcRenderer.send(IPC_CHANNELS.SNACK_ADD, amount)
+    },
+    spend: (amount?: number) => {
+      return ipcRenderer.invoke(IPC_CHANNELS.SNACK_SPEND, amount)
+    },
+    onUpdate: (callback: (snacks: number) => void) => {
+      const listener = (_event: unknown, snacks: number) => callback(snacks)
+      ipcRenderer.on(IPC_CHANNELS.SNACK_UPDATE, listener)
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.SNACK_UPDATE, listener)
+      }
+    },
   },
 }
 
