@@ -342,3 +342,28 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (9 tests)
+## 2025-01-19 - anim-idle + anim-walk
+
+**PRD**: anim-idle (idle 애니메이션), anim-walk (walk 애니메이션)
+
+**Completed**:
+- useAnimation hook: state-driven frame cycling
+- setInterval with ANIMATION_FRAME_DURATION_MS (200ms)
+- Frame reset on animState change
+- Single-frame optimization (skip interval if frameCount <= 1)
+- Cleanup on unmount (clearInterval)
+- Integrated with App.tsx and Maenggu component
+
+**Files**:
+- src/renderer/hooks/useAnimation.ts (new)
+- src/renderer/App.tsx (modified: added useAnimation, pass frameIndex)
+
+**Decisions**:
+- Generic hook works for all animation states
+- idle has 1 frame (no visible animation), walk has 3 frames
+- eat/happy need completion callbacks (separate task)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (9 tests)

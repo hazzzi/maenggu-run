@@ -181,7 +181,7 @@
         "idle 프레임 전환 타이머",
         "idle 프레임 루프 적용"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "anim-walk",
@@ -190,7 +190,7 @@
         "walk 프레임 전환 타이머",
         "walk 프레임 루프 적용"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "anim-eat",
