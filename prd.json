@@ -199,7 +199,7 @@
         "eat 프레임 전환 타이머",
         "eat 완료 콜백 처리"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "anim-happy",

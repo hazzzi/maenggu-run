@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 
 import { Maenggu } from './components/Maenggu'
 import { useAnimation } from './hooks/useAnimation'
@@ -7,8 +7,15 @@ import { useMaengguState } from './hooks/useMaengguState'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
-  const { animState, position } = useMaengguState()
-  const { frameIndex } = useAnimation(animState)
+  const { animState, position, dispatchAnimEvent } = useMaengguState()
+
+  const handleAnimationComplete = useCallback(() => {
+    if (animState === 'eat') {
+      dispatchAnimEvent({ type: 'eat-finish' })
+    }
+  }, [animState, dispatchAnimEvent])
+
+  const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 
   useMouseCollider(maengguRef)
 

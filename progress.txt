@@ -390,3 +390,34 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (9 tests)
+## 2025-01-19 - anim-eat
+
+**PRD**: anim-eat (eat 애니메이션)
+
+**Completed**:
+- Extended useAnimation hook with optional onComplete callback parameter
+- Added LOOPING_STATES constant to distinguish looping vs one-shot animations
+- One-shot animations (eat, happy) play once, call onComplete, stay at last frame
+- Looping animations (idle, walk) cycle indefinitely
+- App.tsx dispatches eat-finish event when eat animation completes
+- Completion flag reset on animState change (allows re-triggering)
+- 8 comprehensive tests for looping, one-shot, and state change scenarios
+
+**Files**:
+- src/renderer/hooks/useAnimation.ts (modified: added onComplete, looping logic)
+- src/renderer/App.tsx (modified: handleAnimationComplete callback)
+- src/renderer/hooks/useAnimation.test.ts (new: 8 tests)
+- vitest.config.ts (new: test environment configuration)
+- package.json (modified: added @testing-library/react, jsdom)
+
+**Decisions**:
+- Separated looping states (idle, walk) from one-shot states (eat, happy) via constant
+- Used useRef to track completion flag (prevents multiple onComplete calls)
+- onComplete fires after last frame displayed, not before
+- Single-frame one-shot animations (happy) call onComplete immediately
+- Tests use vi.useFakeTimers for deterministic frame timing
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (17 tests, 8 new for useAnimation)
