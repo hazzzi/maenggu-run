@@ -69,7 +69,7 @@ function createWindow(): void {
     skipTaskbar: true,
     focusable: false,
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.mjs'),
+      preload: path.join(__dirname, 'index.mjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },
