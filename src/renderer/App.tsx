@@ -13,8 +13,7 @@ import { generateRandomTarget, getWindowBounds } from './movement/target'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
-  const clickLockRef = useRef(false)
-  const clickTimeoutRef = useRef<number | null>(null)
+  const lastPointerRef = useRef<{ id: number; time: number } | null>(null)
   const [snackCount, setSnackCount] = useState(0)
 
   const {
@@ -51,25 +50,30 @@ function App(): JSX.Element {
     dispatchAnimEvent({ type: 'force-idle' })
   }, [setMoveTarget, dispatchAnimEvent])
 
-  const handleMaengguClick = useCallback(() => {
-    if (clickLockRef.current) {
+  const handleMaengguClick = useCallback((event: React.PointerEvent) => {
+    if (event.button !== 0) {
       return
     }
-    clickLockRef.current = true
 
-    if (clickTimeoutRef.current !== null) {
-      window.clearTimeout(clickTimeoutRef.current)
+    if (animState === 'eat' || animState === 'happy') {
+      return
     }
 
-    clickTimeoutRef.current = window.setTimeout(() => {
-      clickLockRef.current = false
-    }, 350)
+    const pointerId = event.pointerId
+    const now = Date.now()
+    const lastPointer = lastPointerRef.current
+
+    if (lastPointer && lastPointer.id === pointerId && now - lastPointer.time < 500) {
+      return
+    }
+
+    lastPointerRef.current = { id: pointerId, time: now }
 
     setMoveTarget(null)
     dispatchAnimEvent({ type: 'eat-start' })
     window.maenggu.snack.add()
     addFloatingText('+1', position)
-  }, [setMoveTarget, dispatchAnimEvent, addFloatingText, position])
+  }, [animState, setMoveTarget, dispatchAnimEvent, addFloatingText, position])
 
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 

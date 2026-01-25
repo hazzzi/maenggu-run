@@ -14,7 +14,7 @@ type MaengguProps = {
   readonly facing: FacingDirection
   readonly frameIndex?: number
   readonly scale?: number
-  readonly onPointerDown?: () => void
+  readonly onPointerDown?: (event: React.PointerEvent<HTMLDivElement>) => void
 }
 
 const DISPLAY_SCALE = 2
