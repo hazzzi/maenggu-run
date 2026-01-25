@@ -443,3 +443,29 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (17 tests)
+## 2025-01-25 - movement-idle-timer
+
+**PRD**: movement-idle-timer (idle 타이머)
+
+**Completed**:
+- useIdleTimer hook: starts timer when entering idle state
+- Random duration from IDLE_TIME_RANGE (3-8 seconds)
+- Dispatches walk-start event when timer fires
+- Timer cancels when leaving idle or on unmount
+- Integrated with App.tsx
+
+**Files**:
+- src/renderer/hooks/useIdleTimer.ts (new)
+- src/renderer/hooks/useIdleTimer.test.ts (new: 6 tests)
+- src/renderer/App.tsx (modified: added useIdleTimer hook)
+
+**Decisions**:
+- Separate hook for single responsibility
+- useRef for timer handle (prevents memory leaks)
+- Timer resets on animState change via useEffect cleanup
+- Random uses Math.random with range calculation
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (23 tests, 6 new for useIdleTimer)

@@ -227,7 +227,7 @@
         "3-8초 랜덤 idle 시간 생성",
         "idle 타이머 종료 시 이동 시작"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "movement-target",

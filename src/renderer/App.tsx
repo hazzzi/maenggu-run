@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react'
 
 import { Maenggu } from './components/Maenggu'
 import { useAnimation } from './hooks/useAnimation'
+import { useIdleTimer } from './hooks/useIdleTimer'
 import { useMouseCollider } from './hooks/useMouseCollider'
 import { useMaengguState } from './hooks/useMaengguState'
 
@@ -19,6 +20,7 @@ function App(): JSX.Element {
 
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 
+  useIdleTimer({ animState, dispatchAnimEvent })
   useMouseCollider(maengguRef)
 
   return (
