@@ -686,3 +686,30 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, UI animation tested via integration)
+## 2025-01-25 - interaction-feed-trigger + interaction-feed-cost + interaction-feed-flow
+
+**PRD**: interaction-feed-trigger (먹이주기 트리거), interaction-feed-cost (먹이 부족 처리), interaction-feed-flow (먹이 애니메이션 흐름)
+
+**Completed**:
+- onContextMenu handler in Maenggu component (right-click trigger)
+- handleMaengguContextMenu: calls snack.spend() IPC
+- Conditional animation: only starts eat if spend succeeds
+- snack.spend() returns boolean (true if spent, false if insufficient)
+- No visual feedback on failed spend (silent no-op as per PRD)
+- eat → happy flow already handled by existing animation state machine
+
+**Files**:
+- src/renderer/components/Maenggu.tsx (modified: added onContextMenu prop)
+- src/renderer/App.tsx (modified: added handleMaengguContextMenu handler)
+
+**Decisions**:
+- Right-click handled entirely in renderer (no Electron Menu needed)
+- preventDefault() blocks browser context menu
+- Await snack.spend() to check success before animating
+- Failed spend is silent (no error message, just no animation)
+- Stops movement on successful feed (setMoveTarget null)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (58 tests, feeding logic tested via IPC integration)

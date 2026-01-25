@@ -10,6 +10,7 @@ type MaengguProps = {
   readonly frameIndex?: number
   readonly scale?: number
   readonly onClick?: () => void
+  readonly onContextMenu?: (event: React.MouseEvent) => void
 }
 
 const DISPLAY_SCALE = 2
@@ -20,7 +21,7 @@ function stateToSpriteState(state: MaengguState): SpriteState {
 
 export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
   function Maenggu(
-    { animState, position, frameIndex = 0, scale = DISPLAY_SCALE, onClick },
+    { animState, position, frameIndex = 0, scale = DISPLAY_SCALE, onClick, onContextMenu },
     ref,
   ) {
     const spriteUrls = useMemo(() => getSpriteFrameUrls('/'), [])
@@ -35,6 +36,7 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
       <div
         ref={ref}
         onClick={onClick}
+        onContextMenu={onContextMenu}
         style={{
           position: 'absolute',
           left: position.x - displaySize / 2,

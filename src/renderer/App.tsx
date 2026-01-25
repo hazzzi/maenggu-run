@@ -54,6 +54,20 @@ function App(): JSX.Element {
     addFloatingText('+1', position)
   }, [setMoveTarget, dispatchAnimEvent, addFloatingText, position])
 
+  const handleMaengguContextMenu = useCallback(
+    async (event: React.MouseEvent) => {
+      event.preventDefault()
+
+      const success = await window.maenggu.snack.spend()
+
+      if (success) {
+        setMoveTarget(null)
+        dispatchAnimEvent({ type: 'eat-start' })
+      }
+    },
+    [setMoveTarget, dispatchAnimEvent],
+  )
+
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 
   useIdleTimer({ animState, dispatchAnimEvent })
@@ -84,6 +98,7 @@ function App(): JSX.Element {
         position={position}
         frameIndex={frameIndex}
         onClick={handleMaengguClick}
+        onContextMenu={handleMaengguContextMenu}
       />
       {floatingTexts.map((floatingText) => (
         <FloatingText

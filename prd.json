@@ -309,7 +309,7 @@
         "우클릭 컨텍스트 메뉴 표시",
         "먹이주기 항목 선택 처리"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "interaction-feed-cost",
@@ -318,7 +318,7 @@
         "snack 부족 시 no-op 처리",
         "메뉴는 항상 표시 유지"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "interaction-feed-flow",
@@ -327,7 +327,7 @@
         "snack:spend IPC 호출",
         "eat → happy 자동 전환"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "assets-sprites",
