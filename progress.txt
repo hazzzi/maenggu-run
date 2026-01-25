@@ -632,3 +632,29 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, no new tests needed for integration)
+## 2025-01-25 - ui-snack-counter + ui-click-through
+
+**PRD**: ui-snack-counter (간식 UI 표시), ui-click-through (UI 클릭 통과)
+
+**Completed**:
+- SnackCounter component: fixed top-left position, 🍖 icon + count display
+- Styled with semi-transparent background, monospace font, white text
+- pointerEvents: 'none' for complete click-through (no blocking)
+- Integrated with App.tsx via snack.onUpdate IPC listener
+- Real-time snack count updates from main process
+
+**Files**:
+- src/renderer/components/SnackCounter.tsx (new)
+- src/renderer/App.tsx (modified: added snackCount state, snack.onUpdate listener, rendered SnackCounter)
+
+**Decisions**:
+- Fixed position top-left (16px margin)
+- pointerEvents: 'none' ensures no mouse interaction blocking
+- userSelect: 'none' prevents text selection
+- Monospace font for clean number display
+- 🍖 emoji as snack icon (clear, no asset needed)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (58 tests, UI component tested via integration)

@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Maenggu } from './components/Maenggu'
+import { SnackCounter } from './components/SnackCounter'
 import { useAnimation } from './hooks/useAnimation'
 import { useIdleTimer } from './hooks/useIdleTimer'
 import { useMouseCollider } from './hooks/useMouseCollider'
@@ -10,6 +11,8 @@ import { generateRandomTarget, getWindowBounds } from './movement/target'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
+  const [snackCount, setSnackCount] = useState(0)
+
   const {
     animState,
     position,
@@ -18,6 +21,14 @@ function App(): JSX.Element {
     setPosition,
     setMoveTarget,
   } = useMaengguState()
+
+  useEffect(() => {
+    const cleanup = window.maenggu.snack.onUpdate((count) => {
+      setSnackCount(count)
+    })
+
+    return cleanup
+  }, [])
 
   const handleAnimationComplete = useCallback(() => {
     if (animState === 'eat') {
@@ -61,6 +72,7 @@ function App(): JSX.Element {
 
   return (
     <div id="maenggu-container">
+      <SnackCounter count={snackCount} />
       <Maenggu
         ref={maengguRef}
         animState={animState}
