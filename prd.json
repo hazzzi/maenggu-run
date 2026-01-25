@@ -263,7 +263,7 @@
         "경계 근접 시 감속/멈춤 처리",
         "반대 방향 즉시 전환 방지"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "movement-reach",
@@ -272,7 +272,7 @@
         "목표 도달 조건 설정",
         "도달 시 idle 전환"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "interaction-click-stop",

@@ -557,3 +557,53 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (52 tests, 7 new for useMovement)
+## 2025-01-25 - movement-reach
+
+**PRD**: movement-reach (목표 도달 판정)
+
+**Completed**:
+- Already implemented in movement-step task
+- Distance-based reach detection: distanceToTarget < speed
+- Exact target snap when reached (prevents overshoot)
+- onTargetReached callback triggers idle transition
+- handleTargetReached in App.tsx: clears moveTarget, dispatches force-idle
+
+**Files**:
+- src/renderer/hooks/useMovement.ts (lines 40-45: reach detection logic)
+- src/renderer/App.tsx (lines 30-33: handleTargetReached callback)
+
+**Decisions**:
+- Reach threshold = current speed (adaptive based on movement speed)
+- Snaps to exact target position on reach (no drift)
+- Integrated with movement-step for cohesive implementation
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (52 tests, covered by useMovement tests)
+## 2025-01-25 - movement-boundary
+
+**PRD**: movement-boundary (경계 처리)
+
+**Completed**:
+- clampPositionToBounds(): ensures sprite stays fully visible on screen
+- Accounts for sprite display size (64x64 = SPRITE_SIZE * 2)
+- Updated generateRandomTarget(): targets never exceed valid bounds
+- Integrated clamping in useMovement: every position update is clamped
+- 6 comprehensive boundary tests (negative values, overflow, combined)
+
+**Files**:
+- src/renderer/movement/target.ts (modified: added clampPositionToBounds, updated generateRandomTarget)
+- src/renderer/movement/target.test.ts (modified: 6 new boundary tests, updated existing tests)
+- src/renderer/hooks/useMovement.ts (modified: clamp position on every update)
+
+**Decisions**:
+- Sprite-aware boundaries: maxX/maxY = bounds - SPRITE_DISPLAY_SIZE
+- Math.max(0, Math.min(pos, max)) for clamping (clean, no conditionals)
+- Clamp applied to all position updates (target generation + frame updates)
+- Prevents sprite from going off-screen on any edge
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (58 tests, 6 new for boundary clamping)

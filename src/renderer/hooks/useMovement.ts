@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 
 import { type Position } from '../../shared/types'
 import { calculateVelocity, generateRandomSpeed } from '../movement/vector'
+import { clampPositionToBounds, getWindowBounds } from '../movement/target'
 
 type UseMovementProps = {
   readonly isWalking: boolean
@@ -56,7 +57,10 @@ export function useMovement({
         y: currentPosition.y + velocity.dy,
       }
 
-      onPositionUpdate(nextPosition)
+      const bounds = getWindowBounds()
+      const clampedPosition = clampPositionToBounds(nextPosition, bounds)
+
+      onPositionUpdate(clampedPosition)
       rafIdRef.current = requestAnimationFrame(updatePosition)
     }
 
