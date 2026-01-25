@@ -527,3 +527,33 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (45 tests, 16 new for vector)
+## 2025-01-25 - movement-step
+
+**PRD**: movement-step (이동 프레임 업데이트)
+
+**Completed**:
+- useMovement hook: requestAnimationFrame-based position updates
+- Calculates velocity using vector utilities
+- Updates position every frame when isWalking=true
+- Target reached detection: stops when distance < speed
+- Speed generation on walk start (random 2-4 px/frame)
+- Cleanup: cancels RAF on unmount or when walking stops
+- Integrated with App.tsx: auto-generates target on walk-start, handles target reached
+- 7 tests covering movement scenarios, cleanup, and edge cases
+
+**Files**:
+- src/renderer/hooks/useMovement.ts (new)
+- src/renderer/hooks/useMovement.test.ts (new: 7 tests)
+- src/renderer/App.tsx (modified: integrated useMovement, target generation, handleTargetReached)
+
+**Decisions**:
+- requestAnimationFrame for smooth 60fps movement
+- Speed stored in ref (constant during one walk cycle)
+- Target reached callback triggers force-idle transition
+- Target auto-generated in useEffect when entering walk state with no target
+- Real timers used for one test (RAF incompatible with fake timers)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (52 tests, 7 new for useMovement)

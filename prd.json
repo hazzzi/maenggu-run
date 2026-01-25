@@ -254,7 +254,7 @@
         "프레임마다 위치 업데이트",
         "걷기 상태 전환/유지"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "movement-boundary",
