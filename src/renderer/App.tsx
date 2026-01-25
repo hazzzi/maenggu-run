@@ -13,7 +13,8 @@ import { generateRandomTarget, getWindowBounds } from './movement/target'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
-  const lastClickTimeRef = useRef<number>(0)
+  const clickLockRef = useRef(false)
+  const clickTimeoutRef = useRef<number | null>(null)
   const [snackCount, setSnackCount] = useState(0)
 
   const {
@@ -51,11 +52,18 @@ function App(): JSX.Element {
   }, [setMoveTarget, dispatchAnimEvent])
 
   const handleMaengguClick = useCallback(() => {
-    const now = Date.now()
-    if (now - lastClickTimeRef.current < 150) {
+    if (clickLockRef.current) {
       return
     }
-    lastClickTimeRef.current = now
+    clickLockRef.current = true
+
+    if (clickTimeoutRef.current !== null) {
+      window.clearTimeout(clickTimeoutRef.current)
+    }
+
+    clickTimeoutRef.current = window.setTimeout(() => {
+      clickLockRef.current = false
+    }, 350)
 
     setMoveTarget(null)
     dispatchAnimEvent({ type: 'eat-start' })
@@ -94,7 +102,7 @@ function App(): JSX.Element {
         position={position}
         facing={facing}
         frameIndex={frameIndex}
-        onClick={handleMaengguClick}
+        onPointerDown={handleMaengguClick}
       />
       {floatingTexts.map((floatingText) => (
         <FloatingText
