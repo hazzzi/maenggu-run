@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { type Position } from '../shared/types'
 import { Maenggu } from './components/Maenggu'
 import { SnackCounter } from './components/SnackCounter'
 import { FloatingText } from './components/FloatingText'
@@ -14,6 +15,8 @@ import { generateRandomTarget, getWindowBounds } from './movement/target'
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
   const lastPointerRef = useRef<{ id: number; time: number } | null>(null)
+  const lastClickRef = useRef<{ time: number; position: Position } | null>(null)
+  const lastSnackCountRef = useRef(0)
   const [snackCount, setSnackCount] = useState(0)
 
   const {
@@ -32,10 +35,19 @@ function App(): JSX.Element {
   useEffect(() => {
     const cleanup = window.maenggu.snack.onUpdate((count) => {
       setSnackCount(count)
+
+      const lastClick = lastClickRef.current
+      const lastSnackCount = lastSnackCountRef.current
+
+      if (lastClick && count > lastSnackCount) {
+        addFloatingText('+🍖', lastClick.position)
+      }
+
+      lastSnackCountRef.current = count
     })
 
     return cleanup
-  }, [])
+  }, [addFloatingText])
 
   const handleAnimationComplete = useCallback(() => {
     if (animState === 'eat') {
@@ -71,9 +83,9 @@ function App(): JSX.Element {
 
     setMoveTarget(null)
     dispatchAnimEvent({ type: 'eat-start' })
+    lastClickRef.current = { time: Date.now(), position }
     window.maenggu.snack.add()
-    addFloatingText('+1', position)
-  }, [animState, setMoveTarget, dispatchAnimEvent, addFloatingText, position])
+  }, [animState, setMoveTarget, dispatchAnimEvent, position])
 
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 

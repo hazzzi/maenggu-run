@@ -87,7 +87,7 @@ function createWindow(): void {
 }
 
 function createTray(): void {
-  const iconPath = path.join(process.env.VITE_PUBLIC!, 'assets/idle/mangoo_defatult.png')
+  const iconPath = path.join(process.env.VITE_PUBLIC!, 'assets/idle/mangoo_default.png')
   const icon = nativeImage.createFromPath(iconPath)
   
   tray = new Tray(icon.resize({ width: 16, height: 16 }))
