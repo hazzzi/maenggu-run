@@ -40,7 +40,9 @@ function App(): JSX.Element {
       const lastSnackCount = lastSnackCountRef.current
 
       if (lastClick && count > lastSnackCount) {
-        addFloatingText('+🍖', lastClick.position)
+        if (count === lastSnackCount + 1) {
+          addFloatingText('+🍖', lastClick.position)
+        }
       }
 
       lastSnackCountRef.current = count
@@ -83,9 +85,10 @@ function App(): JSX.Element {
 
     setMoveTarget(null)
     dispatchAnimEvent({ type: 'eat-start' })
-    lastClickRef.current = { time: Date.now(), position }
+    lastClickRef.current = { time: now, position }
+    lastSnackCountRef.current = snackCount
     window.maenggu.snack.add()
-  }, [animState, setMoveTarget, dispatchAnimEvent, position])
+  }, [animState, setMoveTarget, dispatchAnimEvent, position, snackCount])
 
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 
