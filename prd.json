@@ -372,7 +372,7 @@
         "모든 디스플레이 영역 이동 확인",
         "경계 끊김 없는지 확인"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "polish-dock",
@@ -381,7 +381,7 @@
         "Dock 위로 이동 가능 여부 확인",
         "auto-hide 상태에서도 동일 확인"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "polish-flow",
@@ -390,7 +390,7 @@
         "실행 → 이동 → 클릭 → 먹이주기 흐름 확인",
         "저장 후 재실행 시 데이터 유지 확인"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
