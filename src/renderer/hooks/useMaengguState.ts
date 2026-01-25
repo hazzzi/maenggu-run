@@ -9,11 +9,13 @@ import {
 type MaengguStateData = {
   readonly animState: MaengguState
   readonly position: Position
+  readonly moveTarget: Position | null
 }
 
 type MaengguStateActions = {
   readonly dispatchAnimEvent: (event: AnimationEvent) => void
   readonly setPosition: (position: Position) => void
+  readonly setMoveTarget: (target: Position | null) => void
 }
 
 type UseMaengguStateReturn = MaengguStateData & MaengguStateActions
@@ -28,6 +30,7 @@ function getInitialPosition(): Position {
 export function useMaengguState(): UseMaengguStateReturn {
   const [animState, setAnimState] = useState<MaengguState>('idle')
   const [position, setPosition] = useState<Position>(getInitialPosition)
+  const [moveTarget, setMoveTarget] = useState<Position | null>(null)
 
   const dispatchAnimEvent = useCallback(
     (event: AnimationEvent) => {
@@ -39,7 +42,9 @@ export function useMaengguState(): UseMaengguStateReturn {
   return {
     animState,
     position,
+    moveTarget,
     dispatchAnimEvent,
     setPosition,
+    setMoveTarget,
   }
 }

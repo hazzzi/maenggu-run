@@ -469,3 +469,30 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (23 tests, 6 new for useIdleTimer)
+## 2025-01-25 - movement-target
+
+**PRD**: movement-target (이동 목적지 선정)
+
+**Completed**:
+- generateRandomTarget(): creates random position within screen bounds
+- isPositionInBounds(): validates position is within valid range
+- getWindowBounds(): gets current window dimensions
+- Added moveTarget state to useMaengguState (Position | null)
+- Added setMoveTarget action to useMaengguState
+
+**Files**:
+- src/renderer/movement/target.ts (new)
+- src/renderer/movement/target.test.ts (new: 6 tests)
+- src/renderer/hooks/useMaengguState.ts (modified: added moveTarget state)
+
+**Decisions**:
+- Separate movement/ directory for movement-related utilities
+- moveTarget is nullable (null when not moving)
+- Uses Math.random with floor for integer coordinates
+- Bounds validation uses inclusive <= for edges
+- getWindowBounds() provides window dimensions
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (29 tests, 6 new for target)
