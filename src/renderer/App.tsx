@@ -12,6 +12,8 @@ function App(): JSX.Element {
   const handleAnimationComplete = useCallback(() => {
     if (animState === 'eat') {
       dispatchAnimEvent({ type: 'eat-finish' })
+    } else if (animState === 'happy') {
+      dispatchAnimEvent({ type: 'happy-finish' })
     }
   }, [animState, dispatchAnimEvent])
 

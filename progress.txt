@@ -421,3 +421,25 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (17 tests, 8 new for useAnimation)
+## 2025-01-25 - anim-happy
+
+**PRD**: anim-happy (happy 애니메이션)
+
+**Completed**:
+- Added happy-finish event dispatch in handleAnimationComplete
+- Completes eat → happy → idle animation flow
+- Happy uses existing one-shot animation infrastructure (from anim-eat)
+- State machine already had happy-finish → idle transition
+
+**Files**:
+- src/renderer/App.tsx (modified: added happy case to handleAnimationComplete)
+
+**Decisions**:
+- Minimal change: only added else-if for happy state
+- Reuses all infrastructure from anim-eat implementation
+- No new tests needed: state-machine.test.ts already covers happy-finish transition
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (17 tests)

@@ -208,7 +208,7 @@
         "happy 프레임 전환 타이머",
         "happy 완료 후 idle 복귀"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "anim-state",
