@@ -9,6 +9,7 @@ type MaengguProps = {
   readonly position: Position
   readonly frameIndex?: number
   readonly scale?: number
+  readonly onClick?: () => void
 }
 
 const DISPLAY_SCALE = 2
@@ -18,7 +19,10 @@ function stateToSpriteState(state: MaengguState): SpriteState {
 }
 
 export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
-  function Maenggu({ animState, position, frameIndex = 0, scale = DISPLAY_SCALE }, ref) {
+  function Maenggu(
+    { animState, position, frameIndex = 0, scale = DISPLAY_SCALE, onClick },
+    ref,
+  ) {
     const spriteUrls = useMemo(() => getSpriteFrameUrls('/'), [])
 
     const spriteState = stateToSpriteState(animState)
@@ -30,6 +34,7 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
     return (
       <div
         ref={ref}
+        onClick={onClick}
         style={{
           position: 'absolute',
           left: position.x - displaySize / 2,
@@ -37,6 +42,7 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
           width: displaySize,
           height: displaySize,
           pointerEvents: 'auto',
+          cursor: onClick ? 'pointer' : 'default',
         }}
       >
         <img

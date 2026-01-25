@@ -607,3 +607,28 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, 6 new for boundary clamping)
+## 2025-01-25 - interaction-click-stop + interaction-click-reward
+
+**PRD**: interaction-click-stop (클릭 즉시 정지), interaction-click-reward (클릭 보상)
+
+**Completed**:
+- Added onClick prop to Maenggu component (optional callback)
+- handleMaengguClick in App.tsx: stops movement + starts eat animation + rewards snack
+- Click behavior: setMoveTarget(null) stops current walk, eat-start event triggers eat animation
+- Integrated snack:add IPC call for +1 snack reward on every click
+- cursor: pointer when onClick handler provided
+
+**Files**:
+- src/renderer/components/Maenggu.tsx (modified: added onClick prop, cursor styling)
+- src/renderer/App.tsx (modified: added handleMaengguClick callback)
+
+**Decisions**:
+- Single click handler combines stop + reward logic (cohesive interaction)
+- Movement stop via setMoveTarget(null) (clean, no RAF cancellation needed)
+- eat-start event immediately starts eating animation
+- snack:add is fire-and-forget (no need to wait for response)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (58 tests, no new tests needed for integration)

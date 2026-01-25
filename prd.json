@@ -281,7 +281,7 @@
         "클릭 시 이동 중지 처리",
         "애니메이션 eat 시작 준비"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "interaction-click-reward",
@@ -290,7 +290,7 @@
         "클릭 시 snack:add IPC 호출",
         "클릭 시 +1 플로팅 텍스트 생성"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "interaction-floating-text",

@@ -32,6 +32,12 @@ function App(): JSX.Element {
     dispatchAnimEvent({ type: 'force-idle' })
   }, [setMoveTarget, dispatchAnimEvent])
 
+  const handleMaengguClick = useCallback(() => {
+    setMoveTarget(null)
+    dispatchAnimEvent({ type: 'eat-start' })
+    window.maenggu.snack.add()
+  }, [setMoveTarget, dispatchAnimEvent])
+
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 
   useIdleTimer({ animState, dispatchAnimEvent })
@@ -60,6 +66,7 @@ function App(): JSX.Element {
         animState={animState}
         position={position}
         frameIndex={frameIndex}
+        onClick={handleMaengguClick}
       />
     </div>
   )
