@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Maenggu } from './components/Maenggu'
 import { SnackCounter } from './components/SnackCounter'
+import { FloatingText } from './components/FloatingText'
 import { useAnimation } from './hooks/useAnimation'
 import { useIdleTimer } from './hooks/useIdleTimer'
 import { useMouseCollider } from './hooks/useMouseCollider'
 import { useMaengguState } from './hooks/useMaengguState'
 import { useMovement } from './hooks/useMovement'
+import { useFloatingTexts } from './hooks/useFloatingTexts'
 import { generateRandomTarget, getWindowBounds } from './movement/target'
 
 function App(): JSX.Element {
@@ -21,6 +23,8 @@ function App(): JSX.Element {
     setPosition,
     setMoveTarget,
   } = useMaengguState()
+
+  const { floatingTexts, addFloatingText, removeFloatingText } = useFloatingTexts()
 
   useEffect(() => {
     const cleanup = window.maenggu.snack.onUpdate((count) => {
@@ -47,7 +51,8 @@ function App(): JSX.Element {
     setMoveTarget(null)
     dispatchAnimEvent({ type: 'eat-start' })
     window.maenggu.snack.add()
-  }, [setMoveTarget, dispatchAnimEvent])
+    addFloatingText('+1', position)
+  }, [setMoveTarget, dispatchAnimEvent, addFloatingText, position])
 
   const { frameIndex } = useAnimation(animState, handleAnimationComplete)
 
@@ -80,6 +85,16 @@ function App(): JSX.Element {
         frameIndex={frameIndex}
         onClick={handleMaengguClick}
       />
+      {floatingTexts.map((floatingText) => (
+        <FloatingText
+          key={floatingText.id}
+          text={floatingText.text}
+          position={floatingText.position}
+          onAnimationEnd={() => {
+            removeFloatingText(floatingText.id)
+          }}
+        />
+      ))}
     </div>
   )
 }

@@ -300,7 +300,7 @@
         "위로 떠오르는 애니메이션",
         "애니메이션 종료 후 제거"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "interaction-feed-trigger",

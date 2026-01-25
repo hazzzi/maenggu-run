@@ -658,3 +658,31 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, UI component tested via integration)
+## 2025-01-25 - interaction-floating-text
+
+**PRD**: interaction-floating-text (플로팅 텍스트)
+
+**Completed**:
+- FloatingText component: animated +1 text on click
+- Fades out (opacity 1 → 0) and floats up (offsetY 0 → -50px) over 1 second
+- requestAnimationFrame-based animation for smooth 60fps
+- useFloatingTexts hook: manages multiple concurrent floating texts
+- Auto-cleanup via onAnimationEnd callback
+- Green color (#4CAF50) with text shadow for visibility
+
+**Files**:
+- src/renderer/components/FloatingText.tsx (new)
+- src/renderer/hooks/useFloatingTexts.ts (new)
+- src/renderer/App.tsx (modified: integrated floating text on click)
+
+**Decisions**:
+- RAF animation instead of CSS transitions (more control, sync with game loop)
+- Multiple floating texts supported (array state with unique IDs)
+- pointerEvents: 'none' prevents interference
+- 1000ms animation duration (visible but not distracting)
+- Text positioned at Maenggu's current position on click
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (58 tests, UI animation tested via integration)
