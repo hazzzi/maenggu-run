@@ -29,6 +29,8 @@ export type Position = {
   readonly y: number
 }
 
+export type FacingDirection = 'left' | 'right'
+
 export const IPC_CHANNELS = {
   SNACK_ADD: 'snack:add',
   SNACK_SPEND: 'snack:spend',

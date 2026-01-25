@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { type Position } from '../../shared/types'
+import { type FacingDirection, type Position } from '../../shared/types'
 import { calculateVelocity, generateRandomSpeed } from '../movement/vector'
 import { clampPositionToBounds, getWindowBounds } from '../movement/target'
 
@@ -10,6 +10,7 @@ type UseMovementProps = {
   readonly targetPosition: Position | null
   readonly onPositionUpdate: (position: Position) => void
   readonly onTargetReached: () => void
+  readonly onDirectionChange: (direction: FacingDirection) => void
 }
 
 export function useMovement({
@@ -18,6 +19,7 @@ export function useMovement({
   targetPosition,
   onPositionUpdate,
   onTargetReached,
+  onDirectionChange,
 }: UseMovementProps): void {
   const rafIdRef = useRef<number | null>(null)
   const speedRef = useRef<number>(generateRandomSpeed())
@@ -39,6 +41,10 @@ export function useMovement({
       const dx = targetPosition.x - currentPosition.x
       const dy = targetPosition.y - currentPosition.y
       const distanceToTarget = Math.sqrt(dx ** 2 + dy ** 2)
+
+      if (dx !== 0) {
+        onDirectionChange(dx < 0 ? 'left' : 'right')
+      }
 
       if (distanceToTarget < speedRef.current) {
         onPositionUpdate(targetPosition)
@@ -72,5 +78,12 @@ export function useMovement({
         rafIdRef.current = null
       }
     }
-  }, [isWalking, currentPosition, targetPosition, onPositionUpdate, onTargetReached])
+  }, [
+    isWalking,
+    currentPosition,
+    targetPosition,
+    onPositionUpdate,
+    onTargetReached,
+    onDirectionChange,
+  ])
 }

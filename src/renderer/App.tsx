@@ -13,15 +13,18 @@ import { generateRandomTarget, getWindowBounds } from './movement/target'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
+  const lastClickTimeRef = useRef<number>(0)
   const [snackCount, setSnackCount] = useState(0)
 
   const {
     animState,
     position,
     moveTarget,
+    facing,
     dispatchAnimEvent,
     setPosition,
     setMoveTarget,
+    setFacing,
   } = useMaengguState()
 
   const { floatingTexts, addFloatingText, removeFloatingText } = useFloatingTexts()
@@ -48,6 +51,12 @@ function App(): JSX.Element {
   }, [setMoveTarget, dispatchAnimEvent])
 
   const handleMaengguClick = useCallback(() => {
+    const now = Date.now()
+    if (now - lastClickTimeRef.current < 150) {
+      return
+    }
+    lastClickTimeRef.current = now
+
     setMoveTarget(null)
     dispatchAnimEvent({ type: 'eat-start' })
     window.maenggu.snack.add()
@@ -65,6 +74,7 @@ function App(): JSX.Element {
     targetPosition: moveTarget,
     onPositionUpdate: setPosition,
     onTargetReached: handleTargetReached,
+    onDirectionChange: setFacing,
   })
 
   useEffect(() => {
@@ -82,6 +92,7 @@ function App(): JSX.Element {
         ref={maengguRef}
         animState={animState}
         position={position}
+        facing={facing}
         frameIndex={frameIndex}
         onClick={handleMaengguClick}
       />

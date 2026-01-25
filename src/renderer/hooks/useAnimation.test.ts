@@ -78,7 +78,12 @@ describe('useAnimation', () => {
       act(() => {
         vi.advanceTimersByTime(200)
       })
-      expect(result.current.frameIndex).toBe(3)
+      expect(result.current.frameIndex).toBe(4)
+
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
+      expect(result.current.frameIndex).toBe(4)
       expect(onComplete).toHaveBeenCalledOnce()
     })
 
@@ -105,16 +110,16 @@ describe('useAnimation', () => {
       const { result } = renderHook(() => useAnimation('eat', onComplete))
 
       act(() => {
-        vi.advanceTimersByTime(200 * 5)
+        vi.advanceTimersByTime(200 * 6)
       })
 
-      expect(result.current.frameIndex).toBe(3)
+      expect(result.current.frameIndex).toBe(4)
 
       act(() => {
         vi.advanceTimersByTime(200 * 5)
       })
 
-      expect(result.current.frameIndex).toBe(3)
+      expect(result.current.frameIndex).toBe(4)
     })
   })
 

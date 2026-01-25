@@ -16,6 +16,7 @@ describe('sprite-loader', () => {
       'eat/mangoo_08.png',
       'eat/mangoo_09.png',
       'eat/mangoo_10.png',
+      'eat/mangoo_11.png',
     ])
     expect(manifest.happy).toEqual(['happy/mangoo_13.png'])
   })
@@ -33,12 +34,13 @@ describe('sprite-loader', () => {
         '/assets/eat/mangoo_08.png',
         '/assets/eat/mangoo_09.png',
         '/assets/eat/mangoo_10.png',
+        '/assets/eat/mangoo_11.png',
       ],
       happy: ['/assets/happy/mangoo_13.png'],
     })
 
     expect(getSpriteFrameUrls('/static')).toEqual({
-      idle: ['/static/assets/idle/mangoo_defatult.png'],
+      idle: ['/static/assets/idle/mangoo_default.png'],
       walk: [
         '/static/assets/walk/mangoo_02.png',
         '/static/assets/walk/mangoo_03.png',
@@ -49,6 +51,7 @@ describe('sprite-loader', () => {
         '/static/assets/eat/mangoo_08.png',
         '/static/assets/eat/mangoo_09.png',
         '/static/assets/eat/mangoo_10.png',
+        '/static/assets/eat/mangoo_11.png',
       ],
       happy: ['/static/assets/happy/mangoo_13.png'],
     })

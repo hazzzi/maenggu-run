@@ -1,12 +1,17 @@
 import { forwardRef, useMemo } from 'react'
 
 import { SPRITE_SIZE } from '../../shared/constants'
-import { type MaengguState, type Position } from '../../shared/types'
+import {
+  type FacingDirection,
+  type MaengguState,
+  type Position,
+} from '../../shared/types'
 import { getSpriteFrameUrls, type SpriteState } from '../animation/sprite-loader'
 
 type MaengguProps = {
   readonly animState: MaengguState
   readonly position: Position
+  readonly facing: FacingDirection
   readonly frameIndex?: number
   readonly scale?: number
   readonly onClick?: () => void
@@ -20,7 +25,7 @@ function stateToSpriteState(state: MaengguState): SpriteState {
 
 export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
   function Maenggu(
-    { animState, position, frameIndex = 0, scale = DISPLAY_SCALE, onClick },
+    { animState, position, facing, frameIndex = 0, scale = DISPLAY_SCALE, onClick },
     ref,
   ) {
     const spriteUrls = useMemo(() => getSpriteFrameUrls('/'), [])
@@ -53,6 +58,7 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
             width: '100%',
             height: '100%',
             imageRendering: 'pixelated',
+            transform: facing === 'left' ? 'scaleX(-1)' : 'scaleX(1)',
           }}
         />
       </div>

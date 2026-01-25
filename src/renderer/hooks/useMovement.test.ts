@@ -32,6 +32,7 @@ describe('useMovement', () => {
         targetPosition: { x: 10, y: 10 },
         onPositionUpdate,
         onTargetReached,
+        onDirectionChange: vi.fn(),
       }),
     )
 
@@ -52,6 +53,7 @@ describe('useMovement', () => {
         targetPosition: null,
         onPositionUpdate,
         onTargetReached,
+        onDirectionChange: vi.fn(),
       }),
     )
 
@@ -72,6 +74,7 @@ describe('useMovement', () => {
         targetPosition: { x: 1, y: 1 },
         onPositionUpdate,
         onTargetReached,
+        onDirectionChange: vi.fn(),
       }),
     )
 
@@ -94,6 +97,7 @@ describe('useMovement', () => {
         targetPosition: { x: 30, y: 0 },
         onPositionUpdate,
         onTargetReached,
+        onDirectionChange: vi.fn(),
       }),
     )
 
@@ -124,6 +128,7 @@ describe('useMovement', () => {
         targetPosition: { x: 100, y: 100 },
         onPositionUpdate,
         onTargetReached,
+        onDirectionChange: vi.fn(),
       }),
     )
 
@@ -148,6 +153,7 @@ describe('useMovement', () => {
           targetPosition: { x: 100, y: 100 },
           onPositionUpdate,
           onTargetReached,
+          onDirectionChange: vi.fn(),
         }),
       { initialProps: { isWalking: true } },
     )
@@ -169,6 +175,7 @@ describe('useMovement', () => {
         targetPosition: { x: 100, y: 100 },
         onPositionUpdate,
         onTargetReached,
+        onDirectionChange: vi.fn(),
       }),
     )
 
