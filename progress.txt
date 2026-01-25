@@ -713,3 +713,27 @@
 - typecheck: ✅ pass
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, feeding logic tested via IPC integration)
+## 2025-01-25 - tray-stats
+
+**PRD**: tray-stats (트레이 통계 메뉴)
+
+**Completed**:
+- Added "Stats" menu item to tray context menu
+- Shows dialog with current snacks and statistics
+- Displays: Snacks, Total Clicks, Total Feedings, Peak Snacks
+- Uses getSnacks() and getStats() from snack state manager
+- Separator between Stats and Quit for visual organization
+
+**Files**:
+- src/main/index.ts (modified: added Stats menu item to tray)
+
+**Decisions**:
+- dialog.showMessageBox for simple stats display (no custom window needed)
+- type: 'info' for informational dialog
+- Formatted stats as multi-line detail string
+- Stats pulled from snack state singleton at click time (always current)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- lint: ✅ pass (0 warnings, 0 errors)
+- test: ✅ pass (58 tests, tray menu tested via manual verification)

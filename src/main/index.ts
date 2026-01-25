@@ -95,6 +95,22 @@ function createTray(): void {
   
   const contextMenu = Menu.buildFromTemplate([
     {
+      label: 'Stats',
+      click: () => {
+        const snackState = getSnackState()
+        const snacks = snackState.getSnacks()
+        const stats = snackState.getStats()
+        
+        dialog.showMessageBox({
+          type: 'info',
+          title: 'Maenggu Stats',
+          message: 'Statistics',
+          detail: `Snacks: ${snacks}\n\nTotal Clicks: ${stats.totalClicks}\nTotal Feedings: ${stats.totalFeedings}\nPeak Snacks: ${stats.peakSnacks}`,
+        })
+      },
+    },
+    { type: 'separator' },
+    {
       label: 'Quit',
       click: () => {
         app.quit()

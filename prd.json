@@ -363,7 +363,7 @@
         "통계 표시 메뉴 항목 추가",
         "표시 방식 placeholder 처리"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "polish-multi-monitor",
