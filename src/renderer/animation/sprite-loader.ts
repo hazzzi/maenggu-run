@@ -3,13 +3,14 @@ export type SpriteState = 'idle' | 'walk' | 'eat' | 'happy'
 type SpriteManifest = Record<SpriteState, readonly string[]>
 
 const SPRITE_FRAMES: SpriteManifest = {
-  idle: ['idle/mangoo_defatult.png'],
+  idle: ['idle/mangoo_default.png'],
   walk: ['walk/mangoo_02.png', 'walk/mangoo_03.png', 'walk/mangoo_04.png'],
   eat: [
     'eat/mangoo_07.png',
     'eat/mangoo_08.png',
     'eat/mangoo_09.png',
     'eat/mangoo_10.png',
+    'eat/mangoo_11.png',
   ],
   happy: ['happy/mangoo_13.png'],
 } as const

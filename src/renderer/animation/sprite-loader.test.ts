@@ -5,7 +5,7 @@ import { getSpriteFrameUrls, getSpriteManifest } from './sprite-loader'
 describe('sprite-loader', () => {
   it('returns manifest with expected frames', () => {
     const manifest = getSpriteManifest()
-    expect(manifest.idle).toEqual(['idle/mangoo_defatult.png'])
+    expect(manifest.idle).toEqual(['idle/mangoo_default.png'])
     expect(manifest.walk).toEqual([
       'walk/mangoo_02.png',
       'walk/mangoo_03.png',
@@ -22,7 +22,7 @@ describe('sprite-loader', () => {
 
   it('builds sprite URLs with trailing slash handling', () => {
     expect(getSpriteFrameUrls('/')).toEqual({
-      idle: ['/assets/idle/mangoo_defatult.png'],
+      idle: ['/assets/idle/mangoo_default.png'],
       walk: [
         '/assets/walk/mangoo_02.png',
         '/assets/walk/mangoo_03.png',
