@@ -236,7 +236,7 @@
         "화면 내 랜덤 목적지 생성",
         "목적지 유효성 검사 (화면 범위)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "movement-vector",
@@ -245,7 +245,7 @@
         "현재 위치→목적지 벡터 계산",
         "속도 2-4px/frame 적용"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "category": "movement-step",
