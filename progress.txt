@@ -767,3 +767,29 @@
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, all core functionality tested)
 - manual: ✅ verified (polish tasks require manual testing, functionality confirmed)
+
+## 2026-02-01 - refactor-game-loop 시작
+
+**PRD**: refactor-game-loop (게임 루프 패턴 리팩터링)
+
+**배경**:
+- 현재 renderer 구조에 문제가 있음
+- useMovement의 deps에 currentPosition이 있어 매 프레임 effect 재실행
+- 6개 훅(useAnimation, useMovement, useIdleTimer, useMaengguState, useMouseCollider, useFloatingTexts)이 암묵적으로 협력
+- 상태가 분산되어 있어 흐름 파악 및 디버깅 어려움
+- "잘 분리된 척" 하지만 실제로는 복잡성이 분산만 됐지 제어되지 않음
+
+**목표**:
+- 단일 RAF 게임 루프로 전환
+- 순수 함수 기반 update 로직 (테스트 용이)
+- useEffect deps 최소화 (이상적으로 [])
+- 상태 통합 (MaengguGameState 단일 객체)
+
+**계획**:
+1. game/ 폴더에 순수 함수 로직 구현
+2. useMaenggu 훅으로 게임 루프 통합
+3. App.tsx 단순화
+4. 기존 훅 삭제
+5. 테스트 재작성
+
+**현재 상태**: 설계 완료, 구현 시작 전
