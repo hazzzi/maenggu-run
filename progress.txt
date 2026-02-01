@@ -812,6 +812,15 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 8] game/update.ts 완료
+- update(state, deltaMs, events, bounds) → UpdateResult (순수 함수)
+- 이벤트 처리: click → eat + add-snack + floating-text, feed-success → eat
+- 애니메이션 완료 처리: eat → happy, happy → idle (타이머 시작)
+- idle 타이머: 만료 시 walk 시작
+- 이동 업데이트: 타겟 도달 시 idle 전환
+- 모든 상태 전이가 한 곳에서 관리됨
+- typecheck: ✅ pass
+
 [2026-02-01 step 7] game/update-movement.ts 완료
 - updateMovement(movement, deltaMs, bounds) → MovementState (순수 함수)
 - deltaMs 기반 프레임 독립적 이동 (60fps 기준 정규화)
