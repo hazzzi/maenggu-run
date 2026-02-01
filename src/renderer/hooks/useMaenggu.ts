@@ -3,21 +3,23 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createInitialState } from '../game/create-initial-state'
 import { getWindowBounds } from '../game/target'
 import { type GameAction, type GameEvent, type MaengguGameState } from '../game/types'
-import { update } from '../game/update'
+import { update, type UpdateResult } from '../game/update'
 
 export type UseMaengguReturn = {
   readonly gameState: MaengguGameState
   readonly pushEvent: (event: GameEvent) => void
 }
 
-function handleAction(action: GameAction): void {
+function executeAction(
+  action: GameAction,
+  onFloatingText?: (text: string, position: { x: number; y: number }) => void,
+): void {
   switch (action.type) {
     case 'add-snack':
       window.maenggu.snack.add()
       break
     case 'show-floating-text':
-      // App.tsx에서 처리하도록 별도 콜백으로 전달
-      // 여기서는 IPC만 처리
+      onFloatingText?.(action.text, action.position)
       break
   }
 }
@@ -32,6 +34,12 @@ export function useMaenggu(
 
   const eventsRef = useRef<GameEvent[]>([])
   const onFloatingTextRef = useRef(onFloatingText)
+  const gameStateRef = useRef(gameState)
+
+  // 최신 상태를 ref에 동기화
+  useEffect(() => {
+    gameStateRef.current = gameState
+  }, [gameState])
 
   // 콜백 참조 업데이트
   useEffect(() => {
@@ -56,20 +64,19 @@ export function useMaenggu(
 
       const bounds = getWindowBounds()
 
-      setGameState((prev) => {
-        const result = update(prev, deltaMs, events, bounds)
+      // 상태 업데이트 (ref에서 직접 읽어서 setState 중복 호출 문제 회피)
+      const result: UpdateResult = update(gameStateRef.current, deltaMs, events, bounds)
 
-        // 액션 처리 (사이드 이펙트)
-        for (const action of result.actions) {
-          handleAction(action)
+      // 상태 변경이 있을 때만 setState 호출
+      if (result.state !== gameStateRef.current) {
+        gameStateRef.current = result.state
+        setGameState(result.state)
+      }
 
-          if (action.type === 'show-floating-text' && onFloatingTextRef.current) {
-            onFloatingTextRef.current(action.text, action.position)
-          }
-        }
-
-        return result.state
-      })
+      // 액션 실행 (setState 바깥에서)
+      for (const action of result.actions) {
+        executeAction(action, onFloatingTextRef.current)
+      }
 
       rafId = requestAnimationFrame(loop)
     }
@@ -79,7 +86,7 @@ export function useMaenggu(
     return () => {
       cancelAnimationFrame(rafId)
     }
-  }, []) // deps 비어있음!
+  }, [])
 
   return { gameState, pushEvent }
 }

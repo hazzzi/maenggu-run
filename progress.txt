@@ -812,6 +812,13 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 bugfix] 클릭 시 간식 2개씩 증가하는 버그 수정
+- 원인: setGameState 안에서 사이드 이펙트 실행 → StrictMode에서 중복 호출
+- 해결: ref 기반으로 상태 관리, 액션은 setState 바깥에서 실행
+- gameStateRef로 최신 상태 추적, setState는 상태 변경 시에만 호출
+- typecheck: ✅ pass
+- test: ✅ pass (62 tests)
+
 [2026-02-01 step 13] prd.json 업데이트 완료
 - refactor-game-loop: status → done, passes → true
 - context 업데이트: 리팩터링 완료 상태 반영
