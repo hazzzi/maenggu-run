@@ -1,127 +1,77 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { type Position } from '../shared/types'
+import { FloatingText } from './components/FloatingText'
 import { Maenggu } from './components/Maenggu'
 import { SnackCounter } from './components/SnackCounter'
-import { FloatingText } from './components/FloatingText'
-import { useAnimation } from './hooks/useAnimation'
-import { useIdleTimer } from './hooks/useIdleTimer'
-import { useMouseCollider } from './hooks/useMouseCollider'
-import { useMaengguState } from './hooks/useMaengguState'
-import { useMovement } from './hooks/useMovement'
 import { useFloatingTexts } from './hooks/useFloatingTexts'
-import { generateRandomTarget, getWindowBounds } from './movement/target'
+import { useMaenggu } from './hooks/useMaenggu'
+import { useMouseCollider } from './hooks/useMouseCollider'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
-  const lastPointerRef = useRef<{ id: number; time: number } | null>(null)
-  const lastClickRef = useRef<{ time: number; position: Position } | null>(null)
-  const lastSnackCountRef = useRef(0)
   const [snackCount, setSnackCount] = useState(0)
-
-  const {
-    animState,
-    position,
-    moveTarget,
-    facing,
-    dispatchAnimEvent,
-    setPosition,
-    setMoveTarget,
-    setFacing,
-  } = useMaengguState()
+  const pendingFeedRef = useRef(false)
 
   const { floatingTexts, addFloatingText, removeFloatingText } = useFloatingTexts()
 
-  useEffect(() => {
-    const cleanup = window.maenggu.snack.onUpdate((count) => {
-      setSnackCount(count)
+  const handleFloatingText = useCallback(
+    (text: string, position: { x: number; y: number }) => {
+      addFloatingText(text, position)
+    },
+    [addFloatingText],
+  )
 
-      const lastClick = lastClickRef.current
-      const lastSnackCount = lastSnackCountRef.current
+  const { gameState, pushEvent } = useMaenggu(handleFloatingText)
 
-      if (lastClick && count > lastSnackCount) {
-        if (count === lastSnackCount + 1) {
-          addFloatingText('+🍖', lastClick.position)
-        }
-      }
-
-      lastSnackCountRef.current = count
-    })
-
-    return cleanup
-  }, [addFloatingText])
-
-  const handleAnimationComplete = useCallback(() => {
-    if (animState === 'eat') {
-      dispatchAnimEvent({ type: 'eat-finish' })
-    } else if (animState === 'happy') {
-      dispatchAnimEvent({ type: 'happy-finish' })
-    }
-  }, [animState, dispatchAnimEvent])
-
-  const handleTargetReached = useCallback(() => {
-    setMoveTarget(null)
-    dispatchAnimEvent({ type: 'force-idle' })
-  }, [setMoveTarget, dispatchAnimEvent])
-
-  const handleMaengguClick = useCallback((event: React.PointerEvent) => {
-    if (event.button !== 0) {
-      return
-    }
-
-    if (animState === 'eat' || animState === 'happy') {
-      return
-    }
-
-    const pointerId = event.pointerId
-    const now = Date.now()
-    const lastPointer = lastPointerRef.current
-
-    if (lastPointer && lastPointer.id === pointerId && now - lastPointer.time < 500) {
-      return
-    }
-
-    lastPointerRef.current = { id: pointerId, time: now }
-
-    setMoveTarget(null)
-    dispatchAnimEvent({ type: 'eat-start' })
-    lastClickRef.current = { time: now, position }
-    lastSnackCountRef.current = snackCount
-    window.maenggu.snack.add()
-  }, [animState, setMoveTarget, dispatchAnimEvent, position, snackCount])
-
-  const { frameIndex } = useAnimation(animState, handleAnimationComplete)
-
-  useIdleTimer({ animState, dispatchAnimEvent })
   useMouseCollider(maengguRef)
 
-  useMovement({
-    isWalking: animState === 'walk',
-    currentPosition: position,
-    targetPosition: moveTarget,
-    onPositionUpdate: setPosition,
-    onTargetReached: handleTargetReached,
-    onDirectionChange: setFacing,
-  })
-
+  // snack 업데이트 리스너
   useEffect(() => {
-    if (animState === 'walk' && !moveTarget) {
-      const bounds = getWindowBounds()
-      const target = generateRandomTarget(bounds)
-      setMoveTarget(target)
-    }
-  }, [animState, moveTarget, setMoveTarget])
+    return window.maenggu.snack.onUpdate(setSnackCount)
+  }, [])
+
+  // 클릭 핸들러
+  const handlePointerDown = useCallback(
+    (event: React.PointerEvent) => {
+      if (event.button !== 0) return
+      pushEvent({ type: 'click', position: gameState.movement.position })
+    },
+    [pushEvent, gameState.movement.position],
+  )
+
+  // 우클릭 (먹이주기) 핸들러
+  const handleContextMenu = useCallback(
+    async (event: React.MouseEvent) => {
+      event.preventDefault()
+
+      if (pendingFeedRef.current) return
+      pendingFeedRef.current = true
+
+      try {
+        const success = await window.maenggu.snack.spend()
+        if (success) {
+          pushEvent({ type: 'feed-success' })
+        } else {
+          pushEvent({ type: 'feed-fail' })
+        }
+      } finally {
+        pendingFeedRef.current = false
+      }
+    },
+    [pushEvent],
+  )
 
   return (
     <div id="maenggu-container">
       <SnackCounter count={snackCount} />
       <Maenggu
         ref={maengguRef}
-        animState={animState}
-        position={position}
-        facing={facing}
-        frameIndex={frameIndex}
-        onPointerDown={handleMaengguClick}
+        animState={gameState.anim.state}
+        position={gameState.movement.position}
+        facing={gameState.movement.facing}
+        frameIndex={gameState.anim.frameIndex}
+        onPointerDown={handlePointerDown}
+        onContextMenu={handleContextMenu}
       />
       {floatingTexts.map((floatingText) => (
         <FloatingText

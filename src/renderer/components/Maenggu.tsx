@@ -1,37 +1,29 @@
 import { forwardRef, useMemo } from 'react'
 
-import { SPRITE_SIZE } from '../../shared/constants'
-import {
-  type FacingDirection,
-  type MaengguState,
-  type Position,
-} from '../../shared/types'
-import { getSpriteFrameUrls, type SpriteState } from '../animation/sprite-loader'
+import { SPRITE_SIZE } from '../game/constants'
+import { getSpriteFrameUrls } from '../game/sprite-loader'
+import { type AnimState, type FacingDirection, type Position } from '../game/types'
 
 type MaengguProps = {
-  readonly animState: MaengguState
+  readonly animState: AnimState
   readonly position: Position
   readonly facing: FacingDirection
   readonly frameIndex?: number
   readonly scale?: number
   readonly onPointerDown?: (event: React.PointerEvent<HTMLDivElement>) => void
+  readonly onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void
 }
 
 const DISPLAY_SCALE = 2
 
-function stateToSpriteState(state: MaengguState): SpriteState {
-  return state
-}
-
 export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
   function Maenggu(
-    { animState, position, facing, frameIndex = 0, scale = DISPLAY_SCALE, onPointerDown },
+    { animState, position, facing, frameIndex = 0, scale = DISPLAY_SCALE, onPointerDown, onContextMenu },
     ref,
   ) {
     const spriteUrls = useMemo(() => getSpriteFrameUrls('/'), [])
 
-    const spriteState = stateToSpriteState(animState)
-    const frames = spriteUrls[spriteState]
+    const frames = spriteUrls[animState]
     const currentFrame = frames[frameIndex % frames.length]
 
     const displaySize = SPRITE_SIZE * scale
@@ -40,6 +32,7 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
       <div
         ref={ref}
         onPointerDown={onPointerDown}
+        onContextMenu={onContextMenu}
         style={{
           position: 'absolute',
           left: position.x - displaySize / 2,
