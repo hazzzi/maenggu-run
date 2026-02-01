@@ -812,6 +812,13 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 6] game/update-animation.ts 완료
+- updateAnimation(anim, deltaMs) → AnimationState (순수 함수)
+- 루프 애니메이션 (idle, walk): 무한 반복
+- one-shot 애니메이션 (eat, happy): 완료 후 isComplete=true
+- resetAnimation(state) → 새 애니메이션 상태 시작
+- typecheck: ✅ pass
+
 [2026-02-01 step 5] game/create-initial-state.ts 완료
 - createInitialState(windowWidth, windowHeight) → MaengguGameState
 - 초기 위치: 화면 중앙
