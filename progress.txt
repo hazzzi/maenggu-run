@@ -812,6 +812,43 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 13] prd.json 업데이트 완료
+- refactor-game-loop: status → done, passes → true
+- context 업데이트: 리팩터링 완료 상태 반영
+- description에 결과 요약 추가
+
+---
+
+## 리팩터링 완료 요약
+
+**변경 전 (문제)**:
+- 6개 훅이 암묵적으로 협력 (useAnimation, useMovement, useIdleTimer, useMaengguState, useMouseCollider, useFloatingTexts)
+- useMovement deps에 currentPosition → 매 프레임 effect 재실행
+- 상태 분산으로 흐름 파악 어려움
+- App.tsx 141줄
+
+**변경 후 (해결)**:
+- 3개 훅 (useMaenggu, useMouseCollider, useFloatingTexts)
+- 단일 RAF 게임 루프, deps: [] (의존성 없음!)
+- 순수 함수 기반 로직 (update.ts)
+- App.tsx 82줄 (41% 감소)
+- 테스트 62개 (순수 함수 대상)
+
+**새 파일 구조**:
+```
+src/renderer/game/
+├── types.ts              # 통합 상태 타입
+├── constants.ts          # 게임 상수
+├── create-initial-state.ts
+├── update.ts             # 메인 업데이트 (순수)
+├── update-animation.ts   # 애니메이션 (순수)
+├── update-movement.ts    # 이동 (순수)
+├── state-machine.ts      # 상태 전이 (순수)
+├── sprite-loader.ts
+├── vector.ts
+└── target.ts
+```
+
 [2026-02-01 step 12] 테스트 재작성 완료
 - game/vector.test.ts (12 tests)
 - game/target.test.ts (12 tests)

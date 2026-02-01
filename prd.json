@@ -1,6 +1,6 @@
 {
   "title": "맹구런 v1",
-  "context": "v1 기능 완료. renderer 구조 리팩터링 필요 - useEffect deps 문제, 훅 분산으로 인한 복잡성. 게임 루프 패턴으로 전환 예정.",
+  "context": "v1 기능 완료. 게임 루프 패턴 리팩터링 완료 - 순수 함수 기반 로직, 단일 RAF 루프, useEffect deps 문제 해결.",
   "items": [
     {
       "id": "setup",
@@ -165,7 +165,7 @@
       "id": "refactor-game-loop",
       "title": "게임 루프 패턴 리팩터링",
       "category": "refactor",
-      "description": "useEffect deps 문제 해결, 순수 함수 기반 게임 로직으로 전환. 현재 6개 훅이 암묵적으로 협력하며 상태가 분산되어 있어 디버깅과 유지보수가 어려움.",
+      "description": "useEffect deps 문제 해결, 순수 함수 기반 게임 로직으로 전환. 6개 훅 → 3개 훅, App.tsx 41% 감소, 테스트 62개.",
       "steps": [
         "game/types.ts - 통합 상태 타입 (MaengguGameState, GameEvent)",
         "game/constants.ts - 게임 상수 정리",
@@ -180,8 +180,8 @@
         "기존 훅 삭제 (useAnimation, useMovement, useIdleTimer, useMaengguState)",
         "테스트 재작성 (순수 함수 단위 테스트)"
       ],
-      "status": "in-progress",
-      "passes": false
+      "status": "done",
+      "passes": true
     }
   ]
 }
