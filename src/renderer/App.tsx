@@ -1,15 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef } from 'react'
 
 import { FloatingText } from './components/FloatingText'
 import { Maenggu } from './components/Maenggu'
-import { SnackCounter } from './components/SnackCounter'
 import { useFloatingTexts } from './hooks/useFloatingTexts'
 import { useMaenggu } from './hooks/useMaenggu'
 import { useMouseCollider } from './hooks/useMouseCollider'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
-  const [snackCount, setSnackCount] = useState(0)
   const pendingFeedRef = useRef(false)
 
   const { floatingTexts, addFloatingText, removeFloatingText } = useFloatingTexts()
@@ -24,11 +22,6 @@ function App(): JSX.Element {
   const { gameState, pushEvent } = useMaenggu(handleFloatingText)
 
   useMouseCollider(maengguRef)
-
-  // snack 업데이트 리스너
-  useEffect(() => {
-    return window.maenggu.snack.onUpdate(setSnackCount)
-  }, [])
 
   // 클릭 핸들러
   const handlePointerDown = useCallback(
@@ -63,7 +56,6 @@ function App(): JSX.Element {
 
   return (
     <div id="maenggu-container">
-      <SnackCounter count={snackCount} />
       <Maenggu
         ref={maengguRef}
         animState={gameState.anim.state}
