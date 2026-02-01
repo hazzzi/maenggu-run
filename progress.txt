@@ -804,3 +804,10 @@
 - GameEvent: click, feed-success, feed-fail
 - GameAction: add-snack, show-floating-text
 - typecheck: ✅ pass
+
+[2026-02-01 step 2] game/constants.ts 완료
+- 게임 전용 상수 분리: IDLE_TIME_RANGE, MOVE_SPEED_RANGE, SPRITE_SIZE, ANIMATION_FRAME_DURATION_MS
+- SPRITE_DISPLAY_SCALE, SPRITE_DISPLAY_SIZE 추가
+- shared/constants.ts에서 re-export (기존 코드 호환성)
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)
