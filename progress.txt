@@ -812,6 +812,17 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 11] 기존 훅들 삭제 완료
+- 삭제: useAnimation.ts, useAnimation.test.ts
+- 삭제: useIdleTimer.ts, useIdleTimer.test.ts
+- 삭제: useMovement.ts, useMovement.test.ts
+- 삭제: useMaengguState.ts
+- 삭제: movement/ 폴더 (re-export 파일들)
+- 삭제: animation/ 폴더 (re-export 파일들)
+- shared/constants.ts에서 게임 상수 re-export 제거
+- typecheck: ✅ pass
+- test: ⚠️ 테스트 파일 없음 (다음 스텝에서 재작성)
+
 [2026-02-01 step 10] App.tsx 리팩터링 완료
 - 기존 6개 훅 → useMaenggu + useFloatingTexts + useMouseCollider (3개)
 - gameState에서 모든 상태 추출
