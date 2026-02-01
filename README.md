@@ -5,7 +5,11 @@ macOS 바탕화면에 상주하는 픽셀 강아지 데스크탑 펫
 ![maenggu](assets/idle/mangoo_default.png)
 
 
-https://github.com/user-attachments/assets/88edb283-3613-4687-ada1-bf5f84ba7f0d
+
+https://github.com/user-attachments/assets/05b37446-0997-4408-9770-2865cd2b26ba
+
+
+
 
 
 ## 소개
