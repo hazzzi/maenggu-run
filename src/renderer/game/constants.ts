@@ -2,7 +2,7 @@
 
 export const IDLE_TIME_RANGE = { min: 3000, max: 8000 } as const
 
-export const MOVE_SPEED_RANGE = { min: 2, max: 4 } as const
+export const MOVE_SPEED_RANGE = { min: 1, max: 2 } as const
 
 export const SPRITE_SIZE = 32
 
