@@ -792,4 +792,15 @@
 4. 기존 훅 삭제
 5. 테스트 재작성
 
-**현재 상태**: 설계 완료, 구현 시작 전
+**현재 상태**: 구현 진행 중
+
+---
+
+[2026-02-01 step 1] game/types.ts 완료
+- MaengguGameState: anim, movement, idleTimer 통합
+- AnimationState: state, frameIndex, elapsedMs, isComplete
+- MovementState: position, target, speed, facing
+- IdleTimerState: remainingMs, isActive
+- GameEvent: click, feed-success, feed-fail
+- GameAction: add-snack, show-floating-text
+- typecheck: ✅ pass
