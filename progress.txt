@@ -812,6 +812,14 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 7] game/update-movement.ts 완료
+- updateMovement(movement, deltaMs, bounds) → MovementState (순수 함수)
+- deltaMs 기반 프레임 독립적 이동 (60fps 기준 정규화)
+- 타겟 도달 시 target=null로 설정
+- 방향(facing) 자동 계산
+- stopMovement(), startMovement() 헬퍼 함수
+- typecheck: ✅ pass
+
 [2026-02-01 step 6] game/update-animation.ts 완료
 - updateAnimation(anim, deltaMs) → AnimationState (순수 함수)
 - 루프 애니메이션 (idle, walk): 무한 반복
