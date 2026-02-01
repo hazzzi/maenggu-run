@@ -811,3 +811,11 @@
 - shared/constants.ts에서 re-export (기존 코드 호환성)
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
+
+[2026-02-01 step 3] game/vector.ts, target.ts 이동 완료
+- movement/vector.ts → game/vector.ts (import 경로 수정, 로컬 타입 사용)
+- movement/target.ts → game/target.ts (SPRITE_DISPLAY_SIZE 상수 활용)
+- 기존 movement/ 파일은 re-export로 호환성 유지
+- Bounds 타입 export 추가
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)
