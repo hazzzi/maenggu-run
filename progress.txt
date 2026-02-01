@@ -812,6 +812,18 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 12] 테스트 재작성 완료
+- game/vector.test.ts (12 tests)
+- game/target.test.ts (12 tests)
+- game/state-machine.test.ts (12 tests)
+- game/update-animation.test.ts (7 tests)
+- game/update-movement.test.ts (8 tests)
+- game/update.test.ts (11 tests)
+- 총 62개 테스트 (기존 58개 → 62개)
+- 모든 테스트가 순수 함수 대상 (훅 테스트 불필요)
+- typecheck: ✅ pass
+- test: ✅ pass (62 tests)
+
 [2026-02-01 step 11] 기존 훅들 삭제 완료
 - 삭제: useAnimation.ts, useAnimation.test.ts
 - 삭제: useIdleTimer.ts, useIdleTimer.test.ts
