@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { type Position } from '../../shared/types'
+import { SPRITE_DISPLAY_SIZE } from '../game/constants'
+import { type Position } from '../game/types'
 
 type FloatingTextProps = {
   readonly text: string
@@ -47,7 +48,7 @@ export function FloatingText({
       style={{
         position: 'absolute',
         left: position.x,
-        top: position.y + offsetY,
+        top: position.y - SPRITE_DISPLAY_SIZE / 2 - 10 + offsetY,
         transform: 'translate(-50%, -50%)',
         fontSize: 24,
         fontWeight: 'bold',

@@ -1,12 +1,10 @@
-import { type Position } from '../../shared/types'
-import { SPRITE_SIZE } from '../../shared/constants'
+import { type Position } from './types'
+import { SPRITE_DISPLAY_SIZE } from './constants'
 
-type Bounds = {
+export type Bounds = {
   readonly width: number
   readonly height: number
 }
-
-const SPRITE_DISPLAY_SIZE = SPRITE_SIZE * 2
 
 export function generateRandomTarget(bounds: Bounds): Position {
   const maxX = bounds.width - SPRITE_DISPLAY_SIZE

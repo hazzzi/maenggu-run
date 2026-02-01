@@ -1,395 +1,186 @@
 {
+  "title": "맹구런 v1",
+  "context": "v1 기능 완료. 게임 루프 패턴 리팩터링 완료 - 순수 함수 기반 로직, 단일 RAF 루프, useEffect deps 문제 해결.",
   "items": [
     {
+      "id": "setup",
+      "title": "프로젝트 초기 설정",
       "category": "setup",
-      "description": "프로젝트 초기 설정",
+      "description": "electron-vite 프로젝트 구조 생성 및 기본 설정",
       "steps": [
         "electron-vite 프로젝트 구조 생성 (src/main, src/preload, src/renderer, src/shared)",
         "공유 타입 정의 (src/shared/types.ts): SaveData, SnackState, MaengguState",
         "기본 Electron 창 설정 (transparent, frame:false, alwaysOnTop, hasShadow:false)"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "window-core",
-      "description": "오버레이 창 기본 설정",
+      "id": "window-core",
+      "title": "오버레이 창 기본 설정",
+      "category": "functional",
+      "description": "투명 오버레이 창 + 멀티모니터 지원",
       "steps": [
         "BrowserWindow 옵션 정의 (transparent, frame:false, alwaysOnTop, hasShadow:false, resizable:false)",
         "전체 디스플레이 합산 영역 계산 로직 추가",
         "오버레이 창 크기/위치에 합산 영역 적용",
         "setIgnoreMouseEvents(true, { forward: true }) 기본 적용"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "window-mouse-main",
-      "description": "클릭 통과 IPC (main process)",
+      "id": "window-mouse",
+      "title": "클릭 통과 시스템",
+      "category": "functional",
+      "description": "맹구 영역만 클릭 가능, 나머지는 통과",
       "steps": [
         "main: mouse:collider IPC 핸들러 등록",
-        "main: inCollider=true면 setIgnoreMouseEvents(false) 적용",
-        "main: inCollider=false면 setIgnoreMouseEvents(true, { forward: true }) 적용"
+        "renderer: 맹구 콜라이더 영역 계산 + mousemove 판정",
+        "in/out 변화 시 setIgnoreMouseEvents 토글"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "window-mouse-renderer",
-      "description": "클릭 통과 콜라이더 (renderer)",
+      "id": "save-system",
+      "title": "저장/로드 시스템",
+      "category": "functional",
+      "description": "JSON 저장, debounce, 오류 처리",
       "steps": [
-        "renderer: 맹구 콜라이더 영역 계산 로직 추가",
-        "renderer: mousemove로 in/out 판정",
-        "renderer: in/out 변화 시 IPC 송신"
+        "save.json 경로 및 SaveData 타입 정의",
+        "저장 파일 읽기/쓰기 구현",
+        "500ms debounce 저장",
+        "로드 실패 시 오류 대화창 + 앱 종료"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "save-schema",
-      "description": "저장 스키마/경로",
+      "id": "snack-state",
+      "title": "간식 상태 관리",
+      "category": "functional",
+      "description": "main process에서 간식 상태 관리 + IPC",
       "steps": [
-        "save.json 경로 상수 정의",
-        "SaveData 타입 정의 (version, snacks, stats)"
+        "SnackStateManager 구현 (add, spend, broadcast)",
+        "snack:add, snack:spend, snack:update IPC",
+        "preload API 노출"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "save-load",
-      "description": "저장 로드 흐름",
+      "id": "maenggu-render",
+      "title": "맹구 렌더링",
+      "category": "functional",
+      "description": "스프라이트 로딩 및 DOM 렌더링",
       "steps": [
-        "저장 파일 읽기 구현",
-        "JSON 파싱 및 기본값 fallback",
-        "스키마 검증 (필수 필드 체크)",
-        "앱 시작 시 자동 로드 트리거",
-        "로드 결과를 renderer로 전달"
+        "스프라이트 로딩 헬퍼 (idle/walk/eat/happy)",
+        "Maenggu 컴포넌트 생성",
+        "image-rendering: pixelated 적용"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "save-error",
-      "description": "저장 손상 처리",
+      "id": "animation-system",
+      "title": "애니메이션 시스템",
+      "category": "functional",
+      "description": "상태 머신 + 프레임 전환",
       "steps": [
-        "로드 실패 시 오류 대화창 표시",
-        "오류 후 앱 종료 처리"
+        "상태 머신 (idle/walk/eat/happy 전이)",
+        "프레임 전환 타이머",
+        "one-shot 애니메이션 완료 콜백 (eat, happy)"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "save-debounce",
-      "description": "저장 debounce",
+      "id": "movement-system",
+      "title": "이동 시스템",
+      "category": "functional",
+      "description": "랜덤 이동 + idle 타이머",
       "steps": [
-        "500ms debounce 타이머 유틸 구현",
-        "snack 변경 시 debounce 저장 호출",
-        "저장 완료 시 최신 상태 반영"
+        "3-8초 랜덤 idle 타이머",
+        "랜덤 목적지 생성",
+        "벡터 계산 + RAF 이동",
+        "경계 처리 + 목표 도달 판정"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "snack-state",
-      "description": "간식 상태 관리",
+      "id": "interaction-click",
+      "title": "클릭 상호작용",
+      "category": "functional",
+      "description": "클릭 시 간식 획득 + 플로팅 텍스트",
       "steps": [
-        "main: snack 상태 메모리 저장 구조",
-        "snack:add 처리 로직",
-        "snack:spend 처리 로직",
-        "snack:update 브로드캐스트 구현"
+        "클릭 시 이동 중지 + eat 애니메이션",
+        "snack:add IPC 호출",
+        "플로팅 텍스트 생성 + 애니메이션"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "ipc-save",
-      "description": "저장 IPC",
+      "id": "interaction-feed",
+      "title": "먹이주기 상호작용",
+      "category": "functional",
+      "description": "우클릭 먹이주기",
       "steps": [
-        "save:load IPC 채널 구현",
-        "save:load 요청 시 저장 데이터 반환"
+        "우클릭 시 snack:spend 호출",
+        "성공 시 eat → happy 애니메이션",
+        "실패 시 no-op"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "preload-api-mouse",
-      "description": "preload API - mouse",
+      "id": "ui-snack",
+      "title": "간식 UI",
+      "category": "usability",
+      "description": "간식 카운터 표시",
       "steps": [
-        "contextBridge에 mouse.setCollider API 노출"
+        "좌상단 고정 위치",
+        "아이콘 + 숫자 렌더링",
+        "pointer-events: none"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "preload-api-save",
-      "description": "preload API - save",
+      "id": "tray-menu",
+      "title": "트레이 메뉴",
+      "category": "usability",
+      "description": "시스템 트레이 메뉴",
       "steps": [
-        "contextBridge에 save.load API 노출"
+        "트레이 아이콘 생성",
+        "Stats 메뉴 (통계 대화창)",
+        "Quit 메뉴"
       ],
+      "status": "done",
       "passes": true
     },
     {
-      "category": "preload-api-snack",
-      "description": "preload API - snack",
+      "id": "refactor-game-loop",
+      "title": "게임 루프 패턴 리팩터링",
+      "category": "refactor",
+      "description": "useEffect deps 문제 해결, 순수 함수 기반 게임 로직으로 전환. 6개 훅 → 3개 훅, App.tsx 41% 감소, 테스트 62개.",
       "steps": [
-        "contextBridge에 snack.add API 노출",
-        "contextBridge에 snack.spend API 노출",
-        "contextBridge에 snack.onUpdate 리스너 노출"
+        "game/types.ts - 통합 상태 타입 (MaengguGameState, GameEvent)",
+        "game/constants.ts - 게임 상수 정리",
+        "game/vector.ts, target.ts - 기존 유틸 이동",
+        "game/sprite-loader.ts, state-machine.ts - 이동",
+        "game/create-initial-state.ts - 초기 상태",
+        "game/update-animation.ts - 순수 애니메이션 로직",
+        "game/update-movement.ts - 순수 이동 로직",
+        "game/update.ts - 메인 업데이트 함수",
+        "hooks/useMaenggu.ts - 단일 게임 루프 훅 (deps: [])",
+        "App.tsx 단순화",
+        "기존 훅 삭제 (useAnimation, useMovement, useIdleTimer, useMaengguState)",
+        "테스트 재작성 (순수 함수 단위 테스트)"
       ],
-      "passes": true
-    },
-    {
-      "category": "renderer-types",
-      "description": "renderer 타입 연결",
-      "steps": [
-        "renderer에서 preload API 타입 선언",
-        "window 객체 타입 보강"
-      ],
-      "passes": true
-    },
-    {
-      "category": "ui-snack-counter",
-      "description": "간식 UI 표시",
-      "steps": [
-        "간식 UI 컴포넌트 생성",
-        "좌상단 고정 위치 스타일 적용",
-        "아이콘 + 숫자 렌더링"
-      ],
-      "passes": true
-    },
-    {
-      "category": "ui-click-through",
-      "description": "UI 클릭 통과",
-      "steps": [
-        "간식 UI 요소에 pointer-events: none 적용",
-        "렌더러 전체 클릭 통과 유지 확인"
-      ],
-      "passes": true
-    },
-    {
-      "category": "sprite-loader",
-      "description": "스프라이트 로딩",
-      "steps": [
-        "스프라이트 로딩 헬퍼 구현",
-        "idle/walk/eat/happy 프레임 로딩"
-      ],
-      "passes": true
-    },
-    {
-      "category": "maenggu-init",
-      "description": "맹구 초기화",
-      "steps": [
-        "맹구 초기 위치 설정",
-        "맹구 DOM 요소 생성",
-        "초기 상태 idle 설정"
-      ],
-      "passes": true
-    },
-    {
-      "category": "anim-idle",
-      "description": "idle 애니메이션",
-      "steps": [
-        "idle 프레임 전환 타이머",
-        "idle 프레임 루프 적용"
-      ],
-      "passes": true
-    },
-    {
-      "category": "anim-walk",
-      "description": "walk 애니메이션",
-      "steps": [
-        "walk 프레임 전환 타이머",
-        "walk 프레임 루프 적용"
-      ],
-      "passes": true
-    },
-    {
-      "category": "anim-eat",
-      "description": "eat 애니메이션",
-      "steps": [
-        "eat 프레임 전환 타이머",
-        "eat 완료 콜백 처리"
-      ],
-      "passes": true
-    },
-    {
-      "category": "anim-happy",
-      "description": "happy 애니메이션",
-      "steps": [
-        "happy 프레임 전환 타이머",
-        "happy 완료 후 idle 복귀"
-      ],
-      "passes": true
-    },
-    {
-      "category": "anim-state",
-      "description": "애니메이션 상태 머신",
-      "steps": [
-        "idle/walk/eat/happy 상태 정의",
-        "상태 전환 로직 추가",
-        "동시 애니메이션 방지 처리"
-      ],
-      "passes": true
-    },
-    {
-      "category": "movement-idle-timer",
-      "description": "idle 타이머",
-      "steps": [
-        "3-8초 랜덤 idle 시간 생성",
-        "idle 타이머 종료 시 이동 시작"
-      ],
-      "passes": true
-    },
-    {
-      "category": "movement-target",
-      "description": "이동 목적지 선정",
-      "steps": [
-        "화면 내 랜덤 목적지 생성",
-        "목적지 유효성 검사 (화면 범위)"
-      ],
-      "passes": true
-    },
-    {
-      "category": "movement-vector",
-      "description": "이동 벡터/속도",
-      "steps": [
-        "현재 위치→목적지 벡터 계산",
-        "속도 2-4px/frame 적용"
-      ],
-      "passes": true
-    },
-    {
-      "category": "movement-step",
-      "description": "이동 프레임 업데이트",
-      "steps": [
-        "프레임마다 위치 업데이트",
-        "걷기 상태 전환/유지"
-      ],
-      "passes": true
-    },
-    {
-      "category": "movement-boundary",
-      "description": "경계 처리",
-      "steps": [
-        "경계 근접 시 감속/멈춤 처리",
-        "반대 방향 즉시 전환 방지"
-      ],
-      "passes": true
-    },
-    {
-      "category": "movement-reach",
-      "description": "목표 도달 판정",
-      "steps": [
-        "목표 도달 조건 설정",
-        "도달 시 idle 전환"
-      ],
-      "passes": true
-    },
-    {
-      "category": "interaction-click-stop",
-      "description": "클릭 즉시 정지",
-      "steps": [
-        "클릭 시 이동 중지 처리",
-        "애니메이션 eat 시작 준비"
-      ],
-      "passes": true
-    },
-    {
-      "category": "interaction-click-reward",
-      "description": "클릭 보상",
-      "steps": [
-        "클릭 시 snack:add IPC 호출",
-        "클릭 시 +1 플로팅 텍스트 생성"
-      ],
-      "passes": true
-    },
-    {
-      "category": "interaction-floating-text",
-      "description": "플로팅 텍스트",
-      "steps": [
-        "플로팅 텍스트 DOM 생성",
-        "위로 떠오르는 애니메이션",
-        "애니메이션 종료 후 제거"
-      ],
-      "passes": true
-    },
-    {
-      "category": "interaction-feed-trigger",
-      "description": "먹이주기 트리거",
-      "steps": [
-        "우클릭 컨텍스트 메뉴 표시",
-        "먹이주기 항목 선택 처리"
-      ],
-      "passes": true
-    },
-    {
-      "category": "interaction-feed-cost",
-      "description": "먹이 부족 처리",
-      "steps": [
-        "snack 부족 시 no-op 처리",
-        "메뉴는 항상 표시 유지"
-      ],
-      "passes": true
-    },
-    {
-      "category": "interaction-feed-flow",
-      "description": "먹이 애니메이션 흐름",
-      "steps": [
-        "snack:spend IPC 호출",
-        "eat → happy 자동 전환"
-      ],
-      "passes": true
-    },
-    {
-      "category": "assets-sprites",
-      "description": "스프라이트 제작",
-      "steps": [
-        "idle/walk/eat/happy PNG 제작 (32x32)",
-        "각 상태 2-3프레임 확보"
-      ],
-      "passes": true
-    },
-    {
-      "category": "assets-rendering",
-      "description": "픽셀 렌더링 설정",
-      "steps": [
-        "image-rendering: pixelated 적용",
-        "스프라이트 크기 고정 확인"
-      ],
-      "passes": true
-    },
-    {
-      "category": "tray-quit",
-      "description": "트레이 종료 메뉴",
-      "steps": [
-        "트레이 생성",
-        "Quit 메뉴 항목 추가"
-      ],
-      "passes": true
-    },
-    {
-      "category": "tray-stats",
-      "description": "트레이 통계 메뉴",
-      "steps": [
-        "통계 표시 메뉴 항목 추가",
-        "표시 방식 placeholder 처리"
-      ],
-      "passes": true
-    },
-    {
-      "category": "polish-multi-monitor",
-      "description": "멀티모니터 테스트",
-      "steps": [
-        "모든 디스플레이 영역 이동 확인",
-        "경계 끊김 없는지 확인"
-      ],
-      "passes": true
-    },
-    {
-      "category": "polish-dock",
-      "description": "Dock 통과 확인",
-      "steps": [
-        "Dock 위로 이동 가능 여부 확인",
-        "auto-hide 상태에서도 동일 확인"
-      ],
-      "passes": true
-    },
-    {
-      "category": "polish-flow",
-      "description": "전체 플로우 테스트",
-      "steps": [
-        "실행 → 이동 → 클릭 → 먹이주기 흐름 확인",
-        "저장 후 재실행 시 데이터 유지 확인"
-      ],
+      "status": "done",
       "passes": true
     }
   ]

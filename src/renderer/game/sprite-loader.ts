@@ -1,6 +1,6 @@
-export type SpriteState = 'idle' | 'walk' | 'eat' | 'happy'
+import { type AnimState } from './types'
 
-type SpriteManifest = Record<SpriteState, readonly string[]>
+type SpriteManifest = Record<AnimState, readonly string[]>
 
 const SPRITE_FRAMES: SpriteManifest = {
   idle: ['idle/mangoo_default.png'],
@@ -33,4 +33,8 @@ export function getSpriteFrameUrls(basePath: string): SpriteManifest {
     eat: SPRITE_FRAMES.eat.map((frame) => `${baseWithAssets}${frame}`),
     happy: SPRITE_FRAMES.happy.map((frame) => `${baseWithAssets}${frame}`),
   }
+}
+
+export function getFrameCount(state: AnimState): number {
+  return SPRITE_FRAMES[state].length
 }

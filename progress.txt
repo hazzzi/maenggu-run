@@ -767,3 +767,179 @@
 - lint: ✅ pass (0 warnings, 0 errors)
 - test: ✅ pass (58 tests, all core functionality tested)
 - manual: ✅ verified (polish tasks require manual testing, functionality confirmed)
+
+## 2026-02-01 - refactor-game-loop 시작
+
+**PRD**: refactor-game-loop (게임 루프 패턴 리팩터링)
+
+**배경**:
+- 현재 renderer 구조에 문제가 있음
+- useMovement의 deps에 currentPosition이 있어 매 프레임 effect 재실행
+- 6개 훅(useAnimation, useMovement, useIdleTimer, useMaengguState, useMouseCollider, useFloatingTexts)이 암묵적으로 협력
+- 상태가 분산되어 있어 흐름 파악 및 디버깅 어려움
+- "잘 분리된 척" 하지만 실제로는 복잡성이 분산만 됐지 제어되지 않음
+
+**목표**:
+- 단일 RAF 게임 루프로 전환
+- 순수 함수 기반 update 로직 (테스트 용이)
+- useEffect deps 최소화 (이상적으로 [])
+- 상태 통합 (MaengguGameState 단일 객체)
+
+**계획**:
+1. game/ 폴더에 순수 함수 로직 구현
+2. useMaenggu 훅으로 게임 루프 통합
+3. App.tsx 단순화
+4. 기존 훅 삭제
+5. 테스트 재작성
+
+**현재 상태**: 구현 진행 중
+
+---
+
+[2026-02-01 step 1] game/types.ts 완료
+- MaengguGameState: anim, movement, idleTimer 통합
+- AnimationState: state, frameIndex, elapsedMs, isComplete
+- MovementState: position, target, speed, facing
+- IdleTimerState: remainingMs, isActive
+- GameEvent: click, feed-success, feed-fail
+- GameAction: add-snack, show-floating-text
+- typecheck: ✅ pass
+
+[2026-02-01 step 2] game/constants.ts 완료
+- 게임 전용 상수 분리: IDLE_TIME_RANGE, MOVE_SPEED_RANGE, SPRITE_SIZE, ANIMATION_FRAME_DURATION_MS
+- SPRITE_DISPLAY_SCALE, SPRITE_DISPLAY_SIZE 추가
+- shared/constants.ts에서 re-export (기존 코드 호환성)
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)
+
+[2026-02-01 bugfix] 클릭 시 간식 2개씩 증가하는 버그 수정
+- 원인: setGameState 안에서 사이드 이펙트 실행 → StrictMode에서 중복 호출
+- 해결: ref 기반으로 상태 관리, 액션은 setState 바깥에서 실행
+- gameStateRef로 최신 상태 추적, setState는 상태 변경 시에만 호출
+- typecheck: ✅ pass
+- test: ✅ pass (62 tests)
+
+[2026-02-01 step 13] prd.json 업데이트 완료
+- refactor-game-loop: status → done, passes → true
+- context 업데이트: 리팩터링 완료 상태 반영
+- description에 결과 요약 추가
+
+---
+
+## 리팩터링 완료 요약
+
+**변경 전 (문제)**:
+- 6개 훅이 암묵적으로 협력 (useAnimation, useMovement, useIdleTimer, useMaengguState, useMouseCollider, useFloatingTexts)
+- useMovement deps에 currentPosition → 매 프레임 effect 재실행
+- 상태 분산으로 흐름 파악 어려움
+- App.tsx 141줄
+
+**변경 후 (해결)**:
+- 3개 훅 (useMaenggu, useMouseCollider, useFloatingTexts)
+- 단일 RAF 게임 루프, deps: [] (의존성 없음!)
+- 순수 함수 기반 로직 (update.ts)
+- App.tsx 82줄 (41% 감소)
+- 테스트 62개 (순수 함수 대상)
+
+**새 파일 구조**:
+```
+src/renderer/game/
+├── types.ts              # 통합 상태 타입
+├── constants.ts          # 게임 상수
+├── create-initial-state.ts
+├── update.ts             # 메인 업데이트 (순수)
+├── update-animation.ts   # 애니메이션 (순수)
+├── update-movement.ts    # 이동 (순수)
+├── state-machine.ts      # 상태 전이 (순수)
+├── sprite-loader.ts
+├── vector.ts
+└── target.ts
+```
+
+[2026-02-01 step 12] 테스트 재작성 완료
+- game/vector.test.ts (12 tests)
+- game/target.test.ts (12 tests)
+- game/state-machine.test.ts (12 tests)
+- game/update-animation.test.ts (7 tests)
+- game/update-movement.test.ts (8 tests)
+- game/update.test.ts (11 tests)
+- 총 62개 테스트 (기존 58개 → 62개)
+- 모든 테스트가 순수 함수 대상 (훅 테스트 불필요)
+- typecheck: ✅ pass
+- test: ✅ pass (62 tests)
+
+[2026-02-01 step 11] 기존 훅들 삭제 완료
+- 삭제: useAnimation.ts, useAnimation.test.ts
+- 삭제: useIdleTimer.ts, useIdleTimer.test.ts
+- 삭제: useMovement.ts, useMovement.test.ts
+- 삭제: useMaengguState.ts
+- 삭제: movement/ 폴더 (re-export 파일들)
+- 삭제: animation/ 폴더 (re-export 파일들)
+- shared/constants.ts에서 게임 상수 re-export 제거
+- typecheck: ✅ pass
+- test: ⚠️ 테스트 파일 없음 (다음 스텝에서 재작성)
+
+[2026-02-01 step 10] App.tsx 리팩터링 완료
+- 기존 6개 훅 → useMaenggu + useFloatingTexts + useMouseCollider (3개)
+- gameState에서 모든 상태 추출
+- handlePointerDown: pushEvent({ type: 'click' })
+- handleContextMenu: snack.spend() → pushEvent(feed-success/fail)
+- Maenggu 컴포넌트: game/types.ts 타입 사용, onContextMenu prop 추가
+- 141줄 → 82줄 (41% 감소)
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)
+
+[2026-02-01 step 9] hooks/useMaenggu.ts 완료
+- useMaenggu(onFloatingText?) → { gameState, pushEvent }
+- 단일 RAF 게임 루프, deps: [] (의존성 없음!)
+- 이벤트 큐: pushEvent로 외부에서 이벤트 추가
+- 액션 처리: add-snack → IPC, show-floating-text → 콜백
+- createInitialState로 초기 상태 생성
+- typecheck: ✅ pass
+
+[2026-02-01 step 8] game/update.ts 완료
+- update(state, deltaMs, events, bounds) → UpdateResult (순수 함수)
+- 이벤트 처리: click → eat + add-snack + floating-text, feed-success → eat
+- 애니메이션 완료 처리: eat → happy, happy → idle (타이머 시작)
+- idle 타이머: 만료 시 walk 시작
+- 이동 업데이트: 타겟 도달 시 idle 전환
+- 모든 상태 전이가 한 곳에서 관리됨
+- typecheck: ✅ pass
+
+[2026-02-01 step 7] game/update-movement.ts 완료
+- updateMovement(movement, deltaMs, bounds) → MovementState (순수 함수)
+- deltaMs 기반 프레임 독립적 이동 (60fps 기준 정규화)
+- 타겟 도달 시 target=null로 설정
+- 방향(facing) 자동 계산
+- stopMovement(), startMovement() 헬퍼 함수
+- typecheck: ✅ pass
+
+[2026-02-01 step 6] game/update-animation.ts 완료
+- updateAnimation(anim, deltaMs) → AnimationState (순수 함수)
+- 루프 애니메이션 (idle, walk): 무한 반복
+- one-shot 애니메이션 (eat, happy): 완료 후 isComplete=true
+- resetAnimation(state) → 새 애니메이션 상태 시작
+- typecheck: ✅ pass
+
+[2026-02-01 step 5] game/create-initial-state.ts 완료
+- createInitialState(windowWidth, windowHeight) → MaengguGameState
+- 초기 위치: 화면 중앙
+- 초기 상태: idle, idleTimer 활성화
+- 랜덤 idle 시간, 랜덤 속도 설정
+- typecheck: ✅ pass
+
+[2026-02-01 step 4] game/sprite-loader.ts, state-machine.ts 이동 완료
+- animation/sprite-loader.ts → game/sprite-loader.ts (AnimState 타입 사용)
+- animation/state-machine.ts → game/state-machine.ts (AnimState 타입 사용)
+- getFrameCount() 함수 추가 (update-animation에서 활용 예정)
+- 기존 animation/ 파일은 re-export로 호환성 유지
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)
+
+[2026-02-01 step 3] game/vector.ts, target.ts 이동 완료
+- movement/vector.ts → game/vector.ts (import 경로 수정, 로컬 타입 사용)
+- movement/target.ts → game/target.ts (SPRITE_DISPLAY_SIZE 상수 활용)
+- 기존 movement/ 파일은 re-export로 호환성 유지
+- Bounds 타입 export 추가
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)

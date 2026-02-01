@@ -1,5 +1,5 @@
-import { type Position } from '../../shared/types'
-import { MOVE_SPEED_RANGE } from '../../shared/constants'
+import { type Position } from './types'
+import { MOVE_SPEED_RANGE } from './constants'
 
 export type Vector = {
   readonly dx: number
