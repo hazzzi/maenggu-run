@@ -4,6 +4,10 @@ macOS 바탕화면에 상주하는 픽셀 강아지 데스크탑 펫
 
 ![maenggu](assets/idle/mangoo_default.png)
 
+
+https://github.com/user-attachments/assets/88edb283-3613-4687-ada1-bf5f84ba7f0d
+
+
 ## 소개
 
 맹구는 당신의 바탕화면을 자유롭게 돌아다니는 귀여운 픽셀 강아지예요. 
@@ -20,7 +24,7 @@ macOS 바탕화면에 상주하는 픽셀 강아지 데스크탑 펫
 
 ### macOS
 
-1. [Releases](https://github.com/your-repo/maenggu-run/releases)에서 `Maenggu-x.x.x.dmg` 다운로드
+1. [Releases](https://github.com/hazzzi/maenggu-run/releases)에서 `Maenggu-x.x.x.dmg` 다운로드
 2. DMG 파일 열기
 3. `Maenggu.app`을 Applications 폴더로 드래그
 
