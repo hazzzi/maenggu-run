@@ -812,6 +812,14 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 4] game/sprite-loader.ts, state-machine.ts 이동 완료
+- animation/sprite-loader.ts → game/sprite-loader.ts (AnimState 타입 사용)
+- animation/state-machine.ts → game/state-machine.ts (AnimState 타입 사용)
+- getFrameCount() 함수 추가 (update-animation에서 활용 예정)
+- 기존 animation/ 파일은 re-export로 호환성 유지
+- typecheck: ✅ pass
+- test: ✅ pass (58 tests)
+
 [2026-02-01 step 3] game/vector.ts, target.ts 이동 완료
 - movement/vector.ts → game/vector.ts (import 경로 수정, 로컬 타입 사용)
 - movement/target.ts → game/target.ts (SPRITE_DISPLAY_SIZE 상수 활용)
