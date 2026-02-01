@@ -1,6 +1,6 @@
 import { forwardRef, useMemo } from 'react'
 
-import { SPRITE_SIZE } from '../game/constants'
+import { SPRITE_DISPLAY_SCALE, SPRITE_SIZE } from '../game/constants'
 import { getSpriteFrameUrls } from '../game/sprite-loader'
 import { type AnimState, type FacingDirection, type Position } from '../game/types'
 
@@ -14,7 +14,7 @@ type MaengguProps = {
   readonly onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void
 }
 
-const DISPLAY_SCALE = 2
+const DISPLAY_SCALE = SPRITE_DISPLAY_SCALE
 
 export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
   function Maenggu(

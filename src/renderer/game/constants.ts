@@ -6,7 +6,7 @@ export const MOVE_SPEED_RANGE = { min: 2, max: 4 } as const
 
 export const SPRITE_SIZE = 32
 
-export const SPRITE_DISPLAY_SCALE = 2
+export const SPRITE_DISPLAY_SCALE = 1
 
 export const SPRITE_DISPLAY_SIZE = SPRITE_SIZE * SPRITE_DISPLAY_SCALE
 
