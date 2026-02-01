@@ -812,6 +812,13 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 5] game/create-initial-state.ts 완료
+- createInitialState(windowWidth, windowHeight) → MaengguGameState
+- 초기 위치: 화면 중앙
+- 초기 상태: idle, idleTimer 활성화
+- 랜덤 idle 시간, 랜덤 속도 설정
+- typecheck: ✅ pass
+
 [2026-02-01 step 4] game/sprite-loader.ts, state-machine.ts 이동 완료
 - animation/sprite-loader.ts → game/sprite-loader.ts (AnimState 타입 사용)
 - animation/state-machine.ts → game/state-machine.ts (AnimState 타입 사용)
