@@ -812,6 +812,14 @@
 - typecheck: ✅ pass
 - test: ✅ pass (58 tests)
 
+[2026-02-01 step 9] hooks/useMaenggu.ts 완료
+- useMaenggu(onFloatingText?) → { gameState, pushEvent }
+- 단일 RAF 게임 루프, deps: [] (의존성 없음!)
+- 이벤트 큐: pushEvent로 외부에서 이벤트 추가
+- 액션 처리: add-snack → IPC, show-floating-text → 콜백
+- createInitialState로 초기 상태 생성
+- typecheck: ✅ pass
+
 [2026-02-01 step 8] game/update.ts 완료
 - update(state, deltaMs, events, bounds) → UpdateResult (순수 함수)
 - 이벤트 처리: click → eat + add-snack + floating-text, feed-success → eat
