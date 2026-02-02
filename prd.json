@@ -195,8 +195,8 @@
         "기존 src/renderer 코드 연결",
         "pnpm tauri dev 로 빌드 확인"
       ],
-      "status": "pending",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "tauri-window",
@@ -211,8 +211,8 @@
         "mouse collider 로직 포팅 (renderer → Tauri API)",
         "macOS에서 동작 확인"
       ],
-      "status": "pending",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "tauri-state",
@@ -225,8 +225,8 @@
         "JS: @tauri-apps/api/core invoke 연결",
         "기존 preload API 대체"
       ],
-      "status": "pending",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "tauri-save",
@@ -239,8 +239,8 @@
         "serde_json으로 직렬화/역직렬화",
         "debounce 저장 로직"
       ],
-      "status": "pending",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "tauri-tray",
