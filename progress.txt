@@ -1025,9 +1025,41 @@ src/renderer/game/
 - [ ] electron-builder 설정 제거
 - [ ] README 업데이트
 
-## 테스트 필요 항목 (사용자 확인 필요)
-- [ ] 맹구 이동 (현재 안 됨 - 확인 필요)
-- [ ] 클릭 통과 (set_ignore_cursor_events)
-- [ ] 간식 클릭 + 저장
-- [ ] 우클릭 먹이주기
-- [ ] 트레이 메뉴 동작
+## 테스트 완료 항목
+- [x] 맹구 이동
+- [x] 클릭 통과 (set_ignore_cursor_events)
+- [x] 간식 클릭 + 저장
+- [x] 트레이 메뉴 동작
+
+---
+
+## 2026-02-03 - tauri-window 클릭 통과 문제 해결
+
+**문제**:
+- Tauri에는 Electron의 `{ forward: true }` 옵션이 없음
+- `setIgnoreCursorEvents(true)` 설정 시 모든 마우스 이벤트 무시
+- mousemove 이벤트를 못 받아서 맹구 영역 감지 불가능
+
+**해결**:
+1. `cursorPosition()` API로 커서 위치 폴링 (requestAnimationFrame)
+2. `devicePixelRatio`로 Retina 스케일 보정 (physical → CSS pixels)
+3. `core:window:allow-set-ignore-cursor-events` 권한 추가
+
+**Files**:
+- src/preload/index.ts: `getCursorPosition` API 타입 추가
+- src/renderer/tauri-api.ts: `getCursorPosition` 구현 (cursorPosition + scale 보정)
+- src/renderer/hooks/useMouseCollider.ts: Tauri면 폴링, Electron이면 기존 방식
+- src-tauri/capabilities/default.json: 권한 추가
+- src-tauri/src/lib.rs: 초기 `set_ignore_cursor_events(true)` 설정
+
+**커밋**:
+- fd18200 - feat: add getCursorPosition API for Tauri cursor polling
+- 18a1eaa - feat: implement getCursorPosition for Tauri
+- 8ecbb27 - feat: implement cursor polling for Tauri mouse collider
+- 79888f0 - fix: add permission and scale factor for cursor events
+- 3c1daa6 - docs: mark tauri-window as done
+
+**Feedback Loops**:
+- 클릭 통과: ✅ pass
+- 맹구 클릭: ✅ pass
+- 간식 먹기 애니메이션: ✅ pass
