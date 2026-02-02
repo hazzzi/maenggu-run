@@ -8,6 +8,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
+    "dev:renderer": "vite",
+    "build:renderer": "tsc && vite build",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
     "lint": "oxlint .",
     "fmt": "oxfmt",
     "typecheck": "tsc -p tsconfig.json",
