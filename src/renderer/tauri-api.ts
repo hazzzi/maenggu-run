@@ -16,8 +16,16 @@ export const tauriMaengguApi: MaengguApi = {
     },
     getCursorPosition: async () => {
       try {
-        const pos = await cursorPosition()
-        return { x: pos.x, y: pos.y }
+        // 데스크탑 기준 커서 위치와 창 위치를 가져와서
+        // 창 내부 좌표로 변환 (getBoundingClientRect 기준과 동일하게)
+        const [cursor, windowPos] = await Promise.all([
+          cursorPosition(),
+          appWindow.innerPosition(),
+        ])
+        return {
+          x: cursor.x - windowPos.x,
+          y: cursor.y - windowPos.y,
+        }
       } catch {
         return null
       }
