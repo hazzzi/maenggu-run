@@ -10,6 +10,7 @@
     "beforeBuildCommand": "pnpm build:renderer"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "maenggu-run",
