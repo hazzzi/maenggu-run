@@ -22,22 +22,26 @@ export function useMouseCollider(
       const pollCursorPosition = async (): Promise<void> => {
         if (!isRunning) return
 
-        const element = colliderRef.current
-        if (element) {
-          const cursorPos = await window.maenggu.mouse.getCursorPosition()
-          if (cursorPos) {
-            const rect = element.getBoundingClientRect()
-            const isInside =
-              cursorPos.x >= rect.left &&
-              cursorPos.x <= rect.right &&
-              cursorPos.y >= rect.top &&
-              cursorPos.y <= rect.bottom
+        try {
+          const element = colliderRef.current
+          if (element) {
+            const cursorPos = await window.maenggu.mouse.getCursorPosition()
+            if (cursorPos) {
+              const rect = element.getBoundingClientRect()
+              const isInside =
+                cursorPos.x >= rect.left &&
+                cursorPos.x <= rect.right &&
+                cursorPos.y >= rect.top &&
+                cursorPos.y <= rect.bottom
 
-            if (isInside !== isInsideRef.current) {
-              isInsideRef.current = isInside
-              window.maenggu.mouse.setCollider(isInside)
+              if (isInside !== isInsideRef.current) {
+                isInsideRef.current = isInside
+                window.maenggu.mouse.setCollider(isInside)
+              }
             }
           }
+        } catch (e) {
+          console.error('pollCursorPosition error:', e)
         }
 
         if (isRunning) {
