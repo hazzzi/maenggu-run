@@ -1,4 +1,4 @@
-import { getCurrentWindow } from '@tauri-apps/api/window'
+import { getCurrentWindow, cursorPosition } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 
@@ -13,6 +13,14 @@ export const tauriMaengguApi: MaengguApi = {
       // inCollider가 true면 클릭 가능 (ignore = false)
       // inCollider가 false면 클릭 통과 (ignore = true)
       appWindow.setIgnoreCursorEvents(!inCollider)
+    },
+    getCursorPosition: async () => {
+      try {
+        const pos = await cursorPosition()
+        return { x: pos.x, y: pos.y }
+      } catch {
+        return null
+      }
     },
   },
   save: {
