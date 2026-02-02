@@ -212,8 +212,8 @@
         "MaengguApi 타입에 getCursorPosition 추가",
         "macOS에서 클릭 통과 + 맹구 클릭 동작 확인"
       ],
-      "status": "in-progress",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "tauri-state",
