@@ -202,17 +202,18 @@
       "id": "tauri-window",
       "title": "투명 창 + 클릭 통과",
       "category": "migration",
-      "description": "핵심 기능 검증 - 투명 창, 클릭 통과, always-on-top",
+      "description": "핵심 기능 검증 - 투명 창, 클릭 통과, always-on-top. Tauri는 Electron의 { forward: true } 옵션이 없어서 cursorPosition 폴링 방식으로 구현",
       "steps": [
         "tauri.conf.json: transparent, decorations:false, alwaysOnTop",
         "macos-private-api feature 활성화",
-        "Rust: set_ignore_cursor_events 구현",
-        "JS: @tauri-apps/api/window 연결",
-        "mouse collider 로직 포팅 (renderer → Tauri API)",
-        "macOS에서 동작 확인"
+        "Rust setup: 초기 set_ignore_cursor_events(true) 설정",
+        "JS: @tauri-apps/api/window cursorPosition API 활용",
+        "useMouseCollider 훅 수정: Tauri에서는 cursorPosition 폴링 방식으로 맹구 영역 감지",
+        "MaengguApi 타입에 getCursorPosition 추가",
+        "macOS에서 클릭 통과 + 맹구 클릭 동작 확인"
       ],
-      "status": "done",
-      "passes": true
+      "status": "in-progress",
+      "passes": false
     },
     {
       "id": "tauri-state",

@@ -2,9 +2,15 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 import { IPC_CHANNELS, SaveLoadResult } from '../shared/types'
 
+export type CursorPosition = {
+  readonly x: number
+  readonly y: number
+}
+
 export type MaengguApi = {
   mouse: {
     setCollider: (inCollider: boolean) => void
+    getCursorPosition: () => Promise<CursorPosition | null>
   }
   save: {
     load: () => Promise<SaveLoadResult>
@@ -21,6 +27,9 @@ const maengguApi: MaengguApi = {
     setCollider: (inCollider: boolean) => {
       ipcRenderer.send(IPC_CHANNELS.MOUSE_COLLIDER, inCollider)
     },
+    // Electron에서는 mousemove + { forward: true } 방식 사용
+    // getCursorPosition은 Tauri 폴링 방식 전용
+    getCursorPosition: () => Promise.resolve(null),
   },
   save: {
     load: () => ipcRenderer.invoke(IPC_CHANNELS.SAVE_LOAD),

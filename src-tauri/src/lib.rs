@@ -199,6 +199,12 @@ pub fn run() {
             // Setup system tray
             setup_tray(app.handle())?;
             
+            // Set initial click-through state (ignore cursor events by default)
+            // Frontend will toggle this on mouseenter/mouseleave
+            if let Some(window) = app.get_webview_window("main") {
+                window.set_ignore_cursor_events(true)?;
+            }
+            
             Ok(())
         })
         .run(tauri::generate_context!())
