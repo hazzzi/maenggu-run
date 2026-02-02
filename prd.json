@@ -1,6 +1,6 @@
 {
-  "title": "맹구런 v1",
-  "context": "v1 기능 완료. 게임 루프 패턴 리팩터링 완료 - 순수 함수 기반 로직, 단일 RAF 루프, useEffect deps 문제 해결.",
+  "title": "맹구런 v2 - Tauri 마이그레이션",
+  "context": "v1 완료 (Electron). v2 목표: Tauri 마이그레이션으로 앱 크기 90% 감소 (~100MB → ~10MB) + Windows 지원 추가. 기존 React 프론트엔드 코드 재사용, Electron main process → Rust 백엔드로 전환.",
   "items": [
     {
       "id": "setup",
@@ -182,6 +182,108 @@
       ],
       "status": "done",
       "passes": true
+    },
+    {
+      "id": "tauri-setup",
+      "title": "Tauri 프로젝트 초기화",
+      "category": "migration",
+      "description": "Tauri v2 프로젝트 셋업, 기존 React 코드 연결, 빌드 확인",
+      "steps": [
+        "Rust 환경 확인 (rustc, cargo)",
+        "pnpm create tauri-app 또는 수동 초기화",
+        "tauri.conf.json 기본 설정",
+        "기존 src/renderer 코드 연결",
+        "pnpm tauri dev 로 빌드 확인"
+      ],
+      "status": "pending",
+      "passes": false
+    },
+    {
+      "id": "tauri-window",
+      "title": "투명 창 + 클릭 통과",
+      "category": "migration",
+      "description": "핵심 기능 검증 - 투명 창, 클릭 통과, always-on-top",
+      "steps": [
+        "tauri.conf.json: transparent, decorations:false, alwaysOnTop",
+        "macos-private-api feature 활성화",
+        "Rust: set_ignore_cursor_events 구현",
+        "JS: @tauri-apps/api/window 연결",
+        "mouse collider 로직 포팅 (renderer → Tauri API)",
+        "macOS에서 동작 확인"
+      ],
+      "status": "pending",
+      "passes": false
+    },
+    {
+      "id": "tauri-state",
+      "title": "간식 상태 관리 (Rust)",
+      "category": "migration",
+      "description": "Electron IPC → Tauri commands로 전환",
+      "steps": [
+        "Rust: SnackState struct + Tauri state 관리",
+        "Rust: snack_add, snack_spend commands",
+        "JS: @tauri-apps/api/core invoke 연결",
+        "기존 preload API 대체"
+      ],
+      "status": "pending",
+      "passes": false
+    },
+    {
+      "id": "tauri-save",
+      "title": "저장/로드 시스템 (Rust)",
+      "category": "migration",
+      "description": "JSON 저장/로드를 Rust로 포팅",
+      "steps": [
+        "Rust: save.json 경로 (app_data_dir)",
+        "Rust: load_save, write_save commands",
+        "serde_json으로 직렬화/역직렬화",
+        "debounce 저장 로직"
+      ],
+      "status": "pending",
+      "passes": false
+    },
+    {
+      "id": "tauri-tray",
+      "title": "트레이 메뉴",
+      "category": "migration",
+      "description": "시스템 트레이 메뉴 구현",
+      "steps": [
+        "Rust: SystemTray 생성",
+        "Stats, Quit 메뉴 아이템",
+        "트레이 아이콘 설정"
+      ],
+      "status": "pending",
+      "passes": false
+    },
+    {
+      "id": "tauri-build",
+      "title": "빌드 & 배포 설정",
+      "category": "migration",
+      "description": "macOS + Windows 빌드 설정",
+      "steps": [
+        "앱 아이콘 설정 (icns, ico)",
+        "tauri.conf.json 메타데이터",
+        "macOS 빌드 테스트 (.dmg)",
+        "Windows 빌드 테스트 (.msi)",
+        "GitHub Actions CI 설정 (선택)"
+      ],
+      "status": "pending",
+      "passes": false
+    },
+    {
+      "id": "cleanup-electron",
+      "title": "Electron 코드 정리",
+      "category": "migration",
+      "description": "마이그레이션 완료 후 Electron 관련 코드 제거",
+      "steps": [
+        "src/main (Electron) 삭제",
+        "src/preload 삭제",
+        "electron 관련 dependencies 제거",
+        "electron-builder 설정 제거",
+        "README 업데이트"
+      ],
+      "status": "pending",
+      "passes": false
     }
   ]
 }
