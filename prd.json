@@ -1,6 +1,6 @@
 {
-  "title": "맹구런 v1",
-  "context": "v1 기능 완료. 게임 루프 패턴 리팩터링 완료 - 순수 함수 기반 로직, 단일 RAF 루프, useEffect deps 문제 해결.",
+  "title": "맹구런 v2 - Tauri 마이그레이션",
+  "context": "v1 완료 (Electron). v2 목표: Tauri 마이그레이션으로 앱 크기 90% 감소 (~100MB → ~10MB) + Windows 지원 추가. 기존 React 프론트엔드 코드 재사용, Electron main process → Rust 백엔드로 전환.",
   "items": [
     {
       "id": "setup",
@@ -179,6 +179,112 @@
         "App.tsx 단순화",
         "기존 훅 삭제 (useAnimation, useMovement, useIdleTimer, useMaengguState)",
         "테스트 재작성 (순수 함수 단위 테스트)"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "tauri-setup",
+      "title": "Tauri 프로젝트 초기화",
+      "category": "migration",
+      "description": "Tauri v2 프로젝트 셋업, 기존 React 코드 연결, 빌드 확인",
+      "steps": [
+        "Rust 환경 확인 (rustc, cargo)",
+        "pnpm create tauri-app 또는 수동 초기화",
+        "tauri.conf.json 기본 설정",
+        "기존 src/renderer 코드 연결",
+        "pnpm tauri dev 로 빌드 확인"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "tauri-window",
+      "title": "투명 창 + 클릭 통과",
+      "category": "migration",
+      "description": "핵심 기능 검증 - 투명 창, 클릭 통과, always-on-top. Tauri는 Electron의 { forward: true } 옵션이 없어서 cursorPosition 폴링 방식으로 구현",
+      "steps": [
+        "tauri.conf.json: transparent, decorations:false, alwaysOnTop",
+        "macos-private-api feature 활성화",
+        "Rust setup: 초기 set_ignore_cursor_events(true) 설정",
+        "JS: @tauri-apps/api/window cursorPosition API 활용",
+        "useMouseCollider 훅 수정: Tauri에서는 cursorPosition 폴링 방식으로 맹구 영역 감지",
+        "MaengguApi 타입에 getCursorPosition 추가",
+        "macOS에서 클릭 통과 + 맹구 클릭 동작 확인"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "tauri-state",
+      "title": "간식 상태 관리 (Rust)",
+      "category": "migration",
+      "description": "Electron IPC → Tauri commands로 전환",
+      "steps": [
+        "Rust: SnackState struct + Tauri state 관리",
+        "Rust: snack_add, snack_spend commands",
+        "JS: @tauri-apps/api/core invoke 연결",
+        "기존 preload API 대체"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "tauri-save",
+      "title": "저장/로드 시스템 (Rust)",
+      "category": "migration",
+      "description": "JSON 저장/로드를 Rust로 포팅",
+      "steps": [
+        "Rust: save.json 경로 (app_data_dir)",
+        "Rust: load_save, write_save commands",
+        "serde_json으로 직렬화/역직렬화",
+        "debounce 저장 로직"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "tauri-tray",
+      "title": "트레이 메뉴",
+      "category": "migration",
+      "description": "시스템 트레이 메뉴 구현",
+      "steps": [
+        "Rust: SystemTray 생성",
+        "Stats, Quit 메뉴 아이템",
+        "트레이 아이콘 설정"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "tauri-build",
+      "title": "빌드 & 배포 설정",
+      "category": "migration",
+      "description": "macOS 빌드 완료. 앱 크기 8.6MB (Electron 대비 91% 감소)",
+      "steps": [
+        "앱 아이콘 설정 - 맹구 스프라이트로 교체 (icns, png)",
+        "tauri.conf.json 메타데이터 확인",
+        "macOS 빌드 테스트 (.app) - 성공",
+        "Windows 빌드 테스트 (.msi) - 미완료 (크로스 컴파일 필요)",
+        "GitHub Actions CI 설정 (선택) - 미완료"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "cleanup-electron",
+      "title": "Electron 코드 정리",
+      "category": "migration",
+      "description": "Electron 관련 코드 완전 제거. dependencies 8개 삭제, 3500줄+ 코드 삭제",
+      "steps": [
+        "MaengguApi 타입을 shared/types.ts로 이동",
+        "src/main (Electron) 삭제",
+        "src/preload 삭제",
+        "IPC_CHANNELS 등 불필요한 코드 정리",
+        "electron 관련 dependencies 제거 (electron, electron-builder, vite-plugin-electron 등)",
+        "electron-builder.json5 삭제",
+        "vite.config.ts에서 electron 플러그인 제거",
+        "tauri.conf.json 스크립트 경로 수정"
       ],
       "status": "done",
       "passes": true

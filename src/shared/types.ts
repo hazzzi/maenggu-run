@@ -31,16 +31,28 @@ export type Position = {
 
 export type FacingDirection = 'left' | 'right'
 
-export const IPC_CHANNELS = {
-  SNACK_ADD: 'snack:add',
-  SNACK_SPEND: 'snack:spend',
-  SNACK_UPDATE: 'snack:update',
-  SAVE_LOAD: 'save:load',
-  MOUSE_COLLIDER: 'mouse:collider',
-} as const
-
-export type IpcChannels = typeof IPC_CHANNELS
-
 export type SaveLoadResult =
   | { success: true; data: SaveData }
   | { success: false; error: string }
+
+// Cursor position type for mouse collider
+export type CursorPosition = {
+  readonly x: number
+  readonly y: number
+}
+
+// Maenggu API interface exposed to renderer
+export type MaengguApi = {
+  mouse: {
+    setCollider: (inCollider: boolean) => void
+    getCursorPosition: () => Promise<CursorPosition | null>
+  }
+  save: {
+    load: () => Promise<SaveLoadResult>
+  }
+  snack: {
+    add: (amount?: number) => void
+    spend: (amount?: number) => Promise<boolean>
+    onUpdate: (callback: (snacks: number) => void) => () => void
+  }
+}
