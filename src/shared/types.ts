@@ -31,16 +31,6 @@ export type Position = {
 
 export type FacingDirection = 'left' | 'right'
 
-export const IPC_CHANNELS = {
-  SNACK_ADD: 'snack:add',
-  SNACK_SPEND: 'snack:spend',
-  SNACK_UPDATE: 'snack:update',
-  SAVE_LOAD: 'save:load',
-  MOUSE_COLLIDER: 'mouse:collider',
-} as const
-
-export type IpcChannels = typeof IPC_CHANNELS
-
 export type SaveLoadResult =
   | { success: true; data: SaveData }
   | { success: false; error: string }
