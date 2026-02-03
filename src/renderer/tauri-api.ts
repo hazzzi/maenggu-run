@@ -2,8 +2,12 @@ import { getCurrentWindow, cursorPosition } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 
-import type { MaengguApi } from '../preload/index'
-import { DEFAULT_SAVE_DATA, type SaveData, type SaveLoadResult } from '../shared/types'
+import {
+  DEFAULT_SAVE_DATA,
+  type MaengguApi,
+  type SaveData,
+  type SaveLoadResult,
+} from '../shared/types'
 
 const appWindow = getCurrentWindow()
 

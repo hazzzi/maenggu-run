@@ -44,3 +44,25 @@ export type IpcChannels = typeof IPC_CHANNELS
 export type SaveLoadResult =
   | { success: true; data: SaveData }
   | { success: false; error: string }
+
+// Cursor position type for mouse collider
+export type CursorPosition = {
+  readonly x: number
+  readonly y: number
+}
+
+// Maenggu API interface exposed to renderer
+export type MaengguApi = {
+  mouse: {
+    setCollider: (inCollider: boolean) => void
+    getCursorPosition: () => Promise<CursorPosition | null>
+  }
+  save: {
+    load: () => Promise<SaveLoadResult>
+  }
+  snack: {
+    add: (amount?: number) => void
+    spend: (amount?: number) => Promise<boolean>
+    onUpdate: (callback: (snacks: number) => void) => () => void
+  }
+}
