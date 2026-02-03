@@ -1011,19 +1011,12 @@ src/renderer/game/
 
 ## 남은 작업
 
-### tauri-build (진행 중)
+### tauri-build
 - [ ] 앱 아이콘 설정 (icns, ico)
 - [ ] tauri.conf.json 메타데이터
 - [ ] macOS 빌드 테스트 (.dmg)
 - [ ] Windows 빌드 테스트 (.msi)
 - [ ] GitHub Actions CI 설정 (선택)
-
-### cleanup-electron
-- [ ] src/main (Electron) 삭제
-- [ ] src/preload 삭제
-- [ ] electron 관련 dependencies 제거
-- [ ] electron-builder 설정 제거
-- [ ] README 업데이트
 
 ## 테스트 완료 항목
 - [x] 맹구 이동
@@ -1063,3 +1056,45 @@ src/renderer/game/
 - 클릭 통과: ✅ pass
 - 맹구 클릭: ✅ pass
 - 간식 먹기 애니메이션: ✅ pass
+
+---
+
+## 2026-02-03 - cleanup-electron 완료
+
+**PRD**: cleanup-electron (Electron 코드 정리)
+
+**Completed**:
+- MaengguApi, CursorPosition 타입을 shared/types.ts로 이동
+- src/main (Electron main process) 삭제
+- src/preload 삭제
+- IPC_CHANNELS 등 불필요한 코드 정리
+- electron 관련 dependencies 제거:
+  - @electron/rebuild
+  - electron
+  - electron-builder
+  - vite-plugin-electron
+  - vite-plugin-electron-renderer
+  - @typescript-eslint/eslint-plugin
+  - @typescript-eslint/parser
+- electron-builder.json5 삭제
+- vite.config.ts에서 electron 플러그인 제거
+- tauri.conf.json 스크립트 경로 수정 (dev:renderer → dev:vite)
+- package.json scripts 정리 (dev → tauri dev)
+
+**결과**:
+- pnpm-lock.yaml 3500줄+ 감소
+- 8개 devDependencies 제거
+- src/ 구조 단순화: renderer/, shared/ 만 남음
+
+**커밋**:
+- ed99cf5 - refactor: move MaengguApi type to shared/types.ts
+- 7cbcc0b - chore: remove Electron main and preload folders
+- 93490cd - chore: remove unused IPC_CHANNELS
+- d77e00f - chore: remove Electron dependencies
+- 4a76091 - chore: remove electron-builder config and vite electron plugin
+- 2a52725 - fix: update tauri dev/build commands to match package.json
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- test: ✅ pass (62 tests)
+- pnpm dev: ✅ pass (Tauri 실행 확인)

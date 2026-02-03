@@ -275,16 +275,19 @@
       "id": "cleanup-electron",
       "title": "Electron 코드 정리",
       "category": "migration",
-      "description": "마이그레이션 완료 후 Electron 관련 코드 제거",
+      "description": "Electron 관련 코드 완전 제거. dependencies 8개 삭제, 3500줄+ 코드 삭제",
       "steps": [
+        "MaengguApi 타입을 shared/types.ts로 이동",
         "src/main (Electron) 삭제",
         "src/preload 삭제",
-        "electron 관련 dependencies 제거",
-        "electron-builder 설정 제거",
-        "README 업데이트"
+        "IPC_CHANNELS 등 불필요한 코드 정리",
+        "electron 관련 dependencies 제거 (electron, electron-builder, vite-plugin-electron 등)",
+        "electron-builder.json5 삭제",
+        "vite.config.ts에서 electron 플러그인 제거",
+        "tauri.conf.json 스크립트 경로 수정"
       ],
-      "status": "pending",
-      "passes": false
+      "status": "done",
+      "passes": true
     }
   ]
 }
