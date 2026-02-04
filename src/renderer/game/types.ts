@@ -42,6 +42,7 @@ export type GameEvent =
   | { readonly type: 'click'; readonly position: Position }
   | { readonly type: 'feed-success' }
   | { readonly type: 'feed-fail' }
+  | { readonly type: 'summon'; readonly x: number; readonly y: number }
 
 // === 액션 (게임 루프 → 외부) ===
 
