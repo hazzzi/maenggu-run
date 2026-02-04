@@ -18,7 +18,7 @@ Fight entropy. Leave the codebase better than you found it.
 
 ## Purpose
 
-This repo builds a macOS-only Electron app. Agents should follow this guide for commands, code style, and safe edits.
+This repo builds a macOS Tauri app (migrated from Electron). Agents should follow this guide for commands, code style, and safe edits.
 
 ## Quick Commands (pnpm)
 
@@ -174,8 +174,17 @@ If `package.json` differs, update this file:
 - `format`: `oxfmt .`
 - `test`: `vitest`
 
+## Git Workflow
+
+- NEVER push directly to main
+- Always create a feature branch: `git checkout -b feat/feature-name`
+- Make small, focused commits
+- Create PR for review before merging
+- Merge via PR, not direct push
+
 ## Forbidden
 
+- Don't push directly to main (use PR)
 - Don't use `rm -rf`; use `trash` instead
 - Don't bypass pre-commit hooks unless asked
 - Don't edit unrelated files
