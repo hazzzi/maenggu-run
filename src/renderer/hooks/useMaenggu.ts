@@ -50,6 +50,18 @@ export function useMaenggu(
     eventsRef.current.push(event)
   }, [])
 
+  // summon 이벤트 구독
+  useEffect(() => {
+    const unsubscribe = window.maenggu.summon.onSummon(async () => {
+      const cursor = await window.maenggu.mouse.getCursorPosition()
+      if (cursor) {
+        pushEvent({ type: 'summon', x: cursor.x, y: cursor.y })
+      }
+    })
+
+    return unsubscribe
+  }, [pushEvent])
+
   // 게임 루프
   useEffect(() => {
     let lastTime = performance.now()
