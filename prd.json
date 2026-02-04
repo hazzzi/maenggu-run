@@ -297,8 +297,8 @@
       "steps": [
         "types.ts: GameEvent에 { type: 'summon', x: number, y: number } 추가"
       ],
-      "status": "todo",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "summon-2-target-union",
@@ -310,8 +310,8 @@
         "types.ts: MovementState.target 타입 변경",
         "update-movement.ts: 기존 target 사용처 수정 (target.position 접근)"
       ],
-      "status": "todo",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "summon-3-speed",
@@ -322,8 +322,8 @@
         "constants.ts: SUMMON_SPEED 추가 (MOVEMENT.SPEED * 2 정도)",
         "update-movement.ts: target.type === 'summon'이면 SUMMON_SPEED 사용"
       ],
-      "status": "todo",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "summon-4-handler",
@@ -334,8 +334,8 @@
         "update.ts: handleSummon() - walk 전환 + summon target 설정",
         "update-movement.ts: handleTargetReached()에서 summon 도착 시 happy 애니메이션"
       ],
-      "status": "todo",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "summon-5-tray",
@@ -346,8 +346,8 @@
         "lib.rs: 트레이 메뉴에 'summon' 항목 추가",
         "lib.rs: 클릭 시 'summon' 이벤트 emit (payload 없이)"
       ],
-      "status": "todo",
-      "passes": false
+      "status": "done",
+      "passes": true
     },
     {
       "id": "summon-6-bridge",
@@ -359,8 +359,8 @@
         "tauri-api.ts: listen('summon') 구현",
         "useMaenggu: onSummon 구독 → 마우스 위치 조회 → pushEvent({ type: 'summon', x, y })"
       ],
-      "status": "todo",
-      "passes": false
+      "status": "done",
+      "passes": true
     }
   ]
 }
