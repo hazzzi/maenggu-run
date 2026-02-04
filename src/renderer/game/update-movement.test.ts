@@ -16,7 +16,8 @@ describe('updateMovement', () => {
 
     const result = updateMovement(state, 16, bounds)
 
-    expect(result.position).toEqual(state.position)
+    expect(result.state.position).toEqual(state.position)
+    expect(result.reachedTarget).toBeNull()
   })
 
   it('should move towards target', () => {
@@ -29,8 +30,9 @@ describe('updateMovement', () => {
 
     const result = updateMovement(state, 16, bounds)
 
-    expect(result.position.x).toBeGreaterThan(100)
-    expect(result.position.y).toBeCloseTo(100)
+    expect(result.state.position.x).toBeGreaterThan(100)
+    expect(result.state.position.y).toBeCloseTo(100)
+    expect(result.reachedTarget).toBeNull()
   })
 
   it('should snap to target when close enough', () => {
@@ -43,8 +45,9 @@ describe('updateMovement', () => {
 
     const result = updateMovement(state, 16, bounds)
 
-    expect(result.position).toEqual({ x: 101, y: 100 })
-    expect(result.target).toBeNull()
+    expect(result.state.position).toEqual({ x: 101, y: 100 })
+    expect(result.state.target).toBeNull()
+    expect(result.reachedTarget).toEqual({ type: 'random', position: { x: 101, y: 100 } })
   })
 
   it('should update facing direction when moving left', () => {
@@ -57,7 +60,7 @@ describe('updateMovement', () => {
 
     const result = updateMovement(state, 16, bounds)
 
-    expect(result.facing).toBe('left')
+    expect(result.state.facing).toBe('left')
   })
 
   it('should update facing direction when moving right', () => {
@@ -70,7 +73,7 @@ describe('updateMovement', () => {
 
     const result = updateMovement(state, 16, bounds)
 
-    expect(result.facing).toBe('right')
+    expect(result.state.facing).toBe('right')
   })
 
   it('should clamp position to bounds', () => {
@@ -83,7 +86,7 @@ describe('updateMovement', () => {
 
     const result = updateMovement(state, 16, bounds)
 
-    expect(result.position.x).toBeGreaterThanOrEqual(0)
+    expect(result.state.position.x).toBeGreaterThanOrEqual(0)
   })
 })
 

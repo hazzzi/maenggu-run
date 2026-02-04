@@ -2,16 +2,21 @@ import { type Bounds, clampPositionToBounds } from './target'
 import { type FacingDirection, type MovementState, type MovementTarget, type Position } from './types'
 import { calculateVelocity } from './vector'
 
+export type MovementUpdateResult = {
+  readonly state: MovementState
+  readonly reachedTarget: MovementTarget | null
+}
+
 export function updateMovement(
   movement: MovementState,
   deltaMs: number,
   bounds: Bounds,
-): MovementState {
+): MovementUpdateResult {
   const { position, target, speed } = movement
 
   // 타겟이 없으면 이동하지 않음
   if (target === null) {
-    return movement
+    return { state: movement, reachedTarget: null }
   }
 
   const targetPos = target.position
@@ -25,10 +30,13 @@ export function updateMovement(
   // 타겟 도달 판정 (speed 기준)
   if (distanceToTarget < speed) {
     return {
-      ...movement,
-      position: targetPos,
-      target: null,
-      facing,
+      state: {
+        ...movement,
+        position: targetPos,
+        target: null,
+        facing,
+      },
+      reachedTarget: target,
     }
   }
 
@@ -44,9 +52,12 @@ export function updateMovement(
   const clampedPosition = clampPositionToBounds(nextPosition, bounds)
 
   return {
-    ...movement,
-    position: clampedPosition,
-    facing,
+    state: {
+      ...movement,
+      position: clampedPosition,
+      facing,
+    },
+    reachedTarget: null,
   }
 }
 

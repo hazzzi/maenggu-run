@@ -1,4 +1,4 @@
-import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE } from './constants'
+import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE, SUMMON_SPEED } from './constants'
 import { type Bounds, generateRandomTarget } from './target'
 import {
   type AnimState,
@@ -6,6 +6,7 @@ import {
   type GameEvent,
   type IdleTimerState,
   type MaengguGameState,
+  type MovementTarget,
 } from './types'
 import { resetAnimation, updateAnimation } from './update-animation'
 import { startMovement, stopMovement, updateMovement } from './update-movement'
@@ -70,6 +71,27 @@ function handleFeedSuccess(state: MaengguGameState): { state: MaengguGameState; 
   return { state: newState, actions: [] }
 }
 
+function handleSummon(
+  state: MaengguGameState,
+  x: number,
+  y: number,
+): { state: MaengguGameState; actions: GameAction[] } {
+  if (!canInteract(state.anim.state)) {
+    return { state, actions: [] }
+  }
+
+  const target: MovementTarget = { type: 'summon', position: { x, y } }
+
+  const newState: MaengguGameState = {
+    ...state,
+    anim: resetAnimation('walk'),
+    movement: startMovement(state.movement, target, SUMMON_SPEED),
+    idleTimer: { remainingMs: 0, isActive: false },
+  }
+
+  return { state: newState, actions: [] }
+}
+
 function handleEvents(
   state: MaengguGameState,
   events: readonly GameEvent[],
@@ -94,6 +116,12 @@ function handleEvents(
       case 'feed-fail':
         // no-op
         break
+      case 'summon': {
+        const result = handleSummon(currentState, event.x, event.y)
+        currentState = result.state
+        allActions.push(...result.actions)
+        break
+      }
     }
   }
 
@@ -167,9 +195,11 @@ function handleWalkStart(state: MaengguGameState, bounds: Bounds): MaengguGameSt
   }
 }
 
-function handleTargetReached(state: MaengguGameState): MaengguGameState {
-  // 타겟 도달 시 idle로 전환
-  if (state.movement.target !== null) {
+function handleTargetReached(
+  state: MaengguGameState,
+  reachedTarget: MovementTarget | null,
+): MaengguGameState {
+  if (reachedTarget === null) {
     return state
   }
 
@@ -177,6 +207,16 @@ function handleTargetReached(state: MaengguGameState): MaengguGameState {
     return state
   }
 
+  // summon 도착 시 happy 애니메이션
+  if (reachedTarget.type === 'summon') {
+    return {
+      ...state,
+      anim: resetAnimation('happy'),
+      idleTimer: { remainingMs: 0, isActive: false },
+    }
+  }
+
+  // random 도착 시 idle 전환
   return {
     ...state,
     anim: resetAnimation('idle'),
@@ -215,11 +255,12 @@ export function update(
 
   // 4. 이동 업데이트
   if (currentState.anim.state === 'walk') {
+    const movementResult = updateMovement(currentState.movement, deltaMs, bounds)
     currentState = {
       ...currentState,
-      movement: updateMovement(currentState.movement, deltaMs, bounds),
+      movement: movementResult.state,
     }
-    currentState = handleTargetReached(currentState)
+    currentState = handleTargetReached(currentState, movementResult.reachedTarget)
   }
 
   // 5. 애니메이션 프레임 업데이트
