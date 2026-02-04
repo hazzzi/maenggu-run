@@ -1,402 +1,182 @@
 {
-  "title": "맹구런 v2 - Tauri 마이그레이션",
-  "context": "v1 완료 (Electron). v2 목표: Tauri 마이그레이션으로 앱 크기 90% 감소 (~100MB → ~10MB) + Windows 지원 추가. 기존 React 프론트엔드 코드 재사용, Electron main process → Rust 백엔드로 전환.",
-  "items": [
+  "title": "맹구런 - 데스크탑 펫 앱",
+  "overview": "화면 위를 돌아다니는 픽셀 강아지 데스크탑 펫. 사용자가 자신의 반려동물로 커스터마이징할 수 있는 것이 최종 목표.",
+  "features": [
     {
-      "id": "setup",
-      "title": "프로젝트 초기 설정",
-      "category": "setup",
-      "description": "electron-vite 프로젝트 구조 생성 및 기본 설정",
-      "steps": [
-        "electron-vite 프로젝트 구조 생성 (src/main, src/preload, src/renderer, src/shared)",
-        "공유 타입 정의 (src/shared/types.ts): SaveData, SnackState, MaengguState",
-        "기본 Electron 창 설정 (transparent, frame:false, alwaysOnTop, hasShadow:false)"
-      ],
+      "id": "v2-tauri-migration",
+      "title": "v2: Tauri 마이그레이션",
       "status": "done",
-      "passes": true
+      "background": "v1은 Electron으로 구현. 앱 크기가 ~100MB로 너무 컸음.",
+      "goal": "Tauri로 전환하여 앱 크기 90% 감소 (~10MB) + 성능 개선",
+      "outcome": "완료. 8.6MB 달성. macOS Spaces 지원 포함.",
+      "items": [
+        { "id": "setup", "title": "프로젝트 초기 설정", "status": "done" },
+        { "id": "window-core", "title": "오버레이 창 기본 설정", "status": "done" },
+        { "id": "window-mouse", "title": "클릭 통과 시스템", "status": "done" },
+        { "id": "save-system", "title": "저장/로드 시스템", "status": "done" },
+        { "id": "snack-state", "title": "간식 상태 관리", "status": "done" },
+        { "id": "maenggu-render", "title": "맹구 렌더링", "status": "done" },
+        { "id": "animation-system", "title": "애니메이션 시스템", "status": "done" },
+        { "id": "movement-system", "title": "이동 시스템", "status": "done" },
+        { "id": "interaction-click", "title": "클릭 상호작용", "status": "done" },
+        { "id": "interaction-feed", "title": "먹이주기 상호작용", "status": "done" },
+        { "id": "ui-snack", "title": "간식 UI", "status": "done" },
+        { "id": "tray-menu", "title": "트레이 메뉴", "status": "done" },
+        { "id": "refactor-game-loop", "title": "게임 루프 리팩터링", "status": "done" },
+        { "id": "tauri-setup", "title": "Tauri 프로젝트 초기화", "status": "done" },
+        { "id": "tauri-window", "title": "투명 창 + 클릭 통과", "status": "done" },
+        { "id": "tauri-state", "title": "간식 상태 관리 (Rust)", "status": "done" },
+        { "id": "tauri-save", "title": "저장/로드 시스템 (Rust)", "status": "done" },
+        { "id": "tauri-tray", "title": "트레이 메뉴 (Rust)", "status": "done" },
+        { "id": "tauri-build", "title": "빌드 & 배포 설정", "status": "done" },
+        { "id": "cleanup-electron", "title": "Electron 코드 정리", "status": "done" }
+      ]
     },
     {
-      "id": "window-core",
-      "title": "오버레이 창 기본 설정",
-      "category": "functional",
-      "description": "투명 오버레이 창 + 멀티모니터 지원",
-      "steps": [
-        "BrowserWindow 옵션 정의 (transparent, frame:false, alwaysOnTop, hasShadow:false, resizable:false)",
-        "전체 디스플레이 합산 영역 계산 로직 추가",
-        "오버레이 창 크기/위치에 합산 영역 적용",
-        "setIgnoreMouseEvents(true, { forward: true }) 기본 적용"
-      ],
+      "id": "v2.1-summon",
+      "title": "v2.1: 맹구 부르기",
       "status": "done",
-      "passes": true
+      "background": "맹구가 어디 있는지 찾기 어려울 때가 있음.",
+      "goal": "트레이 메뉴에서 '맹구 부르기' 클릭 시 마우스 위치로 빠르게 달려오기",
+      "outcome": "완료. summon 이벤트 + MovementTarget Tagged Union으로 구현.",
+      "items": [
+        { "id": "summon-types", "title": "GameEvent 타입 추가", "status": "done" },
+        { "id": "summon-target-union", "title": "MovementTarget Tagged Union", "status": "done" },
+        { "id": "summon-speed", "title": "SUMMON_SPEED 상수", "status": "done" },
+        { "id": "summon-handler", "title": "handleSummon 로직", "status": "done" },
+        { "id": "summon-tray", "title": "트레이 메뉴 항목", "status": "done" },
+        { "id": "summon-bridge", "title": "JS 이벤트 연결", "status": "done" }
+      ]
     },
     {
-      "id": "window-mouse",
-      "title": "클릭 통과 시스템",
-      "category": "functional",
-      "description": "맹구 영역만 클릭 가능, 나머지는 통과",
-      "steps": [
-        "main: mouse:collider IPC 핸들러 등록",
-        "renderer: 맹구 콜라이더 영역 계산 + mousemove 판정",
-        "in/out 변화 시 setIgnoreMouseEvents 토글"
-      ],
+      "id": "v2.2-spaces",
+      "title": "v2.2: macOS Spaces 지원",
       "status": "done",
-      "passes": true
+      "background": "macOS 가상 데스크탑(Spaces) 전환 시 맹구가 안 보임.",
+      "goal": "모든 Spaces에서 맹구가 보이도록",
+      "outcome": "완료. NSWindowCollectionBehaviorCanJoinAllSpaces 설정.",
+      "items": [
+        { "id": "spaces-behavior", "title": "NSWindowCollectionBehavior 설정", "status": "done" },
+        { "id": "spaces-objc2", "title": "objc2-app-kit 마이그레이션", "status": "done" }
+      ]
     },
     {
-      "id": "save-system",
-      "title": "저장/로드 시스템",
-      "category": "functional",
-      "description": "JSON 저장, debounce, 오류 처리",
-      "steps": [
-        "save.json 경로 및 SaveData 타입 정의",
-        "저장 파일 읽기/쓰기 구현",
-        "500ms debounce 저장",
-        "로드 실패 시 오류 대화창 + 앱 종료"
+      "id": "v3-custom-sprite",
+      "title": "v3: 커스텀 스프라이트",
+      "status": "planning",
+      "background": "사용자가 자신의 반려동물을 데스크탑 펫으로 쓰고 싶어함.",
+      "goal": "AI로 반려동물 사진 → 픽셀아트 스프라이트 자동 생성. 일반 유저도 쉽게 사용 가능.",
+      "decisions": [
+        {
+          "question": "스프라이트 로딩 방식을 어떻게 할까?",
+          "answer": "매니페스트(sprite.json) 기반 단일 방식",
+          "reason": "최종 목표가 AI 생성이므로, AI가 이미지 + 매니페스트를 함께 생성하면 됨. 폴더 자동감지 같은 편의 기능은 과적합. 파워유저는 스펙 보고 직접 만들 수 있음."
+        },
+        {
+          "question": "새 상태(예: sleep) 추가되면?",
+          "answer": "매니페스트에 상태 정의 + fallback 규칙으로 해결",
+          "reason": "커스텀 스프라이트가 새 상태를 지원 안 하면 fallback 상태(idle) 사용. 하위 호환성 유지."
+        }
       ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "snack-state",
-      "title": "간식 상태 관리",
-      "category": "functional",
-      "description": "main process에서 간식 상태 관리 + IPC",
-      "steps": [
-        "SnackStateManager 구현 (add, spend, broadcast)",
-        "snack:add, snack:spend, snack:update IPC",
-        "preload API 노출"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "maenggu-render",
-      "title": "맹구 렌더링",
-      "category": "functional",
-      "description": "스프라이트 로딩 및 DOM 렌더링",
-      "steps": [
-        "스프라이트 로딩 헬퍼 (idle/walk/eat/happy)",
-        "Maenggu 컴포넌트 생성",
-        "image-rendering: pixelated 적용"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "animation-system",
-      "title": "애니메이션 시스템",
-      "category": "functional",
-      "description": "상태 머신 + 프레임 전환",
-      "steps": [
-        "상태 머신 (idle/walk/eat/happy 전이)",
-        "프레임 전환 타이머",
-        "one-shot 애니메이션 완료 콜백 (eat, happy)"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "movement-system",
-      "title": "이동 시스템",
-      "category": "functional",
-      "description": "랜덤 이동 + idle 타이머",
-      "steps": [
-        "3-8초 랜덤 idle 타이머",
-        "랜덤 목적지 생성",
-        "벡터 계산 + RAF 이동",
-        "경계 처리 + 목표 도달 판정"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "interaction-click",
-      "title": "클릭 상호작용",
-      "category": "functional",
-      "description": "클릭 시 간식 획득 + 플로팅 텍스트",
-      "steps": [
-        "클릭 시 이동 중지 + eat 애니메이션",
-        "snack:add IPC 호출",
-        "플로팅 텍스트 생성 + 애니메이션"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "interaction-feed",
-      "title": "먹이주기 상호작용",
-      "category": "functional",
-      "description": "우클릭 먹이주기",
-      "steps": [
-        "우클릭 시 snack:spend 호출",
-        "성공 시 eat → happy 애니메이션",
-        "실패 시 no-op"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "ui-snack",
-      "title": "간식 UI",
-      "category": "usability",
-      "description": "간식 카운터 표시",
-      "steps": [
-        "좌상단 고정 위치",
-        "아이콘 + 숫자 렌더링",
-        "pointer-events: none"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tray-menu",
-      "title": "트레이 메뉴",
-      "category": "usability",
-      "description": "시스템 트레이 메뉴",
-      "steps": [
-        "트레이 아이콘 생성",
-        "Stats 메뉴 (통계 대화창)",
-        "Quit 메뉴"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "refactor-game-loop",
-      "title": "게임 루프 패턴 리팩터링",
-      "category": "refactor",
-      "description": "useEffect deps 문제 해결, 순수 함수 기반 게임 로직으로 전환. 6개 훅 → 3개 훅, App.tsx 41% 감소, 테스트 62개.",
-      "steps": [
-        "game/types.ts - 통합 상태 타입 (MaengguGameState, GameEvent)",
-        "game/constants.ts - 게임 상수 정리",
-        "game/vector.ts, target.ts - 기존 유틸 이동",
-        "game/sprite-loader.ts, state-machine.ts - 이동",
-        "game/create-initial-state.ts - 초기 상태",
-        "game/update-animation.ts - 순수 애니메이션 로직",
-        "game/update-movement.ts - 순수 이동 로직",
-        "game/update.ts - 메인 업데이트 함수",
-        "hooks/useMaenggu.ts - 단일 게임 루프 훅 (deps: [])",
-        "App.tsx 단순화",
-        "기존 훅 삭제 (useAnimation, useMovement, useIdleTimer, useMaengguState)",
-        "테스트 재작성 (순수 함수 단위 테스트)"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tauri-setup",
-      "title": "Tauri 프로젝트 초기화",
-      "category": "migration",
-      "description": "Tauri v2 프로젝트 셋업, 기존 React 코드 연결, 빌드 확인",
-      "steps": [
-        "Rust 환경 확인 (rustc, cargo)",
-        "pnpm create tauri-app 또는 수동 초기화",
-        "tauri.conf.json 기본 설정",
-        "기존 src/renderer 코드 연결",
-        "pnpm tauri dev 로 빌드 확인"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tauri-window",
-      "title": "투명 창 + 클릭 통과",
-      "category": "migration",
-      "description": "핵심 기능 검증 - 투명 창, 클릭 통과, always-on-top. Tauri는 Electron의 { forward: true } 옵션이 없어서 cursorPosition 폴링 방식으로 구현",
-      "steps": [
-        "tauri.conf.json: transparent, decorations:false, alwaysOnTop",
-        "macos-private-api feature 활성화",
-        "Rust setup: 초기 set_ignore_cursor_events(true) 설정",
-        "JS: @tauri-apps/api/window cursorPosition API 활용",
-        "useMouseCollider 훅 수정: Tauri에서는 cursorPosition 폴링 방식으로 맹구 영역 감지",
-        "MaengguApi 타입에 getCursorPosition 추가",
-        "macOS에서 클릭 통과 + 맹구 클릭 동작 확인"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tauri-state",
-      "title": "간식 상태 관리 (Rust)",
-      "category": "migration",
-      "description": "Electron IPC → Tauri commands로 전환",
-      "steps": [
-        "Rust: SnackState struct + Tauri state 관리",
-        "Rust: snack_add, snack_spend commands",
-        "JS: @tauri-apps/api/core invoke 연결",
-        "기존 preload API 대체"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tauri-save",
-      "title": "저장/로드 시스템 (Rust)",
-      "category": "migration",
-      "description": "JSON 저장/로드를 Rust로 포팅",
-      "steps": [
-        "Rust: save.json 경로 (app_data_dir)",
-        "Rust: load_save, write_save commands",
-        "serde_json으로 직렬화/역직렬화",
-        "debounce 저장 로직"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tauri-tray",
-      "title": "트레이 메뉴",
-      "category": "migration",
-      "description": "시스템 트레이 메뉴 구현",
-      "steps": [
-        "Rust: SystemTray 생성",
-        "Stats, Quit 메뉴 아이템",
-        "트레이 아이콘 설정"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "tauri-build",
-      "title": "빌드 & 배포 설정",
-      "category": "migration",
-      "description": "macOS 빌드 완료. 앱 크기 8.6MB (Electron 대비 91% 감소)",
-      "steps": [
-        "앱 아이콘 설정 - 맹구 스프라이트로 교체 (icns, png)",
-        "tauri.conf.json 메타데이터 확인",
-        "macOS 빌드 테스트 (.app) - 성공",
-        "Windows 빌드 테스트 (.msi) - 미완료 (크로스 컴파일 필요)",
-        "GitHub Actions CI 설정 (선택) - 미완료"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "cleanup-electron",
-      "title": "Electron 코드 정리",
-      "category": "migration",
-      "description": "Electron 관련 코드 완전 제거. dependencies 8개 삭제, 3500줄+ 코드 삭제",
-      "steps": [
-        "MaengguApi 타입을 shared/types.ts로 이동",
-        "src/main (Electron) 삭제",
-        "src/preload 삭제",
-        "IPC_CHANNELS 등 불필요한 코드 정리",
-        "electron 관련 dependencies 제거 (electron, electron-builder, vite-plugin-electron 등)",
-        "electron-builder.json5 삭제",
-        "vite.config.ts에서 electron 플러그인 제거",
-        "tauri.conf.json 스크립트 경로 수정"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "summon-1-types",
-      "title": "부르기: GameEvent 타입 추가",
-      "category": "functional",
-      "description": "summon 이벤트 타입 정의",
-      "steps": [
-        "types.ts: GameEvent에 { type: 'summon', x: number, y: number } 추가"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "summon-2-target-union",
-      "title": "부르기: MovementTarget Tagged Union",
-      "category": "functional",
-      "description": "target을 Tagged Union으로 변경하여 도착 시 분기 가능하게",
-      "steps": [
-        "types.ts: MovementTarget = { type: 'random', position } | { type: 'summon', position }",
-        "types.ts: MovementState.target 타입 변경",
-        "update-movement.ts: 기존 target 사용처 수정 (target.position 접근)"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "summon-3-speed",
-      "title": "부르기: 속도 상수 추가",
-      "category": "functional",
-      "description": "summon 시 빠른 속도 적용",
-      "steps": [
-        "constants.ts: SUMMON_SPEED 추가 (MOVEMENT.SPEED * 2 정도)",
-        "update-movement.ts: target.type === 'summon'이면 SUMMON_SPEED 사용"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "summon-4-handler",
-      "title": "부르기: handleSummon 로직",
-      "category": "functional",
-      "description": "summon 이벤트 처리 + 도착 시 happy",
-      "steps": [
-        "update.ts: handleSummon() - walk 전환 + summon target 설정",
-        "update-movement.ts: handleTargetReached()에서 summon 도착 시 happy 애니메이션"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "summon-5-tray",
-      "title": "부르기: 트레이 메뉴 항목",
-      "category": "functional",
-      "description": "Rust 트레이에 '맹구 부르기' 추가",
-      "steps": [
-        "lib.rs: 트레이 메뉴에 'summon' 항목 추가",
-        "lib.rs: 클릭 시 'summon' 이벤트 emit (payload 없이)"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "summon-6-bridge",
-      "title": "부르기: JS 이벤트 연결",
-      "category": "functional",
-      "description": "Tauri 이벤트 → JS 연결",
-      "steps": [
-        "shared/types.ts: MaengguApi.onSummon 추가",
-        "tauri-api.ts: listen('summon') 구현",
-        "useMaenggu: onSummon 구독 → 마우스 위치 조회 → pushEvent({ type: 'summon', x, y })"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "multimonitor-1-rust-bounds",
-      "title": "멀티모니터: Rust에서 전체 영역 계산",
-      "category": "functional",
-      "description": "available_monitors API로 모든 모니터 합산 영역 계산",
-      "steps": [
-        "lib.rs: available_monitors()로 모니터 목록 조회",
-        "lib.rs: 전체 영역 계산 (min x/y, max x+width/y+height)"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "multimonitor-2-window-resize",
-      "title": "멀티모니터: 창 크기/위치 동적 설정",
-      "category": "functional",
-      "description": "setup에서 계산된 영역으로 창 설정",
-      "steps": [
-        "lib.rs: setup에서 window.set_position(), set_size() 호출",
-        "tauri.conf.json: 기본 width/height 제거 또는 fallback용으로 유지"
-      ],
-      "status": "done",
-      "passes": true
-    },
-    {
-      "id": "multimonitor-3-js-offset",
-      "title": "멀티모니터: JS 좌표 오프셋 처리",
-      "category": "functional",
-      "description": "음수 좌표 모니터 대응 (필요시)",
-      "steps": [
-        "창 위치가 음수일 때 마우스 좌표 보정 필요 여부 확인",
-        "필요시 getCursorPosition에서 오프셋 적용"
-      ],
-      "status": "done",
-      "passes": true
+      "spec": {
+        "spritePack": {
+          "description": "스프라이트 팩은 앱이 로드하는 단일 단위. 메타데이터 + 상태별 프레임으로 구성.",
+          "manifestFile": "sprite.json",
+          "manifestSchema": {
+            "name": "string - 스프라이트 팩 이름",
+            "version": "number - 스펙 버전 (현재 1)",
+            "frameSize": "number - 프레임 크기 (정사각형, 픽셀 단위)",
+            "states": {
+              "[stateName]": {
+                "frames": "string[] - 프레임 이미지 경로 (상대 경로)",
+                "loop": "boolean - 반복 여부",
+                "frameDuration": "number? - 프레임당 ms (기본값 200)"
+              }
+            },
+            "fallback": "string - 없는 상태일 때 대체할 상태명"
+          },
+          "example": {
+            "name": "나의 강아지",
+            "version": 1,
+            "frameSize": 32,
+            "states": {
+              "idle": { "frames": ["idle/01.png"], "loop": true },
+              "walk": { "frames": ["walk/01.png", "walk/02.png", "walk/03.png"], "loop": true },
+              "eat": { "frames": ["eat/01.png", "eat/02.png", "eat/03.png", "eat/04.png", "eat/05.png"], "loop": false },
+              "happy": { "frames": ["happy/01.png"], "loop": false }
+            },
+            "fallback": "idle"
+          },
+          "requiredStates": ["idle", "walk", "eat", "happy"],
+          "notes": "requiredStates는 앱이 반드시 사용하는 상태. 이 상태들이 없으면 로딩 실패."
+        }
+      },
+      "phases": [
+        {
+          "id": "phase1",
+          "title": "Phase 1: 스프라이트 팩 로더",
+          "status": "todo",
+          "goal": "매니페스트 기반 스프라이트 로딩 시스템 구축",
+          "items": [
+            {
+              "id": "sp-types",
+              "title": "SpritePack 타입 정의",
+              "status": "todo",
+              "steps": [
+                "shared/types.ts: SpriteManifest, SpritePack 타입 추가",
+                "상태별 프레임 정보, fallback 로직 포함"
+              ]
+            },
+            {
+              "id": "sp-loader",
+              "title": "스프라이트 팩 로더 구현",
+              "status": "todo",
+              "steps": [
+                "game/sprite-pack-loader.ts: loadSpritePack(path) 함수",
+                "매니페스트 파싱 + 이미지 프리로드",
+                "유효성 검사 (requiredStates 확인)"
+              ]
+            },
+            {
+              "id": "sp-fallback",
+              "title": "fallback 로직 구현",
+              "status": "todo",
+              "steps": [
+                "요청한 상태가 없으면 fallback 상태 반환",
+                "fallback도 없으면 에러"
+              ]
+            },
+            {
+              "id": "sp-integrate",
+              "title": "기존 코드 연동",
+              "status": "todo",
+              "steps": [
+                "기존 하드코딩된 스프라이트 로딩을 SpritePack 기반으로 전환",
+                "맹구 기본 스프라이트를 sprite.json + 이미지로 재구성"
+              ]
+            },
+            {
+              "id": "sp-settings",
+              "title": "설정에서 스프라이트 팩 선택",
+              "status": "todo",
+              "steps": [
+                "트레이 메뉴에 '스프라이트 변경' 추가",
+                "폴더 선택 다이얼로그 → 로드 → 적용",
+                "선택한 경로 저장 (save.json)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "phase2",
+          "title": "Phase 2: AI 스프라이트 생성",
+          "status": "blocked",
+          "blockedBy": "phase1",
+          "goal": "사진 업로드 → AI가 스프라이트 팩 자동 생성",
+          "notes": "Phase 1 완료 후 상세 설계. AI 모델 선정, 프롬프트 설계, 생성 파이프라인 구축 필요.",
+          "items": []
+        }
+      ]
     }
   ]
 }
