@@ -132,8 +132,9 @@ fn snack_spend(app: AppHandle, state: State<SnackState>, amount: Option<u32>) ->
 fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
     let stats_item = MenuItem::with_id(app, "stats", "Stats", true, None::<&str>)?;
+    let summon_item = MenuItem::with_id(app, "summon", "맹구 부르기", true, None::<&str>)?;
     
-    let menu = Menu::with_items(app, &[&stats_item, &quit_item])?;
+    let menu = Menu::with_items(app, &[&summon_item, &stats_item, &quit_item])?;
     
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
@@ -163,6 +164,10 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                         .set_description(&message)
                         .set_level(rfd::MessageLevel::Info)
                         .show();
+                }
+                "summon" => {
+                    // Emit summon event to frontend
+                    app.emit("summon", ()).ok();
                 }
                 _ => {}
             }
