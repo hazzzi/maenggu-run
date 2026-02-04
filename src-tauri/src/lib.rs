@@ -8,6 +8,9 @@ use tauri::{
     AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State, WebviewWindow,
 };
 
+#[cfg(target_os = "macos")]
+use objc2_app_kit::NSWindowCollectionBehavior;
+
 // Save data types matching TypeScript
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -160,9 +163,31 @@ fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u
 
 fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
     if let Some((x, y, width, height)) = calculate_total_monitor_bounds(window) {
+        log::info!("Multimonitor bounds: pos=({}, {}), size={}x{}", x, y, width, height);
         window.set_position(PhysicalPosition::new(x, y))?;
         window.set_size(PhysicalSize::new(width, height))?;
+    } else {
+        log::warn!("Could not calculate multimonitor bounds");
     }
+    
+    // macOS: Show window on all Spaces (virtual desktops)
+    #[cfg(target_os = "macos")]
+    {
+        use objc2::rc::Retained;
+        use objc2_app_kit::NSWindow;
+        
+        if let Ok(ns_window_ptr) = window.ns_window() {
+            unsafe {
+                let ns_window: Retained<NSWindow> = Retained::retain(ns_window_ptr as *mut NSWindow).unwrap();
+                ns_window.setCollectionBehavior(
+                    NSWindowCollectionBehavior::CanJoinAllSpaces
+                    | NSWindowCollectionBehavior::FullScreenAuxiliary
+                );
+            }
+            log::info!("Set window to appear on all Spaces");
+        }
+    }
+    
     Ok(())
 }
 
