@@ -8,6 +8,11 @@ use tauri::{
     AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State, WebviewWindow,
 };
 
+#[cfg(target_os = "macos")]
+use cocoa::appkit::NSWindowCollectionBehavior;
+#[cfg(target_os = "macos")]
+use cocoa::base::id;
+
 // Save data types matching TypeScript
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -160,9 +165,30 @@ fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u
 
 fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
     if let Some((x, y, width, height)) = calculate_total_monitor_bounds(window) {
+        log::info!("Multimonitor bounds: pos=({}, {}), size={}x{}", x, y, width, height);
         window.set_position(PhysicalPosition::new(x, y))?;
         window.set_size(PhysicalSize::new(width, height))?;
+    } else {
+        log::warn!("Could not calculate multimonitor bounds");
     }
+    
+    // macOS: Show window on all Spaces (virtual desktops)
+    #[cfg(target_os = "macos")]
+    {
+        use cocoa::appkit::NSWindow;
+        
+        if let Ok(ns_window) = window.ns_window() {
+            unsafe {
+                let ns_window = ns_window as id;
+                ns_window.setCollectionBehavior_(
+                    NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
+                    | NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary
+                );
+            }
+            log::info!("Set window to appear on all Spaces");
+        }
+    }
+    
     Ok(())
 }
 
