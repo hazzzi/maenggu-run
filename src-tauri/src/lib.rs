@@ -9,9 +9,7 @@ use tauri::{
 };
 
 #[cfg(target_os = "macos")]
-use cocoa::appkit::NSWindowCollectionBehavior;
-#[cfg(target_os = "macos")]
-use cocoa::base::id;
+use objc2_app_kit::NSWindowCollectionBehavior;
 
 // Save data types matching TypeScript
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -175,14 +173,15 @@ fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn s
     // macOS: Show window on all Spaces (virtual desktops)
     #[cfg(target_os = "macos")]
     {
-        use cocoa::appkit::NSWindow;
+        use objc2::rc::Retained;
+        use objc2_app_kit::NSWindow;
         
-        if let Ok(ns_window) = window.ns_window() {
+        if let Ok(ns_window_ptr) = window.ns_window() {
             unsafe {
-                let ns_window = ns_window as id;
-                ns_window.setCollectionBehavior_(
-                    NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
-                    | NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary
+                let ns_window: Retained<NSWindow> = Retained::retain(ns_window_ptr as *mut NSWindow).unwrap();
+                ns_window.setCollectionBehavior(
+                    NSWindowCollectionBehavior::CanJoinAllSpaces
+                    | NSWindowCollectionBehavior::FullScreenAuxiliary
                 );
             }
             log::info!("Set window to appear on all Spaces");
