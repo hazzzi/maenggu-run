@@ -20,14 +20,17 @@ export const tauriMaengguApi: MaengguApi = {
     },
     getCursorPosition: async () => {
       try {
-        const cursor = await cursorPosition()
-        // cursorPosition()은 physical pixels 반환
-        // getBoundingClientRect()는 CSS pixels 사용
-        // Retina 등 HiDPI에서는 devicePixelRatio로 나눠야 함
+        const [cursor, windowPos] = await Promise.all([
+          cursorPosition(),
+          appWindow.outerPosition(),
+        ])
+        // cursorPosition()은 스크린 좌표 (physical pixels)
+        // outerPosition()은 창 위치 (physical pixels)
+        // 창 내부 좌표 = 스크린 좌표 - 창 위치
         const scale = window.devicePixelRatio || 1
         return {
-          x: cursor.x / scale,
-          y: cursor.y / scale,
+          x: (cursor.x - windowPos.x) / scale,
+          y: (cursor.y - windowPos.y) / scale,
         }
       } catch {
         return null

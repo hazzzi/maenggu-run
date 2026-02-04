@@ -5,7 +5,7 @@ use std::sync::Mutex;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Emitter, Manager, State,
+    AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State, WebviewWindow,
 };
 
 // Save data types matching TypeScript
@@ -129,6 +129,43 @@ fn snack_spend(app: AppHandle, state: State<SnackState>, amount: Option<u32>) ->
     success
 }
 
+/// Calculate bounding box that covers all monitors
+fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u32, u32)> {
+    let monitors = window.available_monitors().ok()?;
+    
+    if monitors.is_empty() {
+        return None;
+    }
+    
+    let mut min_x = i32::MAX;
+    let mut min_y = i32::MAX;
+    let mut max_x = i32::MIN;
+    let mut max_y = i32::MIN;
+    
+    for monitor in &monitors {
+        let pos = monitor.position();
+        let size = monitor.size();
+        
+        min_x = min_x.min(pos.x);
+        min_y = min_y.min(pos.y);
+        max_x = max_x.max(pos.x + size.width as i32);
+        max_y = max_y.max(pos.y + size.height as i32);
+    }
+    
+    let width = (max_x - min_x) as u32;
+    let height = (max_y - min_y) as u32;
+    
+    Some((min_x, min_y, width, height))
+}
+
+fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
+    if let Some((x, y, width, height)) = calculate_total_monitor_bounds(window) {
+        window.set_position(PhysicalPosition::new(x, y))?;
+        window.set_size(PhysicalSize::new(width, height))?;
+    }
+    Ok(())
+}
+
 fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
     let stats_item = MenuItem::with_id(app, "stats", "Stats", true, None::<&str>)?;
@@ -204,9 +241,12 @@ pub fn run() {
             // Setup system tray
             setup_tray(app.handle())?;
             
-            // Set initial click-through state (ignore cursor events by default)
-            // Frontend will toggle this on mouseenter/mouseleave
+            // Setup window to cover all monitors
             if let Some(window) = app.get_webview_window("main") {
+                setup_window_for_multimonitor(&window)?;
+                
+                // Set initial click-through state (ignore cursor events by default)
+                // Frontend will toggle this on mouseenter/mouseleave
                 window.set_ignore_cursor_events(true)?;
             }
             
