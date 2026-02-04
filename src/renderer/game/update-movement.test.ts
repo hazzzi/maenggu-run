@@ -22,7 +22,7 @@ describe('updateMovement', () => {
   it('should move towards target', () => {
     const state: MovementState = {
       position: { x: 100, y: 100 },
-      target: { x: 200, y: 100 },
+      target: { type: 'random', position: { x: 200, y: 100 } },
       speed: 3,
       facing: 'right',
     }
@@ -36,7 +36,7 @@ describe('updateMovement', () => {
   it('should snap to target when close enough', () => {
     const state: MovementState = {
       position: { x: 100, y: 100 },
-      target: { x: 101, y: 100 },
+      target: { type: 'random', position: { x: 101, y: 100 } },
       speed: 3,
       facing: 'right',
     }
@@ -50,7 +50,7 @@ describe('updateMovement', () => {
   it('should update facing direction when moving left', () => {
     const state: MovementState = {
       position: { x: 200, y: 100 },
-      target: { x: 100, y: 100 },
+      target: { type: 'random', position: { x: 100, y: 100 } },
       speed: 3,
       facing: 'right',
     }
@@ -63,7 +63,7 @@ describe('updateMovement', () => {
   it('should update facing direction when moving right', () => {
     const state: MovementState = {
       position: { x: 100, y: 100 },
-      target: { x: 200, y: 100 },
+      target: { type: 'random', position: { x: 200, y: 100 } },
       speed: 3,
       facing: 'left',
     }
@@ -76,7 +76,7 @@ describe('updateMovement', () => {
   it('should clamp position to bounds', () => {
     const state: MovementState = {
       position: { x: 10, y: 100 },
-      target: { x: -100, y: 100 },
+      target: { type: 'random', position: { x: -100, y: 100 } },
       speed: 50,
       facing: 'left',
     }
@@ -91,7 +91,7 @@ describe('stopMovement', () => {
   it('should set target to null', () => {
     const state: MovementState = {
       position: { x: 100, y: 100 },
-      target: { x: 200, y: 200 },
+      target: { type: 'random', position: { x: 200, y: 200 } },
       speed: 3,
       facing: 'right',
     }
@@ -112,9 +112,10 @@ describe('startMovement', () => {
       facing: 'right',
     }
 
-    const result = startMovement(state, { x: 300, y: 300 }, 5)
+    const target = { type: 'random' as const, position: { x: 300, y: 300 } }
+    const result = startMovement(state, target, 5)
 
-    expect(result.target).toEqual({ x: 300, y: 300 })
+    expect(result.target).toEqual(target)
     expect(result.speed).toBe(5)
   })
 })

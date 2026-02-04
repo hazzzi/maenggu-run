@@ -18,9 +18,13 @@ export type AnimationState = {
   readonly isComplete: boolean
 }
 
+export type MovementTarget =
+  | { readonly type: 'random'; readonly position: Position }
+  | { readonly type: 'summon'; readonly position: Position }
+
 export type MovementState = {
   readonly position: Position
-  readonly target: Position | null
+  readonly target: MovementTarget | null
   readonly speed: number
   readonly facing: FacingDirection
 }

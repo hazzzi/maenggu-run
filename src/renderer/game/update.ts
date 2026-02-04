@@ -157,13 +157,13 @@ function handleAnimationComplete(state: MaengguGameState): MaengguGameState {
 }
 
 function handleWalkStart(state: MaengguGameState, bounds: Bounds): MaengguGameState {
-  const target = generateRandomTarget(bounds)
+  const targetPosition = generateRandomTarget(bounds)
   const speed = getRandomSpeed()
 
   return {
     ...state,
     anim: resetAnimation('walk'),
-    movement: startMovement(state.movement, target, speed),
+    movement: startMovement(state.movement, { type: 'random', position: targetPosition }, speed),
   }
 }
 

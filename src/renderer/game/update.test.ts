@@ -138,7 +138,7 @@ describe('update', () => {
         anim: { state: 'walk', frameIndex: 0, elapsedMs: 0, isComplete: false },
         movement: {
           position: { x: 100, y: 100 },
-          target: { x: 200, y: 100 },
+          target: { type: 'random', position: { x: 200, y: 100 } },
           speed: 3,
           facing: 'right',
         },
@@ -155,7 +155,7 @@ describe('update', () => {
         anim: { state: 'walk', frameIndex: 0, elapsedMs: 0, isComplete: false },
         movement: {
           position: { x: 199, y: 100 },
-          target: { x: 200, y: 100 },
+          target: { type: 'random', position: { x: 200, y: 100 } },
           speed: 3,
           facing: 'right',
         },
