@@ -1,0 +1,34 @@
+{
+  "name": "맹구",
+  "version": 1,
+  "frameSize": 32,
+  "states": {
+    "idle": {
+      "frames": ["idle/mangoo_default.png"],
+      "loop": true
+    },
+    "walk": {
+      "frames": [
+        "walk/mangoo_02.png",
+        "walk/mangoo_03.png",
+        "walk/mangoo_04.png"
+      ],
+      "loop": true
+    },
+    "eat": {
+      "frames": [
+        "eat/mangoo_07.png",
+        "eat/mangoo_08.png",
+        "eat/mangoo_09.png",
+        "eat/mangoo_10.png",
+        "eat/mangoo_11.png"
+      ],
+      "loop": false
+    },
+    "happy": {
+      "frames": ["happy/mangoo_13.png"],
+      "loop": false
+    }
+  },
+  "fallback": "idle"
+}

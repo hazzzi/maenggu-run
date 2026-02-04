@@ -115,13 +115,13 @@
         {
           "id": "phase1",
           "title": "Phase 1: 스프라이트 팩 로더",
-          "status": "todo",
+          "status": "in_progress",
           "goal": "매니페스트 기반 스프라이트 로딩 시스템 구축",
           "items": [
             {
               "id": "sp-types",
               "title": "SpritePack 타입 정의",
-              "status": "todo",
+              "status": "done",
               "steps": [
                 "shared/types.ts: SpriteManifest, SpritePack 타입 추가",
                 "상태별 프레임 정보, fallback 로직 포함"
@@ -130,20 +130,28 @@
             {
               "id": "sp-loader",
               "title": "스프라이트 팩 로더 구현",
-              "status": "todo",
+              "status": "done",
               "steps": [
-                "game/sprite-pack-loader.ts: loadSpritePack(path) 함수",
-                "매니페스트 파싱 + 이미지 프리로드",
-                "유효성 검사 (requiredStates 확인)"
+                "game/sprite-pack.ts: loadSpritePack(path) 함수",
+                "매니페스트 파싱 + 유효성 검사 (requiredStates 확인)",
+                "getFrameUrls, getStateConfig, getFrameCount 등 헬퍼 함수"
               ]
             },
             {
               "id": "sp-fallback",
               "title": "fallback 로직 구현",
-              "status": "todo",
+              "status": "done",
               "steps": [
-                "요청한 상태가 없으면 fallback 상태 반환",
-                "fallback도 없으면 에러"
+                "getStateConfig에서 상태 없으면 fallback 반환",
+                "validateManifest에서 fallback 존재 여부 검증"
+              ]
+            },
+            {
+              "id": "sp-manifest",
+              "title": "맹구 기본 스프라이트 매니페스트",
+              "status": "done",
+              "steps": [
+                "assets/sprite.json 생성"
               ]
             },
             {
@@ -151,8 +159,9 @@
               "title": "기존 코드 연동",
               "status": "todo",
               "steps": [
-                "기존 하드코딩된 스프라이트 로딩을 SpritePack 기반으로 전환",
-                "맹구 기본 스프라이트를 sprite.json + 이미지로 재구성"
+                "기존 sprite-loader.ts → sprite-pack.ts 사용하도록 전환",
+                "Maenggu 컴포넌트가 SpritePack 기반으로 렌더링",
+                "update-animation.ts가 SpritePack에서 프레임 수/루프 여부 조회"
               ]
             },
             {
