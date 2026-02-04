@@ -55,4 +55,7 @@ export type MaengguApi = {
     spend: (amount?: number) => Promise<boolean>
     onUpdate: (callback: (snacks: number) => void) => () => void
   }
+  summon: {
+    onSummon: (callback: () => void) => () => void
+  }
 }

@@ -138,7 +138,7 @@ describe('update', () => {
         anim: { state: 'walk', frameIndex: 0, elapsedMs: 0, isComplete: false },
         movement: {
           position: { x: 100, y: 100 },
-          target: { x: 200, y: 100 },
+          target: { type: 'random', position: { x: 200, y: 100 } },
           speed: 3,
           facing: 'right',
         },
@@ -155,7 +155,7 @@ describe('update', () => {
         anim: { state: 'walk', frameIndex: 0, elapsedMs: 0, isComplete: false },
         movement: {
           position: { x: 199, y: 100 },
-          target: { x: 200, y: 100 },
+          target: { type: 'random', position: { x: 200, y: 100 } },
           speed: 3,
           facing: 'right',
         },
@@ -167,6 +167,50 @@ describe('update', () => {
       expect(result.state.anim.state).toBe('idle')
       expect(result.state.movement.target).toBeNull()
       expect(result.state.idleTimer.isActive).toBe(true)
+    })
+  })
+
+  describe('summon event', () => {
+    it('should start walking towards summon position', () => {
+      const state = createTestState()
+
+      const result = update(state, 16, [{ type: 'summon', x: 500, y: 300 }], bounds)
+
+      expect(result.state.anim.state).toBe('walk')
+      expect(result.state.movement.target).toEqual({
+        type: 'summon',
+        position: { x: 500, y: 300 },
+      })
+      expect(result.state.movement.speed).toBe(4) // SUMMON_SPEED
+    })
+
+    it('should ignore summon during eat animation', () => {
+      const state = createTestState({
+        anim: { state: 'eat', frameIndex: 0, elapsedMs: 0, isComplete: false },
+      })
+
+      const result = update(state, 16, [{ type: 'summon', x: 500, y: 300 }], bounds)
+
+      expect(result.state.anim.state).toBe('eat')
+      expect(result.state.movement.target).toBeNull()
+    })
+
+    it('should transition to happy when summon target reached', () => {
+      const state = createTestState({
+        anim: { state: 'walk', frameIndex: 0, elapsedMs: 0, isComplete: false },
+        movement: {
+          position: { x: 499, y: 300 },
+          target: { type: 'summon', position: { x: 500, y: 300 } },
+          speed: 4,
+          facing: 'right',
+        },
+        idleTimer: { remainingMs: 0, isActive: false },
+      })
+
+      const result = update(state, 16, [], bounds)
+
+      expect(result.state.anim.state).toBe('happy')
+      expect(result.state.movement.target).toBeNull()
     })
   })
 })

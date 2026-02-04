@@ -75,6 +75,21 @@ export const tauriMaengguApi: MaengguApi = {
       }
     },
   },
+  summon: {
+    onSummon: (callback: () => void): (() => void) => {
+      let unlisten: UnlistenFn | null = null
+
+      listen('summon', () => {
+        callback()
+      }).then((fn) => {
+        unlisten = fn
+      })
+
+      return () => {
+        unlisten?.()
+      }
+    },
+  },
 }
 
 // Tauri 환경인지 확인

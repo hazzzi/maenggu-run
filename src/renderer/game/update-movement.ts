@@ -1,21 +1,27 @@
 import { type Bounds, clampPositionToBounds } from './target'
-import { type FacingDirection, type MovementState, type Position } from './types'
+import { type FacingDirection, type MovementState, type MovementTarget, type Position } from './types'
 import { calculateVelocity } from './vector'
+
+export type MovementUpdateResult = {
+  readonly state: MovementState
+  readonly reachedTarget: MovementTarget | null
+}
 
 export function updateMovement(
   movement: MovementState,
   deltaMs: number,
   bounds: Bounds,
-): MovementState {
+): MovementUpdateResult {
   const { position, target, speed } = movement
 
   // 타겟이 없으면 이동하지 않음
   if (target === null) {
-    return movement
+    return { state: movement, reachedTarget: null }
   }
 
-  const dx = target.x - position.x
-  const dy = target.y - position.y
+  const targetPos = target.position
+  const dx = targetPos.x - position.x
+  const dy = targetPos.y - position.y
   const distanceToTarget = Math.sqrt(dx ** 2 + dy ** 2)
 
   // 방향 결정
@@ -24,16 +30,19 @@ export function updateMovement(
   // 타겟 도달 판정 (speed 기준)
   if (distanceToTarget < speed) {
     return {
-      ...movement,
-      position: target,
-      target: null,
-      facing,
+      state: {
+        ...movement,
+        position: targetPos,
+        target: null,
+        facing,
+      },
+      reachedTarget: target,
     }
   }
 
   // 이동 계산 (deltaMs를 프레임 단위로 변환: 60fps 기준)
   const frameRatio = deltaMs / (1000 / 60)
-  const velocity = calculateVelocity(position, target, speed * frameRatio)
+  const velocity = calculateVelocity(position, targetPos, speed * frameRatio)
 
   const nextPosition: Position = {
     x: position.x + velocity.dx,
@@ -43,9 +52,12 @@ export function updateMovement(
   const clampedPosition = clampPositionToBounds(nextPosition, bounds)
 
   return {
-    ...movement,
-    position: clampedPosition,
-    facing,
+    state: {
+      ...movement,
+      position: clampedPosition,
+      facing,
+    },
+    reachedTarget: null,
   }
 }
 
@@ -56,7 +68,7 @@ export function stopMovement(movement: MovementState): MovementState {
   }
 }
 
-export function startMovement(movement: MovementState, target: Position, speed: number): MovementState {
+export function startMovement(movement: MovementState, target: MovementTarget, speed: number): MovementState {
   return {
     ...movement,
     target,

@@ -18,9 +18,13 @@ export type AnimationState = {
   readonly isComplete: boolean
 }
 
+export type MovementTarget =
+  | { readonly type: 'random'; readonly position: Position }
+  | { readonly type: 'summon'; readonly position: Position }
+
 export type MovementState = {
   readonly position: Position
-  readonly target: Position | null
+  readonly target: MovementTarget | null
   readonly speed: number
   readonly facing: FacingDirection
 }
@@ -42,6 +46,7 @@ export type GameEvent =
   | { readonly type: 'click'; readonly position: Position }
   | { readonly type: 'feed-success' }
   | { readonly type: 'feed-fail' }
+  | { readonly type: 'summon'; readonly x: number; readonly y: number }
 
 // === 액션 (게임 루프 → 외부) ===
 

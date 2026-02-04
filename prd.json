@@ -288,6 +288,115 @@
       ],
       "status": "done",
       "passes": true
+    },
+    {
+      "id": "summon-1-types",
+      "title": "부르기: GameEvent 타입 추가",
+      "category": "functional",
+      "description": "summon 이벤트 타입 정의",
+      "steps": [
+        "types.ts: GameEvent에 { type: 'summon', x: number, y: number } 추가"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "summon-2-target-union",
+      "title": "부르기: MovementTarget Tagged Union",
+      "category": "functional",
+      "description": "target을 Tagged Union으로 변경하여 도착 시 분기 가능하게",
+      "steps": [
+        "types.ts: MovementTarget = { type: 'random', position } | { type: 'summon', position }",
+        "types.ts: MovementState.target 타입 변경",
+        "update-movement.ts: 기존 target 사용처 수정 (target.position 접근)"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "summon-3-speed",
+      "title": "부르기: 속도 상수 추가",
+      "category": "functional",
+      "description": "summon 시 빠른 속도 적용",
+      "steps": [
+        "constants.ts: SUMMON_SPEED 추가 (MOVEMENT.SPEED * 2 정도)",
+        "update-movement.ts: target.type === 'summon'이면 SUMMON_SPEED 사용"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "summon-4-handler",
+      "title": "부르기: handleSummon 로직",
+      "category": "functional",
+      "description": "summon 이벤트 처리 + 도착 시 happy",
+      "steps": [
+        "update.ts: handleSummon() - walk 전환 + summon target 설정",
+        "update-movement.ts: handleTargetReached()에서 summon 도착 시 happy 애니메이션"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "summon-5-tray",
+      "title": "부르기: 트레이 메뉴 항목",
+      "category": "functional",
+      "description": "Rust 트레이에 '맹구 부르기' 추가",
+      "steps": [
+        "lib.rs: 트레이 메뉴에 'summon' 항목 추가",
+        "lib.rs: 클릭 시 'summon' 이벤트 emit (payload 없이)"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "summon-6-bridge",
+      "title": "부르기: JS 이벤트 연결",
+      "category": "functional",
+      "description": "Tauri 이벤트 → JS 연결",
+      "steps": [
+        "shared/types.ts: MaengguApi.onSummon 추가",
+        "tauri-api.ts: listen('summon') 구현",
+        "useMaenggu: onSummon 구독 → 마우스 위치 조회 → pushEvent({ type: 'summon', x, y })"
+      ],
+      "status": "done",
+      "passes": true
+    },
+    {
+      "id": "multimonitor-1-rust-bounds",
+      "title": "멀티모니터: Rust에서 전체 영역 계산",
+      "category": "functional",
+      "description": "available_monitors API로 모든 모니터 합산 영역 계산",
+      "steps": [
+        "lib.rs: available_monitors()로 모니터 목록 조회",
+        "lib.rs: 전체 영역 계산 (min x/y, max x+width/y+height)"
+      ],
+      "status": "todo",
+      "passes": false
+    },
+    {
+      "id": "multimonitor-2-window-resize",
+      "title": "멀티모니터: 창 크기/위치 동적 설정",
+      "category": "functional",
+      "description": "setup에서 계산된 영역으로 창 설정",
+      "steps": [
+        "lib.rs: setup에서 window.set_position(), set_size() 호출",
+        "tauri.conf.json: 기본 width/height 제거 또는 fallback용으로 유지"
+      ],
+      "status": "todo",
+      "passes": false
+    },
+    {
+      "id": "multimonitor-3-js-offset",
+      "title": "멀티모니터: JS 좌표 오프셋 처리",
+      "category": "functional",
+      "description": "음수 좌표 모니터 대응 (필요시)",
+      "steps": [
+        "창 위치가 음수일 때 마우스 좌표 보정 필요 여부 확인",
+        "필요시 getCursorPosition에서 오프셋 적용"
+      ],
+      "status": "todo",
+      "passes": false
     }
   ]
 }
