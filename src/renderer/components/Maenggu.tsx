@@ -27,9 +27,6 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
     const currentFrame = frames[frameIndex % frames.length]
 
     const displaySize = SPRITE_SIZE * scale
-    // 정수 좌표로 반올림하여 subpixel rendering 방지
-    const left = Math.round(position.x - displaySize / 2)
-    const top = Math.round(position.y - displaySize / 2)
 
     return (
       <div
@@ -38,8 +35,8 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
         onContextMenu={onContextMenu}
         style={{
           position: 'absolute',
-          left,
-          top,
+          left: position.x - displaySize / 2,
+          top: position.y - displaySize / 2,
           width: displaySize,
           height: displaySize,
           pointerEvents: 'auto',
@@ -53,15 +50,8 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
           style={{
             width: '100%',
             height: '100%',
-            // 픽셀 아트 crisp rendering
             imageRendering: 'pixelated',
-            // Firefox 호환
-            // @ts-expect-error - Firefox specific property
-            MozCrispEdges: 'crisp-edges',
-            // subpixel 위치 방지
             transform: facing === 'left' ? 'scaleX(-1)' : 'scaleX(1)',
-            // GPU 렌더링으로 일관성 확보
-            willChange: 'transform',
           }}
         />
       </div>

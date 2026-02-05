@@ -5,7 +5,6 @@ import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import {
   DEFAULT_SAVE_DATA,
   type MaengguApi,
-  type MonitorBounds,
   type SaveData,
   type SaveLoadResult,
 } from '../shared/types'
@@ -91,15 +90,6 @@ export const tauriMaengguApi: MaengguApi = {
 
       return () => {
         unlisten?.()
-      }
-    },
-  },
-  monitor: {
-    getBounds: async (): Promise<MonitorBounds | null> => {
-      try {
-        return await invoke<MonitorBounds | null>('get_monitor_bounds')
-      } catch {
-        return null
       }
     },
   },

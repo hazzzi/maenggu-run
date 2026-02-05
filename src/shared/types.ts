@@ -74,23 +74,6 @@ export type CursorPosition = {
   readonly y: number
 }
 
-// Monitor bounds for multi-monitor support
-export type MonitorInfo = {
-  readonly x: number
-  readonly y: number
-  readonly width: number
-  readonly height: number
-  readonly scale_factor: number
-}
-
-export type MonitorBounds = {
-  readonly monitors: readonly MonitorInfo[]
-  readonly total_width: number
-  readonly total_height: number
-  readonly offset_x: number
-  readonly offset_y: number
-}
-
 // Maenggu API interface exposed to renderer
 export type MaengguApi = {
   mouse: {
@@ -107,8 +90,5 @@ export type MaengguApi = {
   }
   summon: {
     onSummon: (callback: () => void) => () => void
-  }
-  monitor: {
-    getBounds: () => Promise<MonitorBounds | null>
   }
 }

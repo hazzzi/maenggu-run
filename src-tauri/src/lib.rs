@@ -272,73 +272,11 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-// Monitor info for frontend
-#[derive(Debug, Clone, Serialize)]
-pub struct MonitorInfo {
-    pub x: i32,
-    pub y: i32,
-    pub width: u32,
-    pub height: u32,
-    pub scale_factor: f64,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub struct MonitorBounds {
-    pub monitors: Vec<MonitorInfo>,
-    pub total_width: u32,
-    pub total_height: u32,
-    pub offset_x: i32,
-    pub offset_y: i32,
-}
-
-#[tauri::command]
-fn get_monitor_bounds(window: WebviewWindow) -> Option<MonitorBounds> {
-    let monitors = window.available_monitors().ok()?;
-    
-    if monitors.is_empty() {
-        return None;
-    }
-    
-    let mut min_x = i32::MAX;
-    let mut min_y = i32::MAX;
-    let mut max_x = i32::MIN;
-    let mut max_y = i32::MIN;
-    
-    let mut monitor_infos = Vec::new();
-    
-    for monitor in &monitors {
-        let pos = monitor.position();
-        let size = monitor.size();
-        let scale = monitor.scale_factor();
-        
-        min_x = min_x.min(pos.x);
-        min_y = min_y.min(pos.y);
-        max_x = max_x.max(pos.x + size.width as i32);
-        max_y = max_y.max(pos.y + size.height as i32);
-        
-        monitor_infos.push(MonitorInfo {
-            x: pos.x,
-            y: pos.y,
-            width: size.width,
-            height: size.height,
-            scale_factor: scale,
-        });
-    }
-    
-    Some(MonitorBounds {
-        monitors: monitor_infos,
-        total_width: (max_x - min_x) as u32,
-        total_height: (max_y - min_y) as u32,
-        offset_x: min_x,
-        offset_y: min_y,
-    })
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .manage(SnackState::default())
-        .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend, get_monitor_bounds])
+        .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(

@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { type MonitorBounds } from '../../shared/types'
 import { MAX_DELTA_MS } from '../game/constants'
 import { createInitialState } from '../game/create-initial-state'
-import { getWindowBounds, setMonitorRegions } from '../game/target'
+import { getWindowBounds } from '../game/target'
 import { type GameAction, type GameEvent, type MaengguGameState } from '../game/types'
 import { update, type UpdateResult } from '../game/update'
 
@@ -50,15 +49,6 @@ export function useMaenggu(
 
   const pushEvent = useCallback((event: GameEvent) => {
     eventsRef.current.push(event)
-  }, [])
-
-  // 모니터 정보 로드 (한 번만)
-  useEffect(() => {
-    void window.maenggu.monitor.getBounds().then((monitorBounds: MonitorBounds | null) => {
-      if (monitorBounds) {
-        setMonitorRegions(monitorBounds.monitors, monitorBounds.offset_x, monitorBounds.offset_y)
-      }
-    })
   }, [])
 
   // summon 이벤트 구독
