@@ -63,7 +63,7 @@
     {
       "id": "v2.3-bugfix",
       "title": "v2.3: 버그 수정",
-      "status": "in_progress",
+      "status": "done",
       "background": "동생(Windows)과 동료(macOS 멀티모니터)에게서 버그 제보 받음.",
       "goal": "안정성 개선 - 게임 방해 없이, 멀티모니터에서도 정상 동작",
       "items": [
@@ -94,10 +94,10 @@
         {
           "id": "bug-hidpi-render",
           "title": "[고해상도] 스프라이트 깨짐",
-          "status": "investigating",
-          "symptom": "고해상도 모니터에서 픽셀이 깨져보임",
-          "cause": "추가 조사 필요 - DPI 스케일링 또는 CSS 렌더링 이슈 가능성",
-          "solution": "조사 후 결정"
+          "status": "done",
+          "symptom": "고해상도 모니터에서 픽셀이 일정하지 않게 보임",
+          "cause": "1.5x 비정수 스케일 + subpixel 위치로 인한 픽셀 아트 렌더링 불일치",
+          "solution": "스케일 2x(정수배)로 변경 + Math.round로 좌표 정수화 + willChange로 GPU 렌더링"
         }
       ]
     },
