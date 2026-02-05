@@ -61,6 +61,47 @@
       ]
     },
     {
+      "id": "v2.3-bugfix",
+      "title": "v2.3: 버그 수정",
+      "status": "in_progress",
+      "background": "동생(Windows)과 동료(macOS 멀티모니터)에게서 버그 제보 받음.",
+      "goal": "안정성 개선 - 게임 방해 없이, 멀티모니터에서도 정상 동작",
+      "items": [
+        {
+          "id": "bug-win-focus",
+          "title": "[Windows] 클릭 시 게임 화면 전환",
+          "status": "todo",
+          "symptom": "풀스크린 게임 중 맹구 클릭 → 게임이 백그라운드로 밀림",
+          "cause": "맹구 창이 포커스를 가져가면서 풀스크린 앱이 전환됨",
+          "solution": "Windows에서 WS_EX_NOACTIVATE 스타일 적용 필요"
+        },
+        {
+          "id": "bug-sleep-speed",
+          "title": "[공통] Sleep 후 빠른 움직임",
+          "status": "todo",
+          "symptom": "화면 꺼놨다 다시 켜면 맹구가 순간이동 수준으로 빠름",
+          "cause": "deltaMs가 sleep 시간(수십~수백초)을 포함하여 한 프레임에 엄청난 거리 이동",
+          "solution": "MAX_DELTA_MS 상한선(100ms) 추가"
+        },
+        {
+          "id": "bug-multimon-bounds",
+          "title": "[멀티모니터] 화면 밖 벗어남",
+          "status": "todo",
+          "symptom": "3모니터(좌-하단-우 배치)에서 맹구가 화면 밖으로 나감",
+          "cause": "getWindowBounds()가 window.innerWidth/Height 반환 → 실제 멀티모니터 bounds와 불일치. negative 좌표 모니터 미고려",
+          "solution": "Tauri에서 실제 bounds 정보를 JS로 전달, clamp 로직에서 offset 고려"
+        },
+        {
+          "id": "bug-hidpi-render",
+          "title": "[고해상도] 스프라이트 깨짐",
+          "status": "investigating",
+          "symptom": "고해상도 모니터에서 픽셀이 깨져보임",
+          "cause": "추가 조사 필요 - DPI 스케일링 또는 CSS 렌더링 이슈 가능성",
+          "solution": "조사 후 결정"
+        }
+      ]
+    },
+    {
       "id": "v3-custom-sprite",
       "title": "v3: 커스텀 스프라이트",
       "status": "planning",
