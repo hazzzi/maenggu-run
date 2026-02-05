@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { MAX_DELTA_MS } from '../game/constants'
 import { createInitialState } from '../game/create-initial-state'
 import { getWindowBounds } from '../game/target'
 import { type GameAction, type GameEvent, type MaengguGameState } from '../game/types'
@@ -68,7 +69,7 @@ export function useMaenggu(
     let rafId: number
 
     const loop = (now: number): void => {
-      const deltaMs = now - lastTime
+      const deltaMs = Math.min(now - lastTime, MAX_DELTA_MS)
       lastTime = now
 
       const events = eventsRef.current
