@@ -70,7 +70,7 @@
         {
           "id": "bug-win-focus",
           "title": "[Windows] 클릭 시 게임 화면 전환",
-          "status": "todo",
+          "status": "done",
           "symptom": "풀스크린 게임 중 맹구 클릭 → 게임이 백그라운드로 밀림",
           "cause": "맹구 창이 포커스를 가져가면서 풀스크린 앱이 전환됨",
           "solution": "Windows에서 WS_EX_NOACTIVATE 스타일 적용 필요"
