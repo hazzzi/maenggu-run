@@ -8,6 +8,7 @@
   "permissions": [
     "core:default",
     "core:window:allow-set-ignore-cursor-events",
-    "clipboard-manager:allow-write-text"
+    "clipboard-manager:allow-write-text",
+    "global-shortcut:allow-register"
   ]
 }

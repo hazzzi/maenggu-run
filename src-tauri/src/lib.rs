@@ -343,10 +343,30 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+fn setup_global_shortcut(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
+    
+    // Cmd+Shift+M (macOS) / Ctrl+Shift+M (Windows)
+    let shortcut: Shortcut = "CmdOrCtrl+Shift+M".parse()?;
+    
+    let app_handle = app.clone();
+    app.global_shortcut().on_shortcut(shortcut, move |_app, _shortcut, event| {
+        if event.state == ShortcutState::Pressed {
+            // Emit summon event (same as tray menu)
+            app_handle.emit("summon", ()).ok();
+            log::info!("Summon shortcut triggered");
+        }
+    })?;
+    
+    log::info!("Registered global shortcut: Cmd/Ctrl+Shift+M");
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(SnackState::default())
         .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend])
         .setup(|app| {
@@ -360,6 +380,9 @@ pub fn run() {
             
             // Setup system tray
             setup_tray(app.handle())?;
+            
+            // Setup global shortcut for summon
+            setup_global_shortcut(app.handle())?;
             
             // Setup window to cover all monitors
             if let Some(window) = app.get_webview_window("main") {
