@@ -1,14 +1,17 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 import { FloatingText } from './components/FloatingText'
 import { Maenggu } from './components/Maenggu'
+import { SpeechBubble } from './components/SpeechBubble'
 import { useFloatingTexts } from './hooks/useFloatingTexts'
 import { useMaenggu } from './hooks/useMaenggu'
+import { useMealReminder } from './hooks/useMealReminder'
 import { useMouseCollider } from './hooks/useMouseCollider'
 
 function App(): JSX.Element {
   const maengguRef = useRef<HTMLDivElement>(null)
   const pendingFeedRef = useRef(false)
+  const [speechBubble, setSpeechBubble] = useState<string | null>(null)
 
   const { floatingTexts, addFloatingText, removeFloatingText } = useFloatingTexts()
 
@@ -22,6 +25,13 @@ function App(): JSX.Element {
   const { gameState, pushEvent } = useMaenggu(handleFloatingText)
 
   useMouseCollider(maengguRef)
+
+  // 밥시간 알림
+  const handleMealReminder = useCallback((message: string) => {
+    setSpeechBubble(message)
+  }, [])
+
+  useMealReminder(handleMealReminder)
 
   // 클릭 핸들러
   const handlePointerDown = useCallback(
@@ -75,6 +85,13 @@ function App(): JSX.Element {
           }}
         />
       ))}
+      {speechBubble && (
+        <SpeechBubble
+          text={speechBubble}
+          position={gameState.movement.position}
+          onDismiss={() => setSpeechBubble(null)}
+        />
+      )}
     </div>
   )
 }

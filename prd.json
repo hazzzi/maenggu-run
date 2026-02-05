@@ -118,9 +118,9 @@
         {
           "id": "ux-summon-shortcut",
           "title": "부르기 단축키",
-          "status": "todo",
+          "status": "done",
           "goal": "글로벌 단축키로 맹구 부르기 (트레이 메뉴 안 거치고)",
-          "notes": "Cmd+Shift+M 또는 사용자 설정 가능하게? tauri-plugin-global-shortcut 필요"
+          "solution": "Cmd+Shift+M (macOS) / Ctrl+Shift+M (Windows)"
         },
         {
           "id": "ux-meal-reminder",
