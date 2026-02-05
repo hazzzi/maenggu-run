@@ -11,6 +11,11 @@ use tauri::{
 #[cfg(target_os = "macos")]
 use objc2_app_kit::NSWindowCollectionBehavior;
 
+#[cfg(target_os = "windows")]
+use windows::Win32::UI::WindowsAndMessaging::{
+    GetWindowLongPtrW, SetWindowLongPtrW, GWL_EXSTYLE, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+};
+
 // Save data types matching TypeScript
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -185,6 +190,24 @@ fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn s
                 );
             }
             log::info!("Set window to appear on all Spaces");
+        }
+    }
+    
+    // Windows: Prevent window from stealing focus (WS_EX_NOACTIVATE)
+    #[cfg(target_os = "windows")]
+    {
+        use windows::Win32::Foundation::HWND;
+        
+        if let Ok(hwnd_ptr) = window.hwnd() {
+            let hwnd = HWND(hwnd_ptr.0);
+            unsafe {
+                let ex_style = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+                // Add WS_EX_NOACTIVATE to prevent focus stealing
+                // Add WS_EX_TOOLWINDOW to hide from taskbar/alt-tab
+                let new_style = ex_style | WS_EX_NOACTIVATE.0 as isize | WS_EX_TOOLWINDOW.0 as isize;
+                SetWindowLongPtrW(hwnd, GWL_EXSTYLE, new_style);
+            }
+            log::info!("Set window to not steal focus (WS_EX_NOACTIVATE)");
         }
     }
     
