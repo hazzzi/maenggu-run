@@ -102,9 +102,9 @@
         {
           "id": "bug-report",
           "title": "버그 리포트 기능",
-          "status": "todo",
+          "status": "done",
           "goal": "트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사",
-          "info": ["OS 정보", "모니터 개수/위치/크기/scale", "window.innerWidth/Height", "devicePixelRatio", "앱 버전"]
+          "info": ["OS 정보", "모니터 개수/위치/크기/scale", "Window physical/CSS pixels", "앱 버전"]
         }
       ]
     },

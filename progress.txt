@@ -1168,14 +1168,22 @@ src/renderer/game/
   - WS_EX_TOOLWINDOW: 작업표시줄/Alt+Tab에서 숨김
 - Files: Cargo.toml, lib.rs
 
-[2026-02-06 bug-hidpi-render] 고해상도 깨짐 ✅
+[2026-02-06 bug-hidpi-render] 고해상도 깨짐 🔍 blocked
 - 증상: 고해상도 모니터에서 픽셀이 일정하지 않게 보임
-- 원인: 1.5x 비정수 스케일 + subpixel 위치 → 픽셀 아트 렌더링 불일치
-- 해결:
-  - SPRITE_DISPLAY_SCALE: 1.5 → 2 (정수배)
-  - Math.round()로 좌표 정수화 (subpixel 방지)
-  - willChange: 'transform' 추가 (GPU 렌더링 일관성)
-- Files: game/constants.ts, components/Maenggu.tsx
+- 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
+
+[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 🔍 blocked
+- 증상: 3모니터 배치에서 맹구가 화면 밖으로 나감
+- 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
+- 참고: 첫 시도한 멀티모니터 로직이 싱글 모니터에서 오히려 문제 발생 → revert
+
+[2026-02-06 bug-report] 버그 리포트 기능 ✅
+- 목표: 트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사
+- 구현:
+  - 트레이 메뉴에 "버그 신고" 항목 추가
+  - tauri-plugin-clipboard-manager로 클립보드 복사
+  - 수집 정보: OS, 아키텍처, 앱 버전, 모니터 정보, 창 크기(physical/CSS)
+- Files: Cargo.toml, capabilities/default.json, lib.rs
 
 **Feedback Loops**:
 - typecheck: ✅ pass
@@ -1185,6 +1193,6 @@ src/renderer/game/
 **커밋**:
 - 4cccbc8 - docs: add v2.3 bugfix plan to prd.json
 - 19ff17f - fix: cap deltaMs to prevent speed burst after sleep/tab switch
-- a4cf555 - fix: add multi-monitor bounds support to prevent sprite going off-screen
 - 4da787e - fix(windows): prevent window from stealing focus with WS_EX_NOACTIVATE
-- 8770355 - fix: improve pixel art rendering on high-DPI displays
+- 99d4f49 - revert: remove broken multi-monitor and hidpi fixes
+- (pending) - feat: add bug report feature to tray menu

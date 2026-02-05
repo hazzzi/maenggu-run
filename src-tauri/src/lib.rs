@@ -214,12 +214,61 @@ fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn s
     Ok(())
 }
 
-fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
-    let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-    let stats_item = MenuItem::with_id(app, "stats", "Stats", true, None::<&str>)?;
-    let summon_item = MenuItem::with_id(app, "summon", "맹구 부르기", true, None::<&str>)?;
+fn collect_bug_report(window: &WebviewWindow) -> String {
+    let app_version = env!("CARGO_PKG_VERSION");
+    let os_info = std::env::consts::OS;
+    let arch = std::env::consts::ARCH;
     
-    let menu = Menu::with_items(app, &[&summon_item, &stats_item, &quit_item])?;
+    let mut report = format!(
+        "## Maenggu Bug Report\n\n\
+         **App Version:** {}\n\
+         **OS:** {} ({})\n\n",
+        app_version, os_info, arch
+    );
+    
+    // Monitor info
+    if let Ok(monitors) = window.available_monitors() {
+        report.push_str(&format!("**Monitors:** {} 개\n\n", monitors.len()));
+        
+        for (i, monitor) in monitors.iter().enumerate() {
+            let pos = monitor.position();
+            let size = monitor.size();
+            let scale = monitor.scale_factor();
+            report.push_str(&format!(
+                "- Monitor {}: pos=({}, {}), size={}x{}, scale={}\n",
+                i + 1, pos.x, pos.y, size.width, size.height, scale
+            ));
+        }
+    }
+    
+    // Window info (physical pixels)
+    if let (Ok(inner_size), Ok(outer_pos), Ok(scale)) = (
+        window.inner_size(), 
+        window.outer_position(),
+        window.scale_factor()
+    ) {
+        let css_width = inner_size.width as f64 / scale;
+        let css_height = inner_size.height as f64 / scale;
+        report.push_str(&format!(
+            "\n**Window (physical):** {}x{}, pos=({}, {})\n\
+             **Window (CSS px):** {:.0}x{:.0}, scale={}\n",
+            inner_size.width, inner_size.height, outer_pos.x, outer_pos.y,
+            css_width, css_height, scale
+        ));
+    }
+    
+    report.push_str("\n---\n_이 내용을 GitHub Issue에 붙여넣어 주세요._\n");
+    
+    report
+}
+
+fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    let quit_item = MenuItem::with_id(app, "quit", "끝내기", true, None::<&str>)?;
+    let stats_item = MenuItem::with_id(app, "stats", "상태", true, None::<&str>)?;
+    let summon_item = MenuItem::with_id(app, "summon", "맹구 부르기", true, None::<&str>)?;
+    let bug_report_item = MenuItem::with_id(app, "bug_report", "버그 신고", true, None::<&str>)?;
+    
+    let menu = Menu::with_items(app, &[&summon_item, &stats_item, &bug_report_item, &quit_item])?;
     
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
@@ -254,6 +303,28 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                     // Emit summon event to frontend
                     app.emit("summon", ()).ok();
                 }
+                "bug_report" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let report = collect_bug_report(&window);
+                        
+                        // Copy to clipboard using the extension trait
+                        use tauri_plugin_clipboard_manager::ClipboardExt;
+                        let _ = app.clipboard().write_text(&report);
+                        
+                        // Show dialog
+                        rfd::MessageDialog::new()
+                            .set_title("버그 신고")
+                            .set_description(&format!(
+                                "시스템 정보가 클립보드에 복사되었습니다!\n\n\
+                                 GitHub Issue에 붙여넣기(Cmd+V)해 주세요:\n\
+                                 https://github.com/hazzzi/maenggu-run/issues/new\n\n\
+                                 ---\n{}",
+                                report
+                            ))
+                            .set_level(rfd::MessageLevel::Info)
+                            .show();
+                    }
+                }
                 _ => {}
             }
         })
@@ -275,6 +346,7 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .manage(SnackState::default())
         .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend])
         .setup(|app| {
