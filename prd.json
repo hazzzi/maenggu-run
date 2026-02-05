@@ -86,7 +86,7 @@
         {
           "id": "bug-multimon-bounds",
           "title": "[멀티모니터] 화면 밖 벗어남",
-          "status": "todo",
+          "status": "done",
           "symptom": "3모니터(좌-하단-우 배치)에서 맹구가 화면 밖으로 나감",
           "cause": "getWindowBounds()가 window.innerWidth/Height 반환 → 실제 멀티모니터 bounds와 불일치. negative 좌표 모니터 미고려",
           "solution": "Tauri에서 실제 bounds 정보를 JS로 전달, clamp 로직에서 offset 고려"
