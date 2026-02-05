@@ -109,6 +109,36 @@
       ]
     },
     {
+      "id": "v2.4-ux",
+      "title": "v2.4: UX 개선",
+      "status": "planning",
+      "background": "Issue #5 기능 요청. 더 생동감 있고 유용한 데스크탑 펫 경험 제공.",
+      "goal": "부르기 단축키, 밥시간 알림, 잠자기 상태 추가",
+      "items": [
+        {
+          "id": "ux-summon-shortcut",
+          "title": "부르기 단축키",
+          "status": "todo",
+          "goal": "글로벌 단축키로 맹구 부르기 (트레이 메뉴 안 거치고)",
+          "notes": "Cmd+Shift+M 또는 사용자 설정 가능하게? tauri-plugin-global-shortcut 필요"
+        },
+        {
+          "id": "ux-meal-reminder",
+          "title": "밥시간 알림",
+          "status": "todo",
+          "goal": "11:50, 17:50에 말풍선으로 '맘마 10분전! ><' 알림",
+          "notes": "시간 체크 로직 + 말풍선 UI. 시간 설정 가능하게 할지?"
+        },
+        {
+          "id": "ux-sleep-state",
+          "title": "잠자기 상태",
+          "status": "todo",
+          "goal": "오래 방치 시 구석에서 자는 모습",
+          "notes": "새 상태(sleep) + 스프라이트 필요. 방치 시간 기준 정의 필요 (예: 10분?)"
+        }
+      ]
+    },
+    {
       "id": "v3-custom-sprite",
       "title": "v3: 커스텀 스프라이트",
       "status": "planning",
