@@ -1133,3 +1133,66 @@ src/renderer/game/
 **Feedback Loops**:
 - pnpm build: ✅ pass
 - .app 생성: ✅ pass (8.6MB)
+
+---
+
+## 2026-02-06 - v2.3 버그 수정
+
+**PRD**: v2.3-bugfix (버그 수정)
+
+**배경**:
+- 동생(Windows): 게임하다가 맹구 클릭하면 게임 화면 전환됨
+- 동료(macOS 멀티모니터 3대): Sleep 후 빠른 움직임, 화면 밖 벗어남, 고해상도 깨짐
+
+---
+
+[2026-02-06 bug-sleep-speed] Sleep 후 빠른 움직임 ✅
+- 원인: sleep 복귀 시 deltaMs가 수십~수백초 포함 → 한 프레임에 순간이동
+- 해결: MAX_DELTA_MS = 100 상한선 추가 (60fps 기준 ~6프레임)
+- Files: game/constants.ts, hooks/useMaenggu.ts
+
+[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 ✅
+- 원인: 좌-하단-우 배치 시 모니터 사이 빈 공간으로 맹구 진입
+- 해결:
+  - Rust: get_monitor_bounds 커맨드 추가 (각 모니터 위치/크기/scale factor)
+  - JS: MonitorBounds, MonitorInfo 타입 추가
+  - target.ts: 모니터 영역 캐싱 + 랜덤 타겟은 유효한 모니터 내에서만 생성
+  - clampToNearestMonitor(): 빈 공간 진입 시 가장 가까운 모니터로 이동
+- Files: lib.rs, shared/types.ts, tauri-api.ts, game/target.ts, hooks/useMaenggu.ts
+
+[2026-02-06 bug-win-focus] Windows 클릭 시 게임 화면 전환 ✅
+- 원인: 맹구 창이 포커스 가져가면서 풀스크린 게임이 백그라운드로 밀림
+- 해결:
+  - windows crate 의존성 추가 (Win32_UI_WindowsAndMessaging)
+  - WS_EX_NOACTIVATE: 클릭해도 포커스 안 가져감
+  - WS_EX_TOOLWINDOW: 작업표시줄/Alt+Tab에서 숨김
+- Files: Cargo.toml, lib.rs
+
+[2026-02-06 bug-hidpi-render] 고해상도 깨짐 🔍 blocked
+- 증상: 고해상도 모니터에서 픽셀이 일정하지 않게 보임
+- 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
+
+[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 🔍 blocked
+- 증상: 3모니터 배치에서 맹구가 화면 밖으로 나감
+- 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
+- 참고: 첫 시도한 멀티모니터 로직이 싱글 모니터에서 오히려 문제 발생 → revert
+
+[2026-02-06 bug-report] 버그 리포트 기능 ✅
+- 목표: 트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사
+- 구현:
+  - 트레이 메뉴에 "버그 신고" 항목 추가
+  - tauri-plugin-clipboard-manager로 클립보드 복사
+  - 수집 정보: OS, 아키텍처, 앱 버전, 모니터 정보, 창 크기(physical/CSS)
+- Files: Cargo.toml, capabilities/default.json, lib.rs
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- test: ✅ pass (73 tests)
+- cargo check: ✅ pass
+
+**커밋**:
+- 4cccbc8 - docs: add v2.3 bugfix plan to prd.json
+- 19ff17f - fix: cap deltaMs to prevent speed burst after sleep/tab switch
+- 4da787e - fix(windows): prevent window from stealing focus with WS_EX_NOACTIVATE
+- 99d4f49 - revert: remove broken multi-monitor and hidpi fixes
+- (pending) - feat: add bug report feature to tray menu

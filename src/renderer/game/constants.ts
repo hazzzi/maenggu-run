@@ -13,3 +13,6 @@ export const SPRITE_DISPLAY_SCALE = 1.5
 export const SPRITE_DISPLAY_SIZE = SPRITE_SIZE * SPRITE_DISPLAY_SCALE
 
 export const ANIMATION_FRAME_DURATION_MS = 200
+
+// Sleep/탭 전환 후 deltaMs 폭주 방지 (60fps 기준 ~6프레임)
+export const MAX_DELTA_MS = 100
