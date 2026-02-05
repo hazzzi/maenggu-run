@@ -78,7 +78,7 @@
         {
           "id": "bug-sleep-speed",
           "title": "[공통] Sleep 후 빠른 움직임",
-          "status": "todo",
+          "status": "done",
           "symptom": "화면 꺼놨다 다시 켜면 맹구가 순간이동 수준으로 빠름",
           "cause": "deltaMs가 sleep 시간(수십~수백초)을 포함하여 한 프레임에 엄청난 거리 이동",
           "solution": "MAX_DELTA_MS 상한선(100ms) 추가"
