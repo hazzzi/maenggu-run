@@ -27,7 +27,7 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 - Build: `pnpm build`
 - Preview (if configured): `pnpm preview`
 - Lint (oxlint): `pnpm lint`
-- Format (oxfmt): `pnpm format`
+- Format (oxfmt): `pnpm fmt` (NOT `pnpm format`)
 - Test (vitest): `pnpm test`
 
 ## Single Test (vitest)
@@ -144,7 +144,18 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 - Avoid unused vars/imports
 - Prefer explicit return types for exported functions
 
-## Commit Hygiene (if asked)
+## Commit Checklist
+
+Every commit MUST follow this checklist:
+
+1. `pnpm fmt` — format before commit
+2. `pnpm lint` — zero warnings
+3. `pnpm test` (or `pnpm vitest run`) — all tests pass
+4. **Update `prd.json`** if the commit changes feature status (todo → done, new solution notes, etc.)
+5. `git add` only files YOU changed — do NOT stage unrelated diffs (e.g. someone else's formatting)
+6. Verify staged files with `git diff --cached --stat` before committing
+
+Other hygiene:
 
 - Don't commit generated files
 - Avoid committing secrets or `.env`
