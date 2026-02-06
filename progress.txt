@@ -1172,10 +1172,22 @@ src/renderer/game/
 - 증상: 고해상도 모니터에서 픽셀이 일정하지 않게 보임
 - 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
 
-[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 🔍 blocked
+[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 → 원인 파악 완료
 - 증상: 3모니터 배치에서 맹구가 화면 밖으로 나감
-- 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
-- 참고: 첫 시도한 멀티모니터 로직이 싱글 모니터에서 오히려 문제 발생 → revert
+- 버그 리포트 수집 완료:
+  - Monitor1: pos=(0,0) 3840x2160 scale=1
+  - Monitor2: pos=(7680,2294) 4112x2658 scale=2
+  - Monitor3: pos=(1920,2160) 1280x720 scale=1
+  - Window: 11792x4952 pos=(0,-2792) scale=1
+- 원인: calculate_total_monitor_bounds()가 모든 모니터의 physical pixel size를 단순 합산
+  - monitor.position()은 OS logical 좌표인데 monitor.size()는 physical pixel
+  - Monitor2의 physical 4112x2658을 그대로 더해서 창이 실제보다 훨씬 커짐
+  - CSS scale=1이라 JS쪽 bounds도 physical 크기 그대로 → 맹구가 가시 영역 밖으로 이동
+- 해결 방향: PhysicalSize → LogicalSize, PhysicalPosition → LogicalPosition으로 변경
+  - 모니터 size를 scale factor로 나눠서 logical 좌표 통일
+  - set_position(LogicalPosition), set_size(LogicalSize) 사용
+  - JS쪽 getWindowBounds()는 window.innerWidth/Height(CSS px)이라 수정 불필요
+- 상태: todo (구현 예정)
 
 [2026-02-06 bug-report] 버그 리포트 기능 ✅
 - 목표: 트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사
@@ -1196,3 +1208,53 @@ src/renderer/game/
 - 4da787e - fix(windows): prevent window from stealing focus with WS_EX_NOACTIVATE
 - 99d4f49 - revert: remove broken multi-monitor and hidpi fixes
 - (pending) - feat: add bug report feature to tray menu
+
+---
+
+## 2026-02-06 - v2.4 UX 개선 (릴리즈 v0.2.2)
+
+**PRD**: v2.4-ux (UX 개선)
+**이슈**: #5 (디벨롭 의견 드립니다.)
+**릴리즈**: v0.2.2
+
+---
+
+[2026-02-06 ux-summon-shortcut] 부르기 단축키 ✅
+- Cmd+Shift+M (macOS) / Ctrl+Shift+M (Windows)으로 마우스 위치에 맹구 소환
+- tauri-plugin-global-shortcut 사용
+- tray 메뉴의 summon과 동일한 이벤트 emit
+- Files: lib.rs, Cargo.toml, capabilities/default.json
+
+[2026-02-06 ux-meal-reminder] 밥시간 알림 ✅
+- 11:50, 17:50에 말풍선 "맘마 10분전! ><" 표시 (5초 후 fade out)
+- SpeechBubble 컴포넌트 + useMealReminder 훅
+- 1분 간격 setInterval로 시간 체크
+- 시간 커스텀은 v2.5 backlog로 미룸
+- Files: components/SpeechBubble.tsx (new), hooks/useMealReminder.ts (new), App.tsx
+
+[2026-02-06 ux-sleep-state] 잠자기 상태 ✅
+- 마지막 상호작용(click/feed/summon) 이후 10분 → sleep 전환
+- sleep 애니메이션: 2프레임 루프, 500ms/frame (느린 숨쉬기)
+- 깨우기: 클릭 → happy (간식 X), summon → walk
+- idle/walk 무관하게 타이머 누적, 상호작용 시 리셋
+- walk 중 잠들면 movement 멈춤
+- 초기 설계: idle 1분 누적 → 피드백 반영하여 "마지막 상호작용 기준 10분"으로 변경
+- Files: types.ts, constants.ts, update.ts, update-animation.ts, create-initial-state.ts,
+         sprite-loader.ts, state-machine.ts, assets/sprite.json, assets/sleep/ (new)
+- 테스트: 87개 전체 통과 (sleep 관련 11개 신규)
+
+**커밋**:
+- 908e0b8 - feat: add global shortcut for summon (Cmd/Ctrl+Shift+M)
+- 137b780 - feat: add meal time reminder (11:50, 17:50)
+- dc48e44 - feat: fmt
+- e2e8c5b - feat: add sleep state for idle timeout (1min → zzz animation)
+- db3d9d1 - test: add sleep state-machine transitions + update prd.json
+- 3a621e0 - fix: sleep timer tracks last interaction instead of idle accumulation
+- b987746 - docs: update prd.json sleep solution description
+- ff417a8 - docs: strengthen commit checklist in AGENTS.md
+- 162f3ff - chore: bump version to 0.2.2
+
+**Feedback Loops**:
+- test: ✅ pass (87 tests)
+- lint: ✅ pass (0 warnings)
+- build: ✅ pass (GitHub Actions macOS + Windows)
