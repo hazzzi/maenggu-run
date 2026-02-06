@@ -28,6 +28,11 @@
     "happy": {
       "frames": ["happy/mangoo_13.png"],
       "loop": false
+    },
+    "sleep": {
+      "frames": ["sleep/mangoo_sleep_01.png", "sleep/mangoo_sleep_02.png"],
+      "loop": true,
+      "frameDuration": 500
     }
   },
   "fallback": "idle"

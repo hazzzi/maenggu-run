@@ -11,25 +11,65 @@
       "outcome": "완료. 8.6MB 달성. macOS Spaces 지원 포함.",
       "items": [
         { "id": "setup", "title": "프로젝트 초기 설정", "status": "done" },
-        { "id": "window-core", "title": "오버레이 창 기본 설정", "status": "done" },
+        {
+          "id": "window-core",
+          "title": "오버레이 창 기본 설정",
+          "status": "done"
+        },
         { "id": "window-mouse", "title": "클릭 통과 시스템", "status": "done" },
         { "id": "save-system", "title": "저장/로드 시스템", "status": "done" },
         { "id": "snack-state", "title": "간식 상태 관리", "status": "done" },
         { "id": "maenggu-render", "title": "맹구 렌더링", "status": "done" },
-        { "id": "animation-system", "title": "애니메이션 시스템", "status": "done" },
+        {
+          "id": "animation-system",
+          "title": "애니메이션 시스템",
+          "status": "done"
+        },
         { "id": "movement-system", "title": "이동 시스템", "status": "done" },
-        { "id": "interaction-click", "title": "클릭 상호작용", "status": "done" },
-        { "id": "interaction-feed", "title": "먹이주기 상호작용", "status": "done" },
+        {
+          "id": "interaction-click",
+          "title": "클릭 상호작용",
+          "status": "done"
+        },
+        {
+          "id": "interaction-feed",
+          "title": "먹이주기 상호작용",
+          "status": "done"
+        },
         { "id": "ui-snack", "title": "간식 UI", "status": "done" },
         { "id": "tray-menu", "title": "트레이 메뉴", "status": "done" },
-        { "id": "refactor-game-loop", "title": "게임 루프 리팩터링", "status": "done" },
-        { "id": "tauri-setup", "title": "Tauri 프로젝트 초기화", "status": "done" },
-        { "id": "tauri-window", "title": "투명 창 + 클릭 통과", "status": "done" },
-        { "id": "tauri-state", "title": "간식 상태 관리 (Rust)", "status": "done" },
-        { "id": "tauri-save", "title": "저장/로드 시스템 (Rust)", "status": "done" },
+        {
+          "id": "refactor-game-loop",
+          "title": "게임 루프 리팩터링",
+          "status": "done"
+        },
+        {
+          "id": "tauri-setup",
+          "title": "Tauri 프로젝트 초기화",
+          "status": "done"
+        },
+        {
+          "id": "tauri-window",
+          "title": "투명 창 + 클릭 통과",
+          "status": "done"
+        },
+        {
+          "id": "tauri-state",
+          "title": "간식 상태 관리 (Rust)",
+          "status": "done"
+        },
+        {
+          "id": "tauri-save",
+          "title": "저장/로드 시스템 (Rust)",
+          "status": "done"
+        },
         { "id": "tauri-tray", "title": "트레이 메뉴 (Rust)", "status": "done" },
         { "id": "tauri-build", "title": "빌드 & 배포 설정", "status": "done" },
-        { "id": "cleanup-electron", "title": "Electron 코드 정리", "status": "done" }
+        {
+          "id": "cleanup-electron",
+          "title": "Electron 코드 정리",
+          "status": "done"
+        }
       ]
     },
     {
@@ -40,10 +80,26 @@
       "goal": "트레이 메뉴에서 '맹구 부르기' 클릭 시 마우스 위치로 빠르게 달려오기",
       "outcome": "완료. summon 이벤트 + MovementTarget Tagged Union으로 구현.",
       "items": [
-        { "id": "summon-types", "title": "GameEvent 타입 추가", "status": "done" },
-        { "id": "summon-target-union", "title": "MovementTarget Tagged Union", "status": "done" },
-        { "id": "summon-speed", "title": "SUMMON_SPEED 상수", "status": "done" },
-        { "id": "summon-handler", "title": "handleSummon 로직", "status": "done" },
+        {
+          "id": "summon-types",
+          "title": "GameEvent 타입 추가",
+          "status": "done"
+        },
+        {
+          "id": "summon-target-union",
+          "title": "MovementTarget Tagged Union",
+          "status": "done"
+        },
+        {
+          "id": "summon-speed",
+          "title": "SUMMON_SPEED 상수",
+          "status": "done"
+        },
+        {
+          "id": "summon-handler",
+          "title": "handleSummon 로직",
+          "status": "done"
+        },
         { "id": "summon-tray", "title": "트레이 메뉴 항목", "status": "done" },
         { "id": "summon-bridge", "title": "JS 이벤트 연결", "status": "done" }
       ]
@@ -56,8 +112,16 @@
       "goal": "모든 Spaces에서 맹구가 보이도록",
       "outcome": "완료. NSWindowCollectionBehaviorCanJoinAllSpaces 설정.",
       "items": [
-        { "id": "spaces-behavior", "title": "NSWindowCollectionBehavior 설정", "status": "done" },
-        { "id": "spaces-objc2", "title": "objc2-app-kit 마이그레이션", "status": "done" }
+        {
+          "id": "spaces-behavior",
+          "title": "NSWindowCollectionBehavior 설정",
+          "status": "done"
+        },
+        {
+          "id": "spaces-objc2",
+          "title": "objc2-app-kit 마이그레이션",
+          "status": "done"
+        }
       ]
     },
     {
@@ -104,7 +168,12 @@
           "title": "버그 리포트 기능",
           "status": "done",
           "goal": "트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사",
-          "info": ["OS 정보", "모니터 개수/위치/크기/scale", "Window physical/CSS pixels", "앱 버전"]
+          "info": [
+            "OS 정보",
+            "모니터 개수/위치/크기/scale",
+            "Window physical/CSS pixels",
+            "앱 버전"
+          ]
         }
       ]
     },
@@ -118,23 +187,30 @@
         {
           "id": "ux-summon-shortcut",
           "title": "부르기 단축키",
-          "status": "todo",
+          "status": "done",
           "goal": "글로벌 단축키로 맹구 부르기 (트레이 메뉴 안 거치고)",
-          "notes": "Cmd+Shift+M 또는 사용자 설정 가능하게? tauri-plugin-global-shortcut 필요"
+          "solution": "Cmd+Shift+M (macOS) / Ctrl+Shift+M (Windows)"
         },
         {
           "id": "ux-meal-reminder",
           "title": "밥시간 알림",
-          "status": "todo",
+          "status": "done",
           "goal": "11:50, 17:50에 말풍선으로 '맘마 10분전! ><' 알림",
-          "notes": "시간 체크 로직 + 말풍선 UI. 시간 설정 가능하게 할지?"
+          "solution": "SpeechBubble 컴포넌트 + useMealReminder 훅. 5초간 표시 후 fade out"
         },
         {
           "id": "ux-sleep-state",
           "title": "잠자기 상태",
-          "status": "todo",
+          "status": "done",
           "goal": "오래 방치 시 구석에서 자는 모습",
-          "notes": "새 상태(sleep) + 스프라이트 필요. 방치 시간 기준 정의 필요 (예: 10분?)"
+          "solution": "마지막 상호작용 이후 10분 → sleep 전환 (500ms/frame). 클릭 → happy 깨우기, summon → walk 깨우기. idle/walk 무관하게 타이머 누적, 상호작용 시 리셋"
+        },
+        {
+          "id": "ux-settings",
+          "title": "설정 커스텀",
+          "status": "backlog",
+          "goal": "트레이 메뉴에서 설정 창 열어서 알림 시간/메시지 수정",
+          "notes": "v2.5에서 진행. 설정 창 UI + save.json에 저장"
         }
       ]
     },
@@ -179,8 +255,20 @@
             "frameSize": 32,
             "states": {
               "idle": { "frames": ["idle/01.png"], "loop": true },
-              "walk": { "frames": ["walk/01.png", "walk/02.png", "walk/03.png"], "loop": true },
-              "eat": { "frames": ["eat/01.png", "eat/02.png", "eat/03.png", "eat/04.png", "eat/05.png"], "loop": false },
+              "walk": {
+                "frames": ["walk/01.png", "walk/02.png", "walk/03.png"],
+                "loop": true
+              },
+              "eat": {
+                "frames": [
+                  "eat/01.png",
+                  "eat/02.png",
+                  "eat/03.png",
+                  "eat/04.png",
+                  "eat/05.png"
+                ],
+                "loop": false
+              },
               "happy": { "frames": ["happy/01.png"], "loop": false }
             },
             "fallback": "idle"
@@ -228,9 +316,7 @@
               "id": "sp-manifest",
               "title": "맹구 기본 스프라이트 매니페스트",
               "status": "done",
-              "steps": [
-                "assets/sprite.json 생성"
-              ]
+              "steps": ["assets/sprite.json 생성"]
             },
             {
               "id": "sp-integrate",

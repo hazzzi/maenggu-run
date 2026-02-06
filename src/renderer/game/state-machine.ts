@@ -1,4 +1,4 @@
-import { type AnimState } from './types'
+import { type AnimState } from './types';
 
 export type AnimationEvent =
   | { type: 'idle-start' }
@@ -6,14 +6,17 @@ export type AnimationEvent =
   | { type: 'eat-start' }
   | { type: 'eat-finish' }
   | { type: 'happy-finish' }
-  | { type: 'force-idle' }
+  | { type: 'sleep-start' }
+  | { type: 'wake-up' }
+  | { type: 'force-idle' };
 
 const STATE_TRANSITIONS: Record<AnimState, Set<AnimationEvent['type']>> = {
-  idle: new Set(['walk-start', 'eat-start', 'force-idle']),
+  idle: new Set(['walk-start', 'eat-start', 'sleep-start', 'force-idle']),
   walk: new Set(['idle-start', 'eat-start', 'force-idle']),
   eat: new Set(['eat-finish', 'force-idle']),
   happy: new Set(['happy-finish', 'force-idle']),
-}
+  sleep: new Set(['wake-up', 'eat-start', 'force-idle']),
+};
 
 const EVENT_TO_STATE: Record<AnimationEvent['type'], AnimState> = {
   'idle-start': 'idle',
@@ -21,18 +24,20 @@ const EVENT_TO_STATE: Record<AnimationEvent['type'], AnimState> = {
   'eat-start': 'eat',
   'eat-finish': 'happy',
   'happy-finish': 'idle',
+  'sleep-start': 'sleep',
+  'wake-up': 'idle',
   'force-idle': 'idle',
-}
+};
 
 export function getNextAnimationState(
   current: AnimState,
   event: AnimationEvent,
 ): AnimState {
-  const allowedEvents = STATE_TRANSITIONS[current]
+  const allowedEvents = STATE_TRANSITIONS[current];
 
   if (!allowedEvents.has(event.type)) {
-    return current
+    return current;
   }
 
-  return EVENT_TO_STATE[event.type]
+  return EVENT_TO_STATE[event.type];
 }

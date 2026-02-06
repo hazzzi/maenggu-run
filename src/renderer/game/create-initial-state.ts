@@ -1,17 +1,20 @@
-import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE } from './constants'
-import { type MaengguGameState } from './types'
+import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE } from './constants';
+import { type MaengguGameState } from './types';
 
 function getRandomIdleTime(): number {
-  const range = IDLE_TIME_RANGE.max - IDLE_TIME_RANGE.min
-  return IDLE_TIME_RANGE.min + Math.random() * range
+  const range = IDLE_TIME_RANGE.max - IDLE_TIME_RANGE.min;
+  return IDLE_TIME_RANGE.min + Math.random() * range;
 }
 
 function getRandomSpeed(): number {
-  const { min, max } = MOVE_SPEED_RANGE
-  return min + Math.random() * (max - min)
+  const { min, max } = MOVE_SPEED_RANGE;
+  return min + Math.random() * (max - min);
 }
 
-export function createInitialState(windowWidth: number, windowHeight: number): MaengguGameState {
+export function createInitialState(
+  windowWidth: number,
+  windowHeight: number,
+): MaengguGameState {
   return {
     anim: {
       state: 'idle',
@@ -32,5 +35,8 @@ export function createInitialState(windowWidth: number, windowHeight: number): M
       remainingMs: getRandomIdleTime(),
       isActive: true,
     },
-  }
+    sleepTimer: {
+      elapsedMs: 0,
+    },
+  };
 }

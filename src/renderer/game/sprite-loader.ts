@@ -1,6 +1,6 @@
-import { type AnimState } from './types'
+import { type AnimState } from './types';
 
-type SpriteManifest = Record<AnimState, readonly string[]>
+type SpriteManifest = Record<AnimState, readonly string[]>;
 
 const SPRITE_FRAMES: SpriteManifest = {
   idle: ['idle/mangoo_default.png'],
@@ -13,28 +13,30 @@ const SPRITE_FRAMES: SpriteManifest = {
     'eat/mangoo_11.png',
   ],
   happy: ['happy/mangoo_13.png'],
-} as const
+  sleep: ['sleep/mangoo_sleep_01.png', 'sleep/mangoo_sleep_02.png'],
+} as const;
 
 function ensureTrailingSlash(path: string): string {
-  return path.endsWith('/') ? path : `${path}/`
+  return path.endsWith('/') ? path : `${path}/`;
 }
 
 export function getSpriteManifest(): SpriteManifest {
-  return SPRITE_FRAMES
+  return SPRITE_FRAMES;
 }
 
 export function getSpriteFrameUrls(basePath: string): SpriteManifest {
-  const normalizedBase = ensureTrailingSlash(basePath)
-  const baseWithAssets = `${normalizedBase}assets/`
+  const normalizedBase = ensureTrailingSlash(basePath);
+  const baseWithAssets = `${normalizedBase}assets/`;
 
   return {
     idle: SPRITE_FRAMES.idle.map((frame) => `${baseWithAssets}${frame}`),
     walk: SPRITE_FRAMES.walk.map((frame) => `${baseWithAssets}${frame}`),
     eat: SPRITE_FRAMES.eat.map((frame) => `${baseWithAssets}${frame}`),
     happy: SPRITE_FRAMES.happy.map((frame) => `${baseWithAssets}${frame}`),
-  }
+    sleep: SPRITE_FRAMES.sleep.map((frame) => `${baseWithAssets}${frame}`),
+  };
 }
 
 export function getFrameCount(state: AnimState): number {
-  return SPRITE_FRAMES[state].length
+  return SPRITE_FRAMES[state].length;
 }

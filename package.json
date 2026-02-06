@@ -1,7 +1,7 @@
 {
   "name": "maenggu-run",
+  "version": "0.2.2",
   "private": true,
-  "version": "0.2.1",
   "description": "macOS 바탕화면에 상주하는 픽셀 강아지 데스크탑 펫",
   "author": "hanee",
   "type": "module",
@@ -16,7 +16,6 @@
     "test": "vitest run",
     "preview": "vite preview"
   },
-  "packageManager": "pnpm@10.6.5",
   "dependencies": {
     "@tauri-apps/api": "^2.9.1",
     "react": "^18.2.0",
@@ -36,5 +35,6 @@
     "typescript": "^5.9.3",
     "vite": "^5.1.6",
     "vitest": "^4.0.17"
-  }
+  },
+  "packageManager": "pnpm@10.6.5"
 }
