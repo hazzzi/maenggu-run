@@ -37,14 +37,6 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 - Watch one file: `pnpm vitest path/to/file.test.ts --watch`
 - Run all tests in a folder: `pnpm vitest path/to/tests/`
 
-## Electron-Vite Structure (expected)
-
-- `src/main` Electron main process
-- `src/preload` Preload scripts (contextBridge)
-- `src/renderer` UI (renderer process)
-- `src/shared` Shared types/constants
-- `resources/` Icons, sprites, assets
-
 ## Process Boundaries
 
 - Main process: app lifecycle, windows, OS integration, filesystem

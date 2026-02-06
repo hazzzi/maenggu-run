@@ -3,8 +3,8 @@
   "overview": "화면 위를 돌아다니는 픽셀 강아지 데스크탑 펫. 사용자가 자신의 반려동물로 커스터마이징할 수 있는 것이 최종 목표.",
   "features": [
     {
-      "id": "v2-tauri-migration",
-      "title": "v2: Tauri 마이그레이션",
+      "id": "v0.1.0",
+      "title": "v0.1.0: Tauri 마이그레이션",
       "status": "done",
       "background": "v1은 Electron으로 구현. 앱 크기가 ~100MB로 너무 컸음.",
       "goal": "Tauri로 전환하여 앱 크기 90% 감소 (~10MB) + 성능 개선",
@@ -73,12 +73,12 @@
       ]
     },
     {
-      "id": "v2.1-summon",
-      "title": "v2.1: 맹구 부르기",
+      "id": "v0.2.0",
+      "title": "v0.2.0: Summon & Spaces",
       "status": "done",
-      "background": "맹구가 어디 있는지 찾기 어려울 때가 있음.",
-      "goal": "트레이 메뉴에서 '맹구 부르기' 클릭 시 마우스 위치로 빠르게 달려오기",
-      "outcome": "완료. summon 이벤트 + MovementTarget Tagged Union으로 구현.",
+      "background": "맹구가 어디 있는지 찾기 어려울 때가 있고, macOS 가상 데스크탑(Spaces) 전환 시 맹구가 안 보임.",
+      "goal": "트레이 메뉴에서 맹구 부르기 + 모든 Spaces에서 맹구가 보이도록",
+      "outcome": "완료. summon 이벤트 + MovementTarget Tagged Union으로 구현. NSWindowCollectionBehaviorCanJoinAllSpaces 설정.",
       "items": [
         {
           "id": "summon-types",
@@ -101,17 +101,7 @@
           "status": "done"
         },
         { "id": "summon-tray", "title": "트레이 메뉴 항목", "status": "done" },
-        { "id": "summon-bridge", "title": "JS 이벤트 연결", "status": "done" }
-      ]
-    },
-    {
-      "id": "v2.2-spaces",
-      "title": "v2.2: macOS Spaces 지원",
-      "status": "done",
-      "background": "macOS 가상 데스크탑(Spaces) 전환 시 맹구가 안 보임.",
-      "goal": "모든 Spaces에서 맹구가 보이도록",
-      "outcome": "완료. NSWindowCollectionBehaviorCanJoinAllSpaces 설정.",
-      "items": [
+        { "id": "summon-bridge", "title": "JS 이벤트 연결", "status": "done" },
         {
           "id": "spaces-behavior",
           "title": "NSWindowCollectionBehavior 설정",
@@ -125,8 +115,8 @@
       ]
     },
     {
-      "id": "v2.3-bugfix",
-      "title": "v2.3: 버그 수정",
+      "id": "v0.2.1",
+      "title": "v0.2.1: 버그 수정",
       "status": "in_progress",
       "background": "동생(Windows)과 동료(macOS 멀티모니터)에게서 버그 제보 받음.",
       "goal": "안정성 개선 - 게임 방해 없이, 멀티모니터에서도 정상 동작",
@@ -179,9 +169,9 @@
       ]
     },
     {
-      "id": "v2.4-ux",
-      "title": "v2.4: UX 개선",
-      "status": "planning",
+      "id": "v0.2.2",
+      "title": "v0.2.2: UX 개선",
+      "status": "done",
       "background": "Issue #5 기능 요청. 더 생동감 있고 유용한 데스크탑 펫 경험 제공.",
       "goal": "부르기 단축키, 밥시간 알림, 잠자기 상태 추가",
       "items": [
@@ -211,7 +201,7 @@
           "title": "설정 커스텀",
           "status": "backlog",
           "goal": "트레이 메뉴에서 설정 창 열어서 알림 시간/메시지 수정",
-          "notes": "v2.5에서 진행. 설정 창 UI + save.json에 저장"
+          "notes": "다음 버전에서 진행. 설정 창 UI + save.json에 저장"
         }
       ]
     },
