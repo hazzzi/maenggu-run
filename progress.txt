@@ -1181,6 +1181,25 @@ src/renderer/game/
 - Files: lib.rs
 - 버전: v0.2.3
 
+[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 수정 ✅ (v0.2.3)
+- PhysicalSize → LogicalSize 변환 (scale_factor 적용)
+- PhysicalPosition/Size → LogicalPosition/Size 사용
+- Files: lib.rs
+- 릴리즈: v0.2.3 태그 생성 및 push 완료
+
+[2026-02-06 chore] branch protection 설정 ✅
+- .githooks/pre-push: main 브랜치 직접 push 방지
+- package.json postinstall: hooksPath 자동 설정
+- GitHub Branch Protection: PR 필수 (admin 포함)
+- CLAUDE.md: Git 워크플로우 지침 추가
+
+[2026-02-06 prd] sp-integrate 작업 분할
+- 기존 sp-integrate → 4개 하위 작업으로 분할
+  - sp-integrate-loader: SpritePack 로딩 시스템
+  - sp-integrate-anim: 애니메이션 SpritePack 연동
+  - sp-integrate-render: Maenggu 렌더링 연동
+  - sp-integrate-cleanup: 레거시 sprite-loader 정리
+
 [2026-02-06 bug-report] 버그 리포트 기능 ✅
 - 목표: 트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사
 - 구현:
