@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# main 브랜치에 직접 push 막기
+branch=$(git rev-parse --abbrev-ref HEAD)
+remote="$1"
+
+while read local_ref local_sha remote_ref remote_sha; do
+  if [[ "$remote_ref" == "refs/heads/main" ]]; then
+    echo ""
+    echo "⚠️  main 브랜치에 직접 push 금지!"
+    echo ""
+    echo "→ feature 브랜치 만들어서 PR로 머지해주세요:"
+    echo "  git checkout -b feat/your-feature"
+    echo "  git push -u origin feat/your-feature"
+    echo "  gh pr create"
+    echo ""
+    exit 1
+  fi
+done
+
+exit 0

@@ -6,6 +6,7 @@
   "author": "hanee",
   "type": "module",
   "scripts": {
+    "postinstall": "git config core.hooksPath .githooks",
     "dev": "tauri dev",
     "build": "tauri build",
     "dev:vite": "vite",
