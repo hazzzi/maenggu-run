@@ -5,7 +5,7 @@ use std::sync::Mutex;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State, WebviewWindow,
+    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, State, WebviewWindow,
 };
 
 #[cfg(target_os = "macos")]
@@ -153,11 +153,16 @@ fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u
     for monitor in &monitors {
         let pos = monitor.position();
         let size = monitor.size();
-        
+        let scale = monitor.scale_factor();
+
+        // physical → logical 변환 (position은 이미 logical 좌표)
+        let logical_w = (size.width as f64 / scale) as i32;
+        let logical_h = (size.height as f64 / scale) as i32;
+
         min_x = min_x.min(pos.x);
         min_y = min_y.min(pos.y);
-        max_x = max_x.max(pos.x + size.width as i32);
-        max_y = max_y.max(pos.y + size.height as i32);
+        max_x = max_x.max(pos.x + logical_w);
+        max_y = max_y.max(pos.y + logical_h);
     }
     
     let width = (max_x - min_x) as u32;
@@ -169,8 +174,8 @@ fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u
 fn setup_window_for_multimonitor(window: &WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
     if let Some((x, y, width, height)) = calculate_total_monitor_bounds(window) {
         log::info!("Multimonitor bounds: pos=({}, {}), size={}x{}", x, y, width, height);
-        window.set_position(PhysicalPosition::new(x, y))?;
-        window.set_size(PhysicalSize::new(width, height))?;
+        window.set_position(LogicalPosition::new(x, y))?;
+        window.set_size(LogicalSize::new(width, height))?;
     } else {
         log::warn!("Could not calculate multimonitor bounds");
     }

@@ -1,6 +1,6 @@
 [package]
 name = "maenggu-run"
-version = "0.2.2"
+version = "0.2.3"
 description = "Desktop pet app - a pixel dog running on your screen"
 authors = ["hazzzi"]
 license = "MIT"

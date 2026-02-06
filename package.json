@@ -1,6 +1,6 @@
 {
   "name": "maenggu-run",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "macOS 바탕화면에 상주하는 픽셀 강아지 데스크탑 펫",
   "author": "hanee",

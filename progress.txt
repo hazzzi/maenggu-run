@@ -1172,22 +1172,14 @@ src/renderer/game/
 - 증상: 고해상도 모니터에서 픽셀이 일정하지 않게 보임
 - 상태: 버그 리포트 기능으로 환경 정보 수집 후 수정 예정
 
-[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 → 원인 파악 완료
+[2026-02-06 bug-multimon-bounds] 멀티모니터 화면 밖 벗어남 ✅
 - 증상: 3모니터 배치에서 맹구가 화면 밖으로 나감
-- 버그 리포트 수집 완료:
-  - Monitor1: pos=(0,0) 3840x2160 scale=1
-  - Monitor2: pos=(7680,2294) 4112x2658 scale=2
-  - Monitor3: pos=(1920,2160) 1280x720 scale=1
-  - Window: 11792x4952 pos=(0,-2792) scale=1
-- 원인: calculate_total_monitor_bounds()가 모든 모니터의 physical pixel size를 단순 합산
-  - monitor.position()은 OS logical 좌표인데 monitor.size()는 physical pixel
-  - Monitor2의 physical 4112x2658을 그대로 더해서 창이 실제보다 훨씬 커짐
-  - CSS scale=1이라 JS쪽 bounds도 physical 크기 그대로 → 맹구가 가시 영역 밖으로 이동
-- 해결 방향: PhysicalSize → LogicalSize, PhysicalPosition → LogicalPosition으로 변경
-  - 모니터 size를 scale factor로 나눠서 logical 좌표 통일
-  - set_position(LogicalPosition), set_size(LogicalSize) 사용
-  - JS쪽 getWindowBounds()는 window.innerWidth/Height(CSS px)이라 수정 불필요
-- 상태: todo (구현 예정)
+- 원인: calculate_total_monitor_bounds()가 physical size를 logical 좌표 공간에 그대로 사용
+- 해결:
+  - calculate_total_monitor_bounds: size를 scale_factor로 나눠 logical 크기로 변환
+  - setup_window_for_multimonitor: PhysicalPosition/Size → LogicalPosition/Size
+- Files: lib.rs
+- 버전: v0.2.3
 
 [2026-02-06 bug-report] 버그 리포트 기능 ✅
 - 목표: 트레이 메뉴에서 시스템 정보 수집 → 클립보드 복사

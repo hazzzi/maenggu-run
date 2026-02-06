@@ -140,7 +140,7 @@
         {
           "id": "bug-multimon-bounds",
           "title": "[멀티모니터] 화면 밖 벗어남",
-          "status": "todo",
+          "status": "done",
           "symptom": "3모니터(좌-하단-우 배치)에서 맹구가 화면 밖으로 나감",
           "cause": "calculate_total_monitor_bounds가 physical pixel 크기를 단순 합산. Monitor 2(scale=2)의 physical size를 logical 좌표 공간에 그대로 사용하여 창 크기가 실제 가시 영역보다 훨씬 커짐",
           "bugReport": "Monitor1: pos=(0,0) 3840x2160 scale=1 | Monitor2: pos=(7680,2294) 4112x2658 scale=2 | Monitor3: pos=(1920,2160) 1280x720 scale=1 | Window: 11792x4952 pos=(0,-2792) scale=1",
