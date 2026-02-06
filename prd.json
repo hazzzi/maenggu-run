@@ -203,7 +203,7 @@
           "title": "잠자기 상태",
           "status": "done",
           "goal": "오래 방치 시 구석에서 자는 모습",
-          "solution": "idle 1분 누적 → sleep 전환 (500ms/frame). 클릭 → happy 깨우기, summon → walk 깨우기. SleepTimerState로 추적"
+          "solution": "마지막 상호작용 이후 10분 → sleep 전환 (500ms/frame). 클릭 → happy 깨우기, summon → walk 깨우기. idle/walk 무관하게 타이머 누적, 상호작용 시 리셋"
         },
         {
           "id": "ux-settings",
