@@ -77,4 +77,34 @@ describe('getNextAnimationState', () => {
       );
     });
   });
+
+  describe('from idle to sleep', () => {
+    it('should transition to sleep on sleep-start', () => {
+      expect(getNextAnimationState('idle', { type: 'sleep-start' })).toBe(
+        'sleep',
+      );
+    });
+  });
+
+  describe('from sleep', () => {
+    it('should transition to idle on wake-up', () => {
+      expect(getNextAnimationState('sleep', { type: 'wake-up' })).toBe('idle');
+    });
+
+    it('should transition to eat on eat-start', () => {
+      expect(getNextAnimationState('sleep', { type: 'eat-start' })).toBe('eat');
+    });
+
+    it('should transition to idle on force-idle', () => {
+      expect(getNextAnimationState('sleep', { type: 'force-idle' })).toBe(
+        'idle',
+      );
+    });
+
+    it('should ignore walk-start during sleep', () => {
+      expect(getNextAnimationState('sleep', { type: 'walk-start' })).toBe(
+        'sleep',
+      );
+    });
+  });
 });
