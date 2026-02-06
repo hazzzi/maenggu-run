@@ -183,19 +183,16 @@ function updateIdleTimer(
   };
 }
 
+// 상호작용 없이 흐른 시간을 추적 (idle/walk 무관하게 누적)
+// 상호작용(click, feed, summon) 시 이벤트 핸들러에서 리셋됨
 function updateSleepTimer(
   sleepTimer: SleepTimerState,
   deltaMs: number,
-  isIdle: boolean,
+  canSleep: boolean,
 ): { timer: SleepTimerState; shouldSleep: boolean } {
-  // idle 상태가 아니면 타이머 리셋
-  if (!isIdle) {
-    return { timer: { elapsedMs: 0 }, shouldSleep: false };
-  }
-
   const newElapsed = sleepTimer.elapsedMs + deltaMs;
 
-  if (newElapsed >= SLEEP_TIMEOUT_MS) {
+  if (newElapsed >= SLEEP_TIMEOUT_MS && canSleep) {
     return { timer: { elapsedMs: 0 }, shouldSleep: true };
   }
 
@@ -326,12 +323,13 @@ export function update(
     );
   }
 
-  // 5. sleep 타이머 업데이트
-  const isIdle = currentState.anim.state === 'idle';
+  // 5. sleep 타이머 업데이트 (상호작용 없이 흐른 시간 추적)
+  const canSleep =
+    currentState.anim.state === 'idle' || currentState.anim.state === 'walk';
   const sleepResult = updateSleepTimer(
     currentState.sleepTimer,
     deltaMs,
-    isIdle,
+    canSleep,
   );
   currentState = { ...currentState, sleepTimer: sleepResult.timer };
 
@@ -339,6 +337,7 @@ export function update(
     currentState = {
       ...currentState,
       anim: resetAnimation('sleep'),
+      movement: stopMovement(currentState.movement),
       idleTimer: { remainingMs: 0, isActive: false },
     };
   }

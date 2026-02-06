@@ -17,5 +17,5 @@ export const ANIMATION_FRAME_DURATION_MS = 200;
 // Sleep/탭 전환 후 deltaMs 폭주 방지 (60fps 기준 ~6프레임)
 export const MAX_DELTA_MS = 100;
 
-// 방치 시 잠자기까지 걸리는 시간 (1분)
-export const SLEEP_TIMEOUT_MS = 60_000;
+// 마지막 상호작용 이후 잠자기까지 걸리는 시간 (10분)
+export const SLEEP_TIMEOUT_MS = 600_000;
