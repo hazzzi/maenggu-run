@@ -3,8 +3,8 @@ import {
   MOVE_SPEED_RANGE,
   SLEEP_TIMEOUT_MS,
   SUMMON_SPEED,
-} from "./constants";
-import { type Bounds, generateRandomTarget } from "./target";
+} from './constants';
+import { type Bounds, generateRandomTarget } from './target';
 import {
   type AnimState,
   type GameAction,
@@ -13,9 +13,9 @@ import {
   type MaengguGameState,
   type MovementTarget,
   type SleepTimerState,
-} from "./types";
-import { resetAnimation, updateAnimation } from "./update-animation";
-import { startMovement, stopMovement, updateMovement } from "./update-movement";
+} from './types';
+import { resetAnimation, updateAnimation } from './update-animation';
+import { startMovement, stopMovement, updateMovement } from './update-movement';
 
 // === 헬퍼 함수 ===
 
@@ -30,7 +30,7 @@ function getRandomSpeed(): number {
 }
 
 function canInteract(animState: AnimState): boolean {
-  return animState === "idle" || animState === "walk" || animState === "sleep";
+  return animState === 'idle' || animState === 'walk' || animState === 'sleep';
 }
 
 // === 업데이트 결과 타입 ===
@@ -51,10 +51,10 @@ function handleClick(state: MaengguGameState): {
   }
 
   // sleep 상태에서 클릭 → 깨우기만 (간식 X)
-  if (state.anim.state === "sleep") {
+  if (state.anim.state === 'sleep') {
     const newState: MaengguGameState = {
       ...state,
-      anim: resetAnimation("happy"),
+      anim: resetAnimation('happy'),
       idleTimer: { remainingMs: 0, isActive: false },
       sleepTimer: { elapsedMs: 0 },
     };
@@ -63,17 +63,17 @@ function handleClick(state: MaengguGameState): {
 
   const newState: MaengguGameState = {
     ...state,
-    anim: resetAnimation("eat"),
+    anim: resetAnimation('eat'),
     movement: stopMovement(state.movement),
     idleTimer: { remainingMs: 0, isActive: false },
     sleepTimer: { elapsedMs: 0 },
   };
 
   const actions: GameAction[] = [
-    { type: "add-snack" },
+    { type: 'add-snack' },
     {
-      type: "show-floating-text",
-      text: "+🍖",
+      type: 'show-floating-text',
+      text: '+🍖',
       position: state.movement.position,
     },
   ];
@@ -91,7 +91,7 @@ function handleFeedSuccess(state: MaengguGameState): {
 
   const newState: MaengguGameState = {
     ...state,
-    anim: resetAnimation("eat"),
+    anim: resetAnimation('eat'),
     movement: stopMovement(state.movement),
     idleTimer: { remainingMs: 0, isActive: false },
     sleepTimer: { elapsedMs: 0 },
@@ -109,11 +109,11 @@ function handleSummon(
     return { state, actions: [] };
   }
 
-  const target: MovementTarget = { type: "summon", position: { x, y } };
+  const target: MovementTarget = { type: 'summon', position: { x, y } };
 
   const newState: MaengguGameState = {
     ...state,
-    anim: resetAnimation("walk"),
+    anim: resetAnimation('walk'),
     movement: startMovement(state.movement, target, SUMMON_SPEED),
     idleTimer: { remainingMs: 0, isActive: false },
     sleepTimer: { elapsedMs: 0 },
@@ -131,22 +131,22 @@ function handleEvents(
 
   for (const event of events) {
     switch (event.type) {
-      case "click": {
+      case 'click': {
         const result = handleClick(currentState);
         currentState = result.state;
         allActions.push(...result.actions);
         break;
       }
-      case "feed-success": {
+      case 'feed-success': {
         const result = handleFeedSuccess(currentState);
         currentState = result.state;
         allActions.push(...result.actions);
         break;
       }
-      case "feed-fail":
+      case 'feed-fail':
         // no-op
         break;
-      case "summon": {
+      case 'summon': {
         const result = handleSummon(currentState, event.x, event.y);
         currentState = result.state;
         allActions.push(...result.actions);
@@ -210,18 +210,18 @@ function handleAnimationComplete(state: MaengguGameState): MaengguGameState {
   }
 
   switch (anim.state) {
-    case "eat":
+    case 'eat':
       // eat 완료 → happy로 전환
       return {
         ...state,
-        anim: resetAnimation("happy"),
+        anim: resetAnimation('happy'),
       };
 
-    case "happy":
+    case 'happy':
       // happy 완료 → idle로 전환, 타이머 시작
       return {
         ...state,
-        anim: resetAnimation("idle"),
+        anim: resetAnimation('idle'),
         idleTimer: {
           remainingMs: getRandomIdleTime(),
           isActive: true,
@@ -242,10 +242,10 @@ function handleWalkStart(
 
   return {
     ...state,
-    anim: resetAnimation("walk"),
+    anim: resetAnimation('walk'),
     movement: startMovement(
       state.movement,
-      { type: "random", position: targetPosition },
+      { type: 'random', position: targetPosition },
       speed,
     ),
   };
@@ -259,15 +259,15 @@ function handleTargetReached(
     return state;
   }
 
-  if (state.anim.state !== "walk") {
+  if (state.anim.state !== 'walk') {
     return state;
   }
 
   // summon 도착 시 happy 애니메이션
-  if (reachedTarget.type === "summon") {
+  if (reachedTarget.type === 'summon') {
     return {
       ...state,
-      anim: resetAnimation("happy"),
+      anim: resetAnimation('happy'),
       idleTimer: { remainingMs: 0, isActive: false },
     };
   }
@@ -275,7 +275,7 @@ function handleTargetReached(
   // random 도착 시 idle 전환
   return {
     ...state,
-    anim: resetAnimation("idle"),
+    anim: resetAnimation('idle'),
     idleTimer: {
       remainingMs: getRandomIdleTime(),
       isActive: true,
@@ -300,7 +300,7 @@ export function update(
   currentState = handleAnimationComplete(currentState);
 
   // 3. idle 타이머 업데이트
-  if (currentState.anim.state === "idle") {
+  if (currentState.anim.state === 'idle') {
     const timerResult = updateIdleTimer(currentState.idleTimer, deltaMs);
     currentState = { ...currentState, idleTimer: timerResult.timer };
 
@@ -310,7 +310,7 @@ export function update(
   }
 
   // 4. 이동 업데이트
-  if (currentState.anim.state === "walk") {
+  if (currentState.anim.state === 'walk') {
     const movementResult = updateMovement(
       currentState.movement,
       deltaMs,
@@ -327,7 +327,7 @@ export function update(
   }
 
   // 5. sleep 타이머 업데이트
-  const isIdle = currentState.anim.state === "idle";
+  const isIdle = currentState.anim.state === 'idle';
   const sleepResult = updateSleepTimer(
     currentState.sleepTimer,
     deltaMs,
@@ -338,7 +338,7 @@ export function update(
   if (sleepResult.shouldSleep) {
     currentState = {
       ...currentState,
-      anim: resetAnimation("sleep"),
+      anim: resetAnimation('sleep'),
       idleTimer: { remainingMs: 0, isActive: false },
     };
   }

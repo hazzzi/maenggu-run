@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import { SPRITE_DISPLAY_SIZE } from '../game/constants'
-import { type Position } from '../game/types'
+import { SPRITE_DISPLAY_SIZE } from '../game/constants';
+import { type Position } from '../game/types';
 
 type SpeechBubbleProps = {
-  readonly text: string
-  readonly position: Position
-  readonly duration?: number // ms, 기본 5초
-  readonly onDismiss: () => void
-}
+  readonly text: string;
+  readonly position: Position;
+  readonly duration?: number; // ms, 기본 5초
+  readonly onDismiss: () => void;
+};
 
-const DEFAULT_DURATION_MS = 5000
+const DEFAULT_DURATION_MS = 5000;
 
 export function SpeechBubble({
   text,
@@ -18,32 +18,32 @@ export function SpeechBubble({
   duration = DEFAULT_DURATION_MS,
   onDismiss,
 }: SpeechBubbleProps): JSX.Element {
-  const [opacity, setOpacity] = useState(0)
-  const [isVisible, setIsVisible] = useState(true)
+  const [opacity, setOpacity] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     // Fade in
-    const fadeInTimer = setTimeout(() => setOpacity(1), 50)
-    
+    const fadeInTimer = setTimeout(() => setOpacity(1), 50);
+
     // Start fade out before dismiss
     const fadeOutTimer = setTimeout(() => {
-      setOpacity(0)
-    }, duration - 300)
-    
+      setOpacity(0);
+    }, duration - 300);
+
     // Dismiss after duration
     const dismissTimer = setTimeout(() => {
-      setIsVisible(false)
-      onDismiss()
-    }, duration)
+      setIsVisible(false);
+      onDismiss();
+    }, duration);
 
     return () => {
-      clearTimeout(fadeInTimer)
-      clearTimeout(fadeOutTimer)
-      clearTimeout(dismissTimer)
-    }
-  }, [duration, onDismiss])
+      clearTimeout(fadeInTimer);
+      clearTimeout(fadeOutTimer);
+      clearTimeout(dismissTimer);
+    };
+  }, [duration, onDismiss]);
 
-  if (!isVisible) return <></>
+  if (!isVisible) return <></>;
 
   return (
     <div
@@ -82,5 +82,5 @@ export function SpeechBubble({
         }}
       />
     </div>
-  )
+  );
 }

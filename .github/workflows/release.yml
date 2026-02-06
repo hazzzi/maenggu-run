@@ -21,15 +21,15 @@ jobs:
         run: |
           TAG_VERSION="${GITHUB_REF#refs/tags/v}"
           TAURI_VERSION=$(grep '"version"' src-tauri/tauri.conf.json | head -1 | sed 's/.*"version": "\(.*\)".*/\1/')
-          
+
           echo "Tag version: $TAG_VERSION"
           echo "Tauri version: $TAURI_VERSION"
-          
+
           if [ "$TAG_VERSION" != "$TAURI_VERSION" ]; then
             echo "::error::Version mismatch! Tag: v$TAG_VERSION, tauri.conf.json: $TAURI_VERSION"
             exit 1
           fi
-          
+
           echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
 
   build-macos:

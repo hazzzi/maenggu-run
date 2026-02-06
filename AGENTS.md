@@ -39,11 +39,11 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 
 ## Electron-Vite Structure (expected)
 
-- `src/main`        Electron main process
-- `src/preload`     Preload scripts (contextBridge)
-- `src/renderer`    UI (renderer process)
-- `src/shared`      Shared types/constants
-- `resources/`      Icons, sprites, assets
+- `src/main` Electron main process
+- `src/preload` Preload scripts (contextBridge)
+- `src/renderer` UI (renderer process)
+- `src/shared` Shared types/constants
+- `resources/` Icons, sprites, assets
 
 ## Process Boundaries
 
@@ -94,10 +94,10 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 - Use relative imports within same domain
 - Use absolute/alias imports for cross-domain (if configured)
 - Group imports by:
-  1) Node/Electron
-  2) External libs
-  3) Internal modules
-  4) Styles/assets
+  1. Node/Electron
+  2. External libs
+  3. Internal modules
+  4. Styles/assets
 - Keep imports sorted; avoid deep cross-layer imports
 
 ## Formatting (oxfmt)

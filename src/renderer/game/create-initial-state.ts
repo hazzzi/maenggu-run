@@ -1,5 +1,5 @@
-import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE } from "./constants";
-import { type MaengguGameState } from "./types";
+import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE } from './constants';
+import { type MaengguGameState } from './types';
 
 function getRandomIdleTime(): number {
   const range = IDLE_TIME_RANGE.max - IDLE_TIME_RANGE.min;
@@ -17,7 +17,7 @@ export function createInitialState(
 ): MaengguGameState {
   return {
     anim: {
-      state: "idle",
+      state: 'idle',
       frameIndex: 0,
       elapsedMs: 0,
       isComplete: false,
@@ -29,7 +29,7 @@ export function createInitialState(
       },
       target: null,
       speed: getRandomSpeed(),
-      facing: "right",
+      facing: 'right',
     },
     idleTimer: {
       remainingMs: getRandomIdleTime(),

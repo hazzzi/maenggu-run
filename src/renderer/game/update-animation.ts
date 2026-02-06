@@ -1,11 +1,11 @@
-import { ANIMATION_FRAME_DURATION_MS } from "./constants";
-import { getFrameCount } from "./sprite-loader";
-import { type AnimationState, type AnimState } from "./types";
+import { ANIMATION_FRAME_DURATION_MS } from './constants';
+import { getFrameCount } from './sprite-loader';
+import { type AnimationState, type AnimState } from './types';
 
 const LOOPING_STATES: ReadonlySet<AnimState> = new Set([
-  "idle",
-  "walk",
-  "sleep",
+  'idle',
+  'walk',
+  'sleep',
 ]);
 
 // 상태별 프레임 duration (ms)

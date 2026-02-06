@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   // @ts-expect-error - vite-plugin-react uses vite v5, vitest uses vite v7 (type-only conflict)
@@ -9,4 +9,4 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: [],
   },
-})
+});

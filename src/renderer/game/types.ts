@@ -5,9 +5,9 @@ export type Position = {
   readonly y: number;
 };
 
-export type FacingDirection = "left" | "right";
+export type FacingDirection = 'left' | 'right';
 
-export type AnimState = "idle" | "walk" | "eat" | "happy" | "sleep";
+export type AnimState = 'idle' | 'walk' | 'eat' | 'happy' | 'sleep';
 
 // === 게임 상태 (단일 소스) ===
 
@@ -19,8 +19,8 @@ export type AnimationState = {
 };
 
 export type MovementTarget =
-  | { readonly type: "random"; readonly position: Position }
-  | { readonly type: "summon"; readonly position: Position };
+  | { readonly type: 'random'; readonly position: Position }
+  | { readonly type: 'summon'; readonly position: Position };
 
 export type MovementState = {
   readonly position: Position;
@@ -49,17 +49,17 @@ export type MaengguGameState = {
 // === 이벤트 (외부 → 게임 루프) ===
 
 export type GameEvent =
-  | { readonly type: "click"; readonly position: Position }
-  | { readonly type: "feed-success" }
-  | { readonly type: "feed-fail" }
-  | { readonly type: "summon"; readonly x: number; readonly y: number };
+  | { readonly type: 'click'; readonly position: Position }
+  | { readonly type: 'feed-success' }
+  | { readonly type: 'feed-fail' }
+  | { readonly type: 'summon'; readonly x: number; readonly y: number };
 
 // === 액션 (게임 루프 → 외부) ===
 
 export type GameAction =
-  | { readonly type: "add-snack" }
+  | { readonly type: 'add-snack' }
   | {
-      readonly type: "show-floating-text";
+      readonly type: 'show-floating-text';
       readonly text: string;
       readonly position: Position;
     };
