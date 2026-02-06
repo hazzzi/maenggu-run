@@ -1,5 +1,10 @@
-import { IDLE_TIME_RANGE, MOVE_SPEED_RANGE, SUMMON_SPEED } from './constants'
-import { type Bounds, generateRandomTarget } from './target'
+import {
+  IDLE_TIME_RANGE,
+  MOVE_SPEED_RANGE,
+  SLEEP_TIMEOUT_MS,
+  SUMMON_SPEED,
+} from "./constants";
+import { type Bounds, generateRandomTarget } from "./target";
 import {
   type AnimState,
   type GameAction,
@@ -7,68 +12,92 @@ import {
   type IdleTimerState,
   type MaengguGameState,
   type MovementTarget,
-} from './types'
-import { resetAnimation, updateAnimation } from './update-animation'
-import { startMovement, stopMovement, updateMovement } from './update-movement'
+  type SleepTimerState,
+} from "./types";
+import { resetAnimation, updateAnimation } from "./update-animation";
+import { startMovement, stopMovement, updateMovement } from "./update-movement";
 
 // === 헬퍼 함수 ===
 
 function getRandomIdleTime(): number {
-  const range = IDLE_TIME_RANGE.max - IDLE_TIME_RANGE.min
-  return IDLE_TIME_RANGE.min + Math.random() * range
+  const range = IDLE_TIME_RANGE.max - IDLE_TIME_RANGE.min;
+  return IDLE_TIME_RANGE.min + Math.random() * range;
 }
 
 function getRandomSpeed(): number {
-  const { min, max } = MOVE_SPEED_RANGE
-  return min + Math.random() * (max - min)
+  const { min, max } = MOVE_SPEED_RANGE;
+  return min + Math.random() * (max - min);
 }
 
 function canInteract(animState: AnimState): boolean {
-  return animState === 'idle' || animState === 'walk'
+  return animState === "idle" || animState === "walk" || animState === "sleep";
 }
 
 // === 업데이트 결과 타입 ===
 
 export type UpdateResult = {
-  readonly state: MaengguGameState
-  readonly actions: readonly GameAction[]
-}
+  readonly state: MaengguGameState;
+  readonly actions: readonly GameAction[];
+};
 
 // === 이벤트 핸들러 ===
 
-function handleClick(state: MaengguGameState): { state: MaengguGameState; actions: GameAction[] } {
+function handleClick(state: MaengguGameState): {
+  state: MaengguGameState;
+  actions: GameAction[];
+} {
   if (!canInteract(state.anim.state)) {
-    return { state, actions: [] }
+    return { state, actions: [] };
+  }
+
+  // sleep 상태에서 클릭 → 깨우기만 (간식 X)
+  if (state.anim.state === "sleep") {
+    const newState: MaengguGameState = {
+      ...state,
+      anim: resetAnimation("happy"),
+      idleTimer: { remainingMs: 0, isActive: false },
+      sleepTimer: { elapsedMs: 0 },
+    };
+    return { state: newState, actions: [] };
   }
 
   const newState: MaengguGameState = {
     ...state,
-    anim: resetAnimation('eat'),
+    anim: resetAnimation("eat"),
     movement: stopMovement(state.movement),
     idleTimer: { remainingMs: 0, isActive: false },
-  }
+    sleepTimer: { elapsedMs: 0 },
+  };
 
   const actions: GameAction[] = [
-    { type: 'add-snack' },
-    { type: 'show-floating-text', text: '+🍖', position: state.movement.position },
-  ]
+    { type: "add-snack" },
+    {
+      type: "show-floating-text",
+      text: "+🍖",
+      position: state.movement.position,
+    },
+  ];
 
-  return { state: newState, actions }
+  return { state: newState, actions };
 }
 
-function handleFeedSuccess(state: MaengguGameState): { state: MaengguGameState; actions: GameAction[] } {
+function handleFeedSuccess(state: MaengguGameState): {
+  state: MaengguGameState;
+  actions: GameAction[];
+} {
   if (!canInteract(state.anim.state)) {
-    return { state, actions: [] }
+    return { state, actions: [] };
   }
 
   const newState: MaengguGameState = {
     ...state,
-    anim: resetAnimation('eat'),
+    anim: resetAnimation("eat"),
     movement: stopMovement(state.movement),
     idleTimer: { remainingMs: 0, isActive: false },
-  }
+    sleepTimer: { elapsedMs: 0 },
+  };
 
-  return { state: newState, actions: [] }
+  return { state: newState, actions: [] };
 }
 
 function handleSummon(
@@ -77,55 +106,56 @@ function handleSummon(
   y: number,
 ): { state: MaengguGameState; actions: GameAction[] } {
   if (!canInteract(state.anim.state)) {
-    return { state, actions: [] }
+    return { state, actions: [] };
   }
 
-  const target: MovementTarget = { type: 'summon', position: { x, y } }
+  const target: MovementTarget = { type: "summon", position: { x, y } };
 
   const newState: MaengguGameState = {
     ...state,
-    anim: resetAnimation('walk'),
+    anim: resetAnimation("walk"),
     movement: startMovement(state.movement, target, SUMMON_SPEED),
     idleTimer: { remainingMs: 0, isActive: false },
-  }
+    sleepTimer: { elapsedMs: 0 },
+  };
 
-  return { state: newState, actions: [] }
+  return { state: newState, actions: [] };
 }
 
 function handleEvents(
   state: MaengguGameState,
   events: readonly GameEvent[],
 ): { state: MaengguGameState; actions: GameAction[] } {
-  let currentState = state
-  const allActions: GameAction[] = []
+  let currentState = state;
+  const allActions: GameAction[] = [];
 
   for (const event of events) {
     switch (event.type) {
-      case 'click': {
-        const result = handleClick(currentState)
-        currentState = result.state
-        allActions.push(...result.actions)
-        break
+      case "click": {
+        const result = handleClick(currentState);
+        currentState = result.state;
+        allActions.push(...result.actions);
+        break;
       }
-      case 'feed-success': {
-        const result = handleFeedSuccess(currentState)
-        currentState = result.state
-        allActions.push(...result.actions)
-        break
+      case "feed-success": {
+        const result = handleFeedSuccess(currentState);
+        currentState = result.state;
+        allActions.push(...result.actions);
+        break;
       }
-      case 'feed-fail':
+      case "feed-fail":
         // no-op
-        break
-      case 'summon': {
-        const result = handleSummon(currentState, event.x, event.y)
-        currentState = result.state
-        allActions.push(...result.actions)
-        break
+        break;
+      case "summon": {
+        const result = handleSummon(currentState, event.x, event.y);
+        currentState = result.state;
+        allActions.push(...result.actions);
+        break;
       }
     }
   }
 
-  return { state: currentState, actions: allActions }
+  return { state: currentState, actions: allActions };
 }
 
 // === 시간 기반 업데이트 ===
@@ -135,64 +165,90 @@ function updateIdleTimer(
   deltaMs: number,
 ): { timer: IdleTimerState; shouldStartWalk: boolean } {
   if (!idleTimer.isActive) {
-    return { timer: idleTimer, shouldStartWalk: false }
+    return { timer: idleTimer, shouldStartWalk: false };
   }
 
-  const newRemaining = idleTimer.remainingMs - deltaMs
+  const newRemaining = idleTimer.remainingMs - deltaMs;
 
   if (newRemaining <= 0) {
     return {
       timer: { remainingMs: 0, isActive: false },
       shouldStartWalk: true,
-    }
+    };
   }
 
   return {
     timer: { ...idleTimer, remainingMs: newRemaining },
     shouldStartWalk: false,
+  };
+}
+
+function updateSleepTimer(
+  sleepTimer: SleepTimerState,
+  deltaMs: number,
+  isIdle: boolean,
+): { timer: SleepTimerState; shouldSleep: boolean } {
+  // idle 상태가 아니면 타이머 리셋
+  if (!isIdle) {
+    return { timer: { elapsedMs: 0 }, shouldSleep: false };
   }
+
+  const newElapsed = sleepTimer.elapsedMs + deltaMs;
+
+  if (newElapsed >= SLEEP_TIMEOUT_MS) {
+    return { timer: { elapsedMs: 0 }, shouldSleep: true };
+  }
+
+  return { timer: { elapsedMs: newElapsed }, shouldSleep: false };
 }
 
 function handleAnimationComplete(state: MaengguGameState): MaengguGameState {
-  const { anim } = state
+  const { anim } = state;
 
   if (!anim.isComplete) {
-    return state
+    return state;
   }
 
   switch (anim.state) {
-    case 'eat':
+    case "eat":
       // eat 완료 → happy로 전환
       return {
         ...state,
-        anim: resetAnimation('happy'),
-      }
+        anim: resetAnimation("happy"),
+      };
 
-    case 'happy':
+    case "happy":
       // happy 완료 → idle로 전환, 타이머 시작
       return {
         ...state,
-        anim: resetAnimation('idle'),
+        anim: resetAnimation("idle"),
         idleTimer: {
           remainingMs: getRandomIdleTime(),
           isActive: true,
         },
-      }
+      };
 
     default:
-      return state
+      return state;
   }
 }
 
-function handleWalkStart(state: MaengguGameState, bounds: Bounds): MaengguGameState {
-  const targetPosition = generateRandomTarget(bounds)
-  const speed = getRandomSpeed()
+function handleWalkStart(
+  state: MaengguGameState,
+  bounds: Bounds,
+): MaengguGameState {
+  const targetPosition = generateRandomTarget(bounds);
+  const speed = getRandomSpeed();
 
   return {
     ...state,
-    anim: resetAnimation('walk'),
-    movement: startMovement(state.movement, { type: 'random', position: targetPosition }, speed),
-  }
+    anim: resetAnimation("walk"),
+    movement: startMovement(
+      state.movement,
+      { type: "random", position: targetPosition },
+      speed,
+    ),
+  };
 }
 
 function handleTargetReached(
@@ -200,31 +256,31 @@ function handleTargetReached(
   reachedTarget: MovementTarget | null,
 ): MaengguGameState {
   if (reachedTarget === null) {
-    return state
+    return state;
   }
 
-  if (state.anim.state !== 'walk') {
-    return state
+  if (state.anim.state !== "walk") {
+    return state;
   }
 
   // summon 도착 시 happy 애니메이션
-  if (reachedTarget.type === 'summon') {
+  if (reachedTarget.type === "summon") {
     return {
       ...state,
-      anim: resetAnimation('happy'),
+      anim: resetAnimation("happy"),
       idleTimer: { remainingMs: 0, isActive: false },
-    }
+    };
   }
 
   // random 도착 시 idle 전환
   return {
     ...state,
-    anim: resetAnimation('idle'),
+    anim: resetAnimation("idle"),
     idleTimer: {
       remainingMs: getRandomIdleTime(),
       isActive: true,
     },
-  }
+  };
 }
 
 // === 메인 업데이트 함수 ===
@@ -236,38 +292,62 @@ export function update(
   bounds: Bounds,
 ): UpdateResult {
   // 1. 이벤트 처리
-  const eventResult = handleEvents(state, events)
-  let currentState = eventResult.state
-  const actions = [...eventResult.actions]
+  const eventResult = handleEvents(state, events);
+  let currentState = eventResult.state;
+  const actions = [...eventResult.actions];
 
   // 2. 애니메이션 완료 처리
-  currentState = handleAnimationComplete(currentState)
+  currentState = handleAnimationComplete(currentState);
 
   // 3. idle 타이머 업데이트
-  if (currentState.anim.state === 'idle') {
-    const timerResult = updateIdleTimer(currentState.idleTimer, deltaMs)
-    currentState = { ...currentState, idleTimer: timerResult.timer }
+  if (currentState.anim.state === "idle") {
+    const timerResult = updateIdleTimer(currentState.idleTimer, deltaMs);
+    currentState = { ...currentState, idleTimer: timerResult.timer };
 
     if (timerResult.shouldStartWalk) {
-      currentState = handleWalkStart(currentState, bounds)
+      currentState = handleWalkStart(currentState, bounds);
     }
   }
 
   // 4. 이동 업데이트
-  if (currentState.anim.state === 'walk') {
-    const movementResult = updateMovement(currentState.movement, deltaMs, bounds)
+  if (currentState.anim.state === "walk") {
+    const movementResult = updateMovement(
+      currentState.movement,
+      deltaMs,
+      bounds,
+    );
     currentState = {
       ...currentState,
       movement: movementResult.state,
-    }
-    currentState = handleTargetReached(currentState, movementResult.reachedTarget)
+    };
+    currentState = handleTargetReached(
+      currentState,
+      movementResult.reachedTarget,
+    );
   }
 
-  // 5. 애니메이션 프레임 업데이트
+  // 5. sleep 타이머 업데이트
+  const isIdle = currentState.anim.state === "idle";
+  const sleepResult = updateSleepTimer(
+    currentState.sleepTimer,
+    deltaMs,
+    isIdle,
+  );
+  currentState = { ...currentState, sleepTimer: sleepResult.timer };
+
+  if (sleepResult.shouldSleep) {
+    currentState = {
+      ...currentState,
+      anim: resetAnimation("sleep"),
+      idleTimer: { remainingMs: 0, isActive: false },
+    };
+  }
+
+  // 6. 애니메이션 프레임 업데이트
   currentState = {
     ...currentState,
     anim: updateAnimation(currentState.anim, deltaMs),
-  }
+  };
 
-  return { state: currentState, actions }
+  return { state: currentState, actions };
 }
