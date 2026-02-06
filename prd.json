@@ -310,13 +310,48 @@
               "steps": ["assets/sprite.json 생성"]
             },
             {
-              "id": "sp-integrate",
-              "title": "기존 코드 연동",
+              "id": "sp-integrate-loader",
+              "title": "SpritePack 로딩 시스템",
               "status": "todo",
+              "goal": "useMaenggu에서 SpritePack 비동기 로딩 + 상태 관리",
               "steps": [
-                "기존 sprite-loader.ts → sprite-pack.ts 사용하도록 전환",
-                "Maenggu 컴포넌트가 SpritePack 기반으로 렌더링",
-                "update-animation.ts가 SpritePack에서 프레임 수/루프 여부 조회"
+                "useMaenggu에 spritePack 상태 추가",
+                "useEffect로 loadSpritePack 호출",
+                "로딩 중/에러 상태 처리"
+              ]
+            },
+            {
+              "id": "sp-integrate-anim",
+              "title": "애니메이션 SpritePack 연동",
+              "status": "todo",
+              "goal": "update-animation이 SpritePack에서 duration/loop 조회",
+              "steps": [
+                "updateAnimation에 SpritePack 파라미터 추가",
+                "LOOPING_STATES → isLoopingState(pack, state)",
+                "STATE_FRAME_DURATION → getFrameDuration(pack, state)",
+                "호출부(update.ts) 수정"
+              ]
+            },
+            {
+              "id": "sp-integrate-render",
+              "title": "Maenggu 렌더링 SpritePack 연동",
+              "status": "todo",
+              "goal": "Maenggu가 SpritePack에서 프레임 URL 조회",
+              "steps": [
+                "Maenggu에 spritePack prop 추가",
+                "getSpriteFrameUrls → getFrameUrls(pack, state)",
+                "App.tsx에서 spritePack 전달"
+              ]
+            },
+            {
+              "id": "sp-integrate-cleanup",
+              "title": "레거시 sprite-loader 정리",
+              "status": "todo",
+              "goal": "하드코딩된 sprite-loader.ts 삭제",
+              "steps": [
+                "sprite-loader.ts 삭제",
+                "관련 테스트 정리",
+                "import 경로 정리"
               ]
             },
             {
