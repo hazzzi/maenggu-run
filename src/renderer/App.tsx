@@ -8,7 +8,7 @@ import { useMaenggu } from './hooks/useMaenggu';
 import { useMealReminder } from './hooks/useMealReminder';
 import { useMouseCollider } from './hooks/useMouseCollider';
 
-function App(): JSX.Element {
+function App(): JSX.Element | null {
   const maengguRef = useRef<HTMLDivElement>(null);
   const pendingFeedRef = useRef(false);
   const [speechBubble, setSpeechBubble] = useState<string | null>(null);
@@ -23,7 +23,8 @@ function App(): JSX.Element {
     [addFloatingText],
   );
 
-  const { gameState, pushEvent } = useMaenggu(handleFloatingText);
+  const { gameState, pushEvent, spritePack, isLoading } =
+    useMaenggu(handleFloatingText);
 
   useMouseCollider(maengguRef);
 
@@ -65,6 +66,11 @@ function App(): JSX.Element {
     [pushEvent],
   );
 
+  // 로딩 중이면 아무것도 렌더링하지 않음
+  if (isLoading || !spritePack) {
+    return null;
+  }
+
   return (
     <div id="maenggu-container">
       <Maenggu
@@ -73,6 +79,7 @@ function App(): JSX.Element {
         position={gameState.movement.position}
         facing={gameState.movement.facing}
         frameIndex={gameState.anim.frameIndex}
+        spritePack={spritePack}
         onPointerDown={handlePointerDown}
         onContextMenu={handleContextMenu}
       />

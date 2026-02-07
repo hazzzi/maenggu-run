@@ -335,7 +335,7 @@
             {
               "id": "sp-integrate-render",
               "title": "Maenggu 렌더링 SpritePack 연동",
-              "status": "todo",
+              "status": "done",
               "goal": "Maenggu가 SpritePack에서 프레임 URL 조회",
               "steps": [
                 "Maenggu에 spritePack prop 추가",

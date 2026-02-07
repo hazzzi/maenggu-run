@@ -1298,3 +1298,10 @@ src/renderer/game/
 - useMaenggu에서 update 호출 시 spritePack 전달
 - 테스트에 mockPack 추가
 - Files: update-animation.ts, update.ts, useMaenggu.ts, sprite-pack.ts, *.test.ts
+
+[2026-02-07 sp-integrate-render] Maenggu 렌더링 SpritePack 연동 ✅
+- Maenggu에 spritePack prop 추가
+- getSpriteFrameUrls → getFrameUrls(pack, state)
+- App.tsx에서 spritePack 전달
+- 로딩 중이면 null 반환
+- Files: Maenggu.tsx, App.tsx

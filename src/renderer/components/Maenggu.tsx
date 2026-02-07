@@ -1,7 +1,8 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 
+import { type SpritePack } from '../../shared/types';
 import { SPRITE_DISPLAY_SCALE, SPRITE_SIZE } from '../game/constants';
-import { getSpriteFrameUrls } from '../game/sprite-loader';
+import { getFrameUrls } from '../game/sprite-pack';
 import {
   type AnimState,
   type FacingDirection,
@@ -14,6 +15,7 @@ type MaengguProps = {
   readonly facing: FacingDirection;
   readonly frameIndex?: number;
   readonly scale?: number;
+  readonly spritePack: SpritePack;
   readonly onPointerDown?: (event: React.PointerEvent<HTMLDivElement>) => void;
   readonly onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void;
 };
@@ -28,14 +30,13 @@ export const Maenggu = forwardRef<HTMLDivElement, MaengguProps>(
       facing,
       frameIndex = 0,
       scale = DISPLAY_SCALE,
+      spritePack,
       onPointerDown,
       onContextMenu,
     },
     ref,
   ) {
-    const spriteUrls = useMemo(() => getSpriteFrameUrls('/'), []);
-
-    const frames = spriteUrls[animState];
+    const frames = getFrameUrls(spritePack, animState);
     const currentFrame = frames[frameIndex % frames.length];
 
     const displaySize = SPRITE_SIZE * scale;
