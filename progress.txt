@@ -1289,3 +1289,12 @@ src/renderer/game/
 - typecheck: ✅ pass
 - test: ✅ pass (87 tests)
 - build: ✅ pass
+
+[2026-02-07 sp-integrate-anim] 애니메이션 SpritePack 연동 ✅
+- updateAnimation(anim, deltaMs, pack) 파라미터 추가
+- LOOPING_STATES, STATE_FRAME_DURATION 하드코딩 제거
+- sprite-pack.ts의 isLoopingState, getFrameDuration, getFrameCount 사용
+- update.ts에 SpritePack 파라미터 추가
+- useMaenggu에서 update 호출 시 spritePack 전달
+- 테스트에 mockPack 추가
+- Files: update-animation.ts, update.ts, useMaenggu.ts, sprite-pack.ts, *.test.ts

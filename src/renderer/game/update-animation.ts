@@ -1,37 +1,23 @@
-import { ANIMATION_FRAME_DURATION_MS } from './constants';
-import { getFrameCount } from './sprite-loader';
+import { type SpritePack } from '../../shared/types';
+import {
+  getFrameCount,
+  getFrameDuration,
+  isLoopingState,
+} from './sprite-pack';
 import { type AnimationState, type AnimState } from './types';
-
-const LOOPING_STATES: ReadonlySet<AnimState> = new Set([
-  'idle',
-  'walk',
-  'sleep',
-]);
-
-// 상태별 프레임 duration (ms)
-const STATE_FRAME_DURATION: Partial<Record<AnimState, number>> = {
-  sleep: 500, // 느린 숨쉬기 애니메이션
-};
-
-function isLoopingState(state: AnimState): boolean {
-  return LOOPING_STATES.has(state);
-}
-
-function getFrameDuration(state: AnimState): number {
-  return STATE_FRAME_DURATION[state] ?? ANIMATION_FRAME_DURATION_MS;
-}
 
 export function updateAnimation(
   anim: AnimationState,
   deltaMs: number,
+  pack: SpritePack,
 ): AnimationState {
   // 이미 완료된 one-shot 애니메이션은 그대로 유지
   if (anim.isComplete) {
     return anim;
   }
 
-  const frameCount = getFrameCount(anim.state);
-  const frameDuration = getFrameDuration(anim.state);
+  const frameCount = getFrameCount(pack, anim.state);
+  const frameDuration = getFrameDuration(pack, anim.state);
   const newElapsed = anim.elapsedMs + deltaMs;
 
   // 프레임 전환이 필요한지 확인
@@ -42,7 +28,7 @@ export function updateAnimation(
   // 다음 프레임으로 전환
   const nextFrameIndex = anim.frameIndex + 1;
 
-  if (isLoopingState(anim.state)) {
+  if (isLoopingState(pack, anim.state)) {
     // 루프 애니메이션: 처음으로 돌아감
     return {
       ...anim,

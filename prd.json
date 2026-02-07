@@ -323,7 +323,7 @@
             {
               "id": "sp-integrate-anim",
               "title": "애니메이션 SpritePack 연동",
-              "status": "todo",
+              "status": "done",
               "goal": "update-animation이 SpritePack에서 duration/loop 조회",
               "steps": [
                 "updateAnimation에 SpritePack 파라미터 추가",

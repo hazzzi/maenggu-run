@@ -1,7 +1,33 @@
 import { describe, expect, it } from 'vitest';
 
+import { type SpritePack } from '../../shared/types';
 import { type MaengguGameState } from './types';
 import { update } from './update';
+
+// 테스트용 mock SpritePack
+const mockPack: SpritePack = {
+  basePath: '/assets/',
+  manifest: {
+    name: 'test',
+    version: 1,
+    frameSize: 32,
+    fallback: 'idle',
+    states: {
+      idle: { frames: ['idle.png'], loop: true },
+      walk: { frames: ['walk1.png', 'walk2.png', 'walk3.png'], loop: true },
+      eat: {
+        frames: ['eat1.png', 'eat2.png', 'eat3.png', 'eat4.png', 'eat5.png'],
+        loop: false,
+      },
+      happy: { frames: ['happy.png'], loop: false },
+      sleep: {
+        frames: ['sleep1.png', 'sleep2.png'],
+        loop: true,
+        frameDuration: 500,
+      },
+    },
+  },
+};
 
 function createTestState(
   overrides: Partial<MaengguGameState> = {},
@@ -45,6 +71,7 @@ describe('update', () => {
         16,
         [{ type: 'click', position: { x: 100, y: 100 } }],
         bounds,
+        mockPack,
       );
 
       expect(result.state.anim.state).toBe('eat');
@@ -64,6 +91,7 @@ describe('update', () => {
         16,
         [{ type: 'click', position: { x: 100, y: 100 } }],
         bounds,
+        mockPack,
       );
 
       expect(result.actions).toHaveLength(0);
@@ -84,6 +112,7 @@ describe('update', () => {
         16,
         [{ type: 'click', position: { x: 100, y: 100 } }],
         bounds,
+        mockPack,
       );
 
       expect(result.actions).toHaveLength(0);
@@ -94,7 +123,7 @@ describe('update', () => {
     it('should transition to eat on feed-success', () => {
       const state = createTestState();
 
-      const result = update(state, 16, [{ type: 'feed-success' }], bounds);
+      const result = update(state, 16, [{ type: 'feed-success' }], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('eat');
       expect(result.actions).toHaveLength(0); // No snack added
@@ -103,7 +132,7 @@ describe('update', () => {
     it('should do nothing on feed-fail', () => {
       const state = createTestState();
 
-      const result = update(state, 16, [{ type: 'feed-fail' }], bounds);
+      const result = update(state, 16, [{ type: 'feed-fail' }], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('idle');
     });
@@ -115,7 +144,7 @@ describe('update', () => {
         anim: { state: 'eat', frameIndex: 4, elapsedMs: 0, isComplete: true },
       });
 
-      const result = update(state, 16, [], bounds);
+      const result = update(state, 16, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('happy');
       expect(result.state.anim.isComplete).toBe(false);
@@ -127,7 +156,7 @@ describe('update', () => {
         idleTimer: { remainingMs: 0, isActive: false },
       });
 
-      const result = update(state, 16, [], bounds);
+      const result = update(state, 16, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('idle');
       expect(result.state.idleTimer.isActive).toBe(true);
@@ -141,7 +170,7 @@ describe('update', () => {
         idleTimer: { remainingMs: 1000, isActive: true },
       });
 
-      const result = update(state, 100, [], bounds);
+      const result = update(state, 100, [], bounds, mockPack);
 
       expect(result.state.idleTimer.remainingMs).toBe(900);
     });
@@ -151,7 +180,7 @@ describe('update', () => {
         idleTimer: { remainingMs: 50, isActive: true },
       });
 
-      const result = update(state, 100, [], bounds);
+      const result = update(state, 100, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('walk');
       expect(result.state.movement.target).not.toBeNull();
@@ -171,7 +200,7 @@ describe('update', () => {
         idleTimer: { remainingMs: 0, isActive: false },
       });
 
-      const result = update(state, 16, [], bounds);
+      const result = update(state, 16, [], bounds, mockPack);
 
       expect(result.state.movement.position.x).toBeGreaterThan(100);
     });
@@ -188,7 +217,7 @@ describe('update', () => {
         idleTimer: { remainingMs: 0, isActive: false },
       });
 
-      const result = update(state, 16, [], bounds);
+      const result = update(state, 16, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('idle');
       expect(result.state.movement.target).toBeNull();
@@ -205,6 +234,7 @@ describe('update', () => {
         16,
         [{ type: 'summon', x: 500, y: 300 }],
         bounds,
+        mockPack,
       );
 
       expect(result.state.anim.state).toBe('walk');
@@ -225,6 +255,7 @@ describe('update', () => {
         16,
         [{ type: 'summon', x: 500, y: 300 }],
         bounds,
+        mockPack,
       );
 
       expect(result.state.anim.state).toBe('eat');
@@ -243,7 +274,7 @@ describe('update', () => {
         idleTimer: { remainingMs: 0, isActive: false },
       });
 
-      const result = update(state, 16, [], bounds);
+      const result = update(state, 16, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('happy');
       expect(result.state.movement.target).toBeNull();
@@ -256,7 +287,7 @@ describe('update', () => {
         sleepTimer: { elapsedMs: 0 },
       });
 
-      const result = update(state, 1000, [], bounds);
+      const result = update(state, 1000, [], bounds, mockPack);
 
       expect(result.state.sleepTimer.elapsedMs).toBeGreaterThan(0);
     });
@@ -274,7 +305,7 @@ describe('update', () => {
         sleepTimer: { elapsedMs: 10_000 },
       });
 
-      const result = update(state, 1000, [], bounds);
+      const result = update(state, 1000, [], bounds, mockPack);
 
       expect(result.state.sleepTimer.elapsedMs).toBeGreaterThan(10_000);
     });
@@ -284,7 +315,7 @@ describe('update', () => {
         sleepTimer: { elapsedMs: 599_500 },
       });
 
-      const result = update(state, 1000, [], bounds);
+      const result = update(state, 1000, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('sleep');
     });
@@ -302,7 +333,7 @@ describe('update', () => {
         sleepTimer: { elapsedMs: 599_500 },
       });
 
-      const result = update(state, 1000, [], bounds);
+      const result = update(state, 1000, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('sleep');
       expect(result.state.movement.target).toBeNull();
@@ -318,6 +349,7 @@ describe('update', () => {
         16,
         [{ type: 'click', position: { x: 100, y: 100 } }],
         bounds,
+        mockPack,
       );
 
       expect(result.state.sleepTimer.elapsedMs).toBeLessThan(100);
@@ -329,7 +361,7 @@ describe('update', () => {
         sleepTimer: { elapsedMs: 599_500 },
       });
 
-      const result = update(state, 1000, [], bounds);
+      const result = update(state, 1000, [], bounds, mockPack);
 
       expect(result.state.anim.state).toBe('eat');
     });
@@ -350,6 +382,7 @@ describe('update', () => {
         16,
         [{ type: 'click', position: { x: 100, y: 100 } }],
         bounds,
+        mockPack,
       );
 
       expect(result.state.anim.state).toBe('happy');
@@ -373,6 +406,7 @@ describe('update', () => {
         16,
         [{ type: 'summon', x: 400, y: 200 }],
         bounds,
+        mockPack,
       );
 
       expect(result.state.anim.state).toBe('walk');
@@ -399,6 +433,7 @@ describe('update', () => {
         16,
         [{ type: 'click', position: { x: 100, y: 100 } }],
         bounds,
+        mockPack,
       );
 
       expect(

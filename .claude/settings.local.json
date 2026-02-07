@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(gh release view:*)",
-      "Bash(pnpm tauri dev:*)"
+      "Bash(pnpm tauri dev:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm test:*)",
+      "Bash(timeout 10 pnpm dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: add SpritePack loading to useMaenggu hook\n\n- Add spritePack, isLoading, error states\n- Game loop waits for SpritePack to load\n- Return { gameState, pushEvent, spritePack, isLoading, error }\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)"
     ]
   },
   "outputStyle": "default"

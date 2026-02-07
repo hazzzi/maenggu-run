@@ -112,6 +112,7 @@ export function useMaenggu(
         deltaMs,
         events,
         bounds,
+        spritePack,
       );
 
       // 상태 변경이 있을 때만 setState 호출
