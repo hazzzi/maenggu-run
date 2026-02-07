@@ -1305,3 +1305,8 @@ src/renderer/game/
 - App.tsx에서 spritePack 전달
 - 로딩 중이면 null 반환
 - Files: Maenggu.tsx, App.tsx
+
+[2026-02-07 sp-integrate-cleanup] 레거시 sprite-loader 정리 ✅
+- sprite-loader.ts 삭제 (하드코딩된 SPRITE_FRAMES)
+- 모든 코드가 sprite-pack.ts 사용
+- Files: sprite-loader.ts (deleted)

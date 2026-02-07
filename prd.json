@@ -346,7 +346,7 @@
             {
               "id": "sp-integrate-cleanup",
               "title": "레거시 sprite-loader 정리",
-              "status": "todo",
+              "status": "done",
               "goal": "하드코딩된 sprite-loader.ts 삭제",
               "steps": [
                 "sprite-loader.ts 삭제",
