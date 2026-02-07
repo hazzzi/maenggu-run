@@ -272,7 +272,7 @@
         {
           "id": "phase1",
           "title": "Phase 1: 스프라이트 팩 로더",
-          "status": "in_progress",
+          "status": "done",
           "goal": "매니페스트 기반 스프라이트 로딩 시스템 구축",
           "items": [
             {
@@ -357,7 +357,7 @@
             {
               "id": "sp-settings",
               "title": "설정에서 스프라이트 팩 선택",
-              "status": "todo",
+              "status": "done",
               "steps": [
                 "트레이 메뉴에 '스프라이트 변경' 추가",
                 "폴더 선택 다이얼로그 → 로드 → 적용",

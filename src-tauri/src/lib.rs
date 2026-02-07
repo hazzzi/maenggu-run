@@ -27,10 +27,13 @@ pub struct SaveDataStats {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SaveData {
     pub version: u8,
     pub snacks: u32,
     pub stats: SaveDataStats,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sprite_path: Option<String>,
 }
 
 impl Default for SaveData {
@@ -44,6 +47,7 @@ impl Default for SaveData {
                 peak_snacks: 0,
                 session_playtime: 0,
             },
+            sprite_path: None,
         }
     }
 }
@@ -272,8 +276,9 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let stats_item = MenuItem::with_id(app, "stats", "상태", true, None::<&str>)?;
     let summon_item = MenuItem::with_id(app, "summon", "맹구 부르기", true, None::<&str>)?;
     let bug_report_item = MenuItem::with_id(app, "bug_report", "버그 신고", true, None::<&str>)?;
-    
-    let menu = Menu::with_items(app, &[&summon_item, &stats_item, &bug_report_item, &quit_item])?;
+    let sprite_item = MenuItem::with_id(app, "change_sprite", "스프라이트 변경", true, None::<&str>)?;
+
+    let menu = Menu::with_items(app, &[&summon_item, &sprite_item, &stats_item, &bug_report_item, &quit_item])?;
     
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
@@ -311,11 +316,11 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                 "bug_report" => {
                     if let Some(window) = app.get_webview_window("main") {
                         let report = collect_bug_report(&window);
-                        
+
                         // Copy to clipboard using the extension trait
                         use tauri_plugin_clipboard_manager::ClipboardExt;
                         let _ = app.clipboard().write_text(&report);
-                        
+
                         // Show dialog
                         rfd::MessageDialog::new()
                             .set_title("버그 신고")
@@ -328,6 +333,28 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                             ))
                             .set_level(rfd::MessageLevel::Info)
                             .show();
+                    }
+                }
+                "change_sprite" => {
+                    // 폴더 선택 다이얼로그
+                    if let Some(folder) = rfd::FileDialog::new()
+                        .set_title("스프라이트 팩 폴더 선택")
+                        .pick_folder()
+                    {
+                        let folder_path = folder.to_string_lossy().to_string();
+
+                        // 저장
+                        let state: State<SnackState> = app.state();
+                        {
+                            let mut data = state.data.lock().unwrap();
+                            data.sprite_path = Some(folder_path.clone());
+                            save_to_file(&app, &data);
+                        }
+
+                        // JS에 알림
+                        app.emit("sprite_changed", folder_path).ok();
+
+                        log::info!("Sprite path changed");
                     }
                 }
                 _ => {}

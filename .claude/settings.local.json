@@ -8,7 +8,8 @@
       "Bash(timeout 10 pnpm dev:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: add SpritePack loading to useMaenggu hook\n\n- Add spritePack, isLoading, error states\n- Game loop waits for SpritePack to load\n- Return { gameState, pushEvent, spritePack, isLoading, error }\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(cargo check:*)"
     ]
   },
   "outputStyle": "default"

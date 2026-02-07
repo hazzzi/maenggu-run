@@ -93,6 +93,21 @@ export const tauriMaengguApi: MaengguApi = {
       };
     },
   },
+  sprite: {
+    onSpriteChanged: (callback: (path: string) => void): (() => void) => {
+      let unlisten: UnlistenFn | null = null;
+
+      listen<string>('sprite_changed', (event) => {
+        callback(event.payload);
+      }).then((fn) => {
+        unlisten = fn;
+      });
+
+      return () => {
+        unlisten?.();
+      };
+    },
+  },
 };
 
 // Tauri 환경인지 확인
