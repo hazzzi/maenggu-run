@@ -312,7 +312,7 @@
             {
               "id": "sp-integrate-loader",
               "title": "SpritePack 로딩 시스템",
-              "status": "todo",
+              "status": "done",
               "goal": "useMaenggu에서 SpritePack 비동기 로딩 + 상태 관리",
               "steps": [
                 "useMaenggu에 spritePack 상태 추가",

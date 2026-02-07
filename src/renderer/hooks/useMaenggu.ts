@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { type SpritePack } from '../../shared/types';
 import { MAX_DELTA_MS } from '../game/constants';
 import { createInitialState } from '../game/create-initial-state';
+import { loadSpritePack } from '../game/sprite-pack';
 import { getWindowBounds } from '../game/target';
 import {
   type GameAction,
@@ -13,6 +15,9 @@ import { update, type UpdateResult } from '../game/update';
 export type UseMaengguReturn = {
   readonly gameState: MaengguGameState;
   readonly pushEvent: (event: GameEvent) => void;
+  readonly spritePack: SpritePack | null;
+  readonly isLoading: boolean;
+  readonly error: string | null;
 };
 
 function executeAction(
@@ -37,6 +42,11 @@ export function useMaenggu(
     return createInitialState(bounds.width, bounds.height);
   });
 
+  // SpritePack 로딩 상태
+  const [spritePack, setSpritePack] = useState<SpritePack | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const eventsRef = useRef<GameEvent[]>([]);
   const onFloatingTextRef = useRef(onFloatingText);
   const gameStateRef = useRef(gameState);
@@ -55,6 +65,19 @@ export function useMaenggu(
     eventsRef.current.push(event);
   }, []);
 
+  // SpritePack 로딩
+  useEffect(() => {
+    loadSpritePack('/assets/').then((result) => {
+      if (result.success) {
+        setSpritePack(result.pack);
+      } else {
+        setError(result.error);
+        console.error('Failed to load sprite pack:', result.error);
+      }
+      setIsLoading(false);
+    });
+  }, []);
+
   // summon 이벤트 구독
   useEffect(() => {
     const unsubscribe = window.maenggu.summon.onSummon(async () => {
@@ -67,8 +90,10 @@ export function useMaenggu(
     return unsubscribe;
   }, [pushEvent]);
 
-  // 게임 루프
+  // 게임 루프 (SpritePack 로딩 완료 후 시작)
   useEffect(() => {
+    if (!spritePack) return;
+
     let lastTime = performance.now();
     let rafId: number;
 
@@ -108,7 +133,7 @@ export function useMaenggu(
     return () => {
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [spritePack]);
 
-  return { gameState, pushEvent };
+  return { gameState, pushEvent, spritePack, isLoading, error };
 }

@@ -1269,3 +1269,23 @@ src/renderer/game/
 - test: ✅ pass (87 tests)
 - lint: ✅ pass (0 warnings)
 - build: ✅ pass (GitHub Actions macOS + Windows)
+
+---
+
+## 2026-02-07 - sp-integrate-loader 완료
+
+**PRD**: sp-integrate-loader (SpritePack 로딩 시스템)
+
+**Completed**:
+- useMaenggu에 SpritePack 비동기 로딩 추가
+- spritePack, isLoading, error 상태 관리
+- 게임 루프는 spritePack 로딩 완료 후 시작
+- 반환값: { gameState, pushEvent, spritePack, isLoading, error }
+
+**Files**:
+- src/renderer/hooks/useMaenggu.ts (modified)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- test: ✅ pass (87 tests)
+- build: ✅ pass
