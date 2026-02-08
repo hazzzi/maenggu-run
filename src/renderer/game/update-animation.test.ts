@@ -1,8 +1,34 @@
 import { describe, expect, it } from 'vitest';
 
+import { type SpritePack } from '../../shared/types';
 import { ANIMATION_FRAME_DURATION_MS } from './constants';
 import { type AnimationState } from './types';
 import { resetAnimation, updateAnimation } from './update-animation';
+
+// 테스트용 mock SpritePack
+const mockPack: SpritePack = {
+  basePath: '/assets/',
+  manifest: {
+    name: 'test',
+    version: 1,
+    frameSize: 32,
+    fallback: 'idle',
+    states: {
+      idle: { frames: ['idle.png'], loop: true },
+      walk: { frames: ['walk1.png', 'walk2.png', 'walk3.png'], loop: true },
+      eat: {
+        frames: ['eat1.png', 'eat2.png', 'eat3.png', 'eat4.png', 'eat5.png'],
+        loop: false,
+      },
+      happy: { frames: ['happy.png'], loop: false },
+      sleep: {
+        frames: ['sleep1.png', 'sleep2.png'],
+        loop: true,
+        frameDuration: 500,
+      },
+    },
+  },
+};
 
 describe('updateAnimation', () => {
   describe('looping animations (idle, walk)', () => {
@@ -14,7 +40,7 @@ describe('updateAnimation', () => {
         isComplete: false,
       };
 
-      const result = updateAnimation(state, 50);
+      const result = updateAnimation(state, 50, mockPack);
 
       expect(result.elapsedMs).toBe(50);
       expect(result.frameIndex).toBe(0);
@@ -28,7 +54,7 @@ describe('updateAnimation', () => {
         isComplete: false,
       };
 
-      const result = updateAnimation(state, 20);
+      const result = updateAnimation(state, 20, mockPack);
 
       expect(result.frameIndex).toBe(1);
       expect(result.elapsedMs).toBe(10);
@@ -42,7 +68,7 @@ describe('updateAnimation', () => {
         isComplete: false,
       };
 
-      const result = updateAnimation(state, 20);
+      const result = updateAnimation(state, 20, mockPack);
 
       expect(result.frameIndex).toBe(0);
     });
@@ -55,7 +81,7 @@ describe('updateAnimation', () => {
         isComplete: false,
       };
 
-      const result = updateAnimation(state, 10000);
+      const result = updateAnimation(state, 10000, mockPack);
 
       expect(result.isComplete).toBe(false);
     });
@@ -71,11 +97,11 @@ describe('updateAnimation', () => {
       };
 
       // Advance to frame 4
-      let result = updateAnimation(state, 20);
+      let result = updateAnimation(state, 20, mockPack);
       expect(result.isComplete).toBe(false);
 
       // Advance past frame 4 (last frame)
-      result = updateAnimation(result, ANIMATION_FRAME_DURATION_MS + 10);
+      result = updateAnimation(result, ANIMATION_FRAME_DURATION_MS + 10, mockPack);
       expect(result.isComplete).toBe(true);
       expect(result.frameIndex).toBe(4);
     });
@@ -88,7 +114,7 @@ describe('updateAnimation', () => {
         isComplete: true,
       };
 
-      const result = updateAnimation(state, 1000);
+      const result = updateAnimation(state, 1000, mockPack);
 
       expect(result).toEqual(state);
     });

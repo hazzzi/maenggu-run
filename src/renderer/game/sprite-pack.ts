@@ -1,6 +1,5 @@
 import {
   REQUIRED_STATES,
-  type RequiredState,
   type SpriteManifest,
   type SpritePack,
   type SpritePackLoadResult,
@@ -125,7 +124,7 @@ export function getStateConfig(
 /**
  * 상태의 프레임 수 반환
  */
-export function getFrameCount(pack: SpritePack, state: RequiredState): number {
+export function getFrameCount(pack: SpritePack, state: string): number {
   const config = getStateConfig(pack, state);
   return config.frames.length;
 }

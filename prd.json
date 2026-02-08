@@ -272,7 +272,7 @@
         {
           "id": "phase1",
           "title": "Phase 1: 스프라이트 팩 로더",
-          "status": "in_progress",
+          "status": "done",
           "goal": "매니페스트 기반 스프라이트 로딩 시스템 구축",
           "items": [
             {
@@ -312,7 +312,7 @@
             {
               "id": "sp-integrate-loader",
               "title": "SpritePack 로딩 시스템",
-              "status": "todo",
+              "status": "done",
               "goal": "useMaenggu에서 SpritePack 비동기 로딩 + 상태 관리",
               "steps": [
                 "useMaenggu에 spritePack 상태 추가",
@@ -323,7 +323,7 @@
             {
               "id": "sp-integrate-anim",
               "title": "애니메이션 SpritePack 연동",
-              "status": "todo",
+              "status": "done",
               "goal": "update-animation이 SpritePack에서 duration/loop 조회",
               "steps": [
                 "updateAnimation에 SpritePack 파라미터 추가",
@@ -335,7 +335,7 @@
             {
               "id": "sp-integrate-render",
               "title": "Maenggu 렌더링 SpritePack 연동",
-              "status": "todo",
+              "status": "done",
               "goal": "Maenggu가 SpritePack에서 프레임 URL 조회",
               "steps": [
                 "Maenggu에 spritePack prop 추가",
@@ -346,7 +346,7 @@
             {
               "id": "sp-integrate-cleanup",
               "title": "레거시 sprite-loader 정리",
-              "status": "todo",
+              "status": "done",
               "goal": "하드코딩된 sprite-loader.ts 삭제",
               "steps": [
                 "sprite-loader.ts 삭제",
@@ -357,7 +357,7 @@
             {
               "id": "sp-settings",
               "title": "설정에서 스프라이트 팩 선택",
-              "status": "todo",
+              "status": "done",
               "steps": [
                 "트레이 메뉴에 '스프라이트 변경' 추가",
                 "폴더 선택 다이얼로그 → 로드 → 적용",

@@ -1269,3 +1269,68 @@ src/renderer/game/
 - test: ✅ pass (87 tests)
 - lint: ✅ pass (0 warnings)
 - build: ✅ pass (GitHub Actions macOS + Windows)
+
+---
+
+## 2026-02-07 - sp-integrate-loader 완료
+
+**PRD**: sp-integrate-loader (SpritePack 로딩 시스템)
+
+**Completed**:
+- useMaenggu에 SpritePack 비동기 로딩 추가
+- spritePack, isLoading, error 상태 관리
+- 게임 루프는 spritePack 로딩 완료 후 시작
+- 반환값: { gameState, pushEvent, spritePack, isLoading, error }
+
+**Files**:
+- src/renderer/hooks/useMaenggu.ts (modified)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- test: ✅ pass (87 tests)
+- build: ✅ pass
+
+[2026-02-07 sp-integrate-anim] 애니메이션 SpritePack 연동 ✅
+- updateAnimation(anim, deltaMs, pack) 파라미터 추가
+- LOOPING_STATES, STATE_FRAME_DURATION 하드코딩 제거
+- sprite-pack.ts의 isLoopingState, getFrameDuration, getFrameCount 사용
+- update.ts에 SpritePack 파라미터 추가
+- useMaenggu에서 update 호출 시 spritePack 전달
+- 테스트에 mockPack 추가
+- Files: update-animation.ts, update.ts, useMaenggu.ts, sprite-pack.ts, *.test.ts
+
+[2026-02-07 sp-integrate-render] Maenggu 렌더링 SpritePack 연동 ✅
+- Maenggu에 spritePack prop 추가
+- getSpriteFrameUrls → getFrameUrls(pack, state)
+- App.tsx에서 spritePack 전달
+- 로딩 중이면 null 반환
+- Files: Maenggu.tsx, App.tsx
+
+[2026-02-07 sp-integrate-cleanup] 레거시 sprite-loader 정리 ✅
+- sprite-loader.ts 삭제 (하드코딩된 SPRITE_FRAMES)
+- 모든 코드가 sprite-pack.ts 사용
+- Files: sprite-loader.ts (deleted)
+
+[2026-02-07 sp-settings] 설정에서 스프라이트 팩 선택 ✅
+- SaveData에 spritePath 필드 추가 (Rust + TS)
+- 트레이 메뉴에 "스프라이트 변경" 항목 추가
+- rfd::FileDialog로 폴더 선택 다이얼로그
+- sprite_changed 이벤트 emit → JS에서 수신
+- useMaenggu에서 sprite_changed 이벤트 리스닝 + SpritePack 리로드
+- convertFileSrc로 로컬 파일 경로를 Tauri asset URL로 변환
+- Files: lib.rs, types.ts, tauri-api.ts, useMaenggu.ts
+
+---
+
+## v3 Phase 1 완료! 🎉
+
+모든 Phase 1 작업 완료:
+- sp-types ✅
+- sp-loader ✅
+- sp-fallback ✅
+- sp-manifest ✅
+- sp-integrate-loader ✅
+- sp-integrate-anim ✅
+- sp-integrate-render ✅
+- sp-integrate-cleanup ✅
+- sp-settings ✅

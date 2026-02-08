@@ -1,3 +1,4 @@
+import { type SpritePack } from '../../shared/types';
 import {
   IDLE_TIME_RANGE,
   MOVE_SPEED_RANGE,
@@ -287,6 +288,7 @@ export function update(
   deltaMs: number,
   events: readonly GameEvent[],
   bounds: Bounds,
+  pack: SpritePack,
 ): UpdateResult {
   // 1. 이벤트 처리
   const eventResult = handleEvents(state, events);
@@ -345,7 +347,7 @@ export function update(
   // 6. 애니메이션 프레임 업데이트
   currentState = {
     ...currentState,
-    anim: updateAnimation(currentState.anim, deltaMs),
+    anim: updateAnimation(currentState.anim, deltaMs, pack),
   };
 
   return { state: currentState, actions };

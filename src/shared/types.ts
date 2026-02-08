@@ -9,6 +9,7 @@ export type SaveData = {
   readonly version: 1;
   readonly snacks: number;
   readonly stats: SaveDataStats;
+  readonly spritePath?: string;
 };
 
 export const DEFAULT_SAVE_DATA: SaveData = {
@@ -90,5 +91,8 @@ export type MaengguApi = {
   };
   summon: {
     onSummon: (callback: () => void) => () => void;
+  };
+  sprite: {
+    onSpriteChanged: (callback: (path: string) => void) => () => void;
   };
 };
