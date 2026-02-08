@@ -5,11 +5,32 @@ export type SaveDataStats = {
   readonly sessionPlaytime: number;
 };
 
+export type MealTime = {
+  readonly hour: number;
+  readonly minute: number;
+};
+
+export type MealReminderSettings = {
+  readonly enabled: boolean;
+  readonly times: readonly MealTime[];
+  readonly message: string;
+};
+
+export const DEFAULT_MEAL_REMINDER: MealReminderSettings = {
+  enabled: true,
+  times: [
+    { hour: 11, minute: 50 },
+    { hour: 17, minute: 50 },
+  ],
+  message: '맘마 10분전! ><',
+};
+
 export type SaveData = {
   readonly version: 1;
   readonly snacks: number;
   readonly stats: SaveDataStats;
   readonly spritePath?: string;
+  readonly mealReminder?: MealReminderSettings;
 };
 
 export const DEFAULT_SAVE_DATA: SaveData = {
@@ -94,5 +115,12 @@ export type MaengguApi = {
   };
   sprite: {
     onSpriteChanged: (callback: (path: string) => void) => () => void;
+  };
+  mealReminder: {
+    getSettings: () => Promise<MealReminderSettings>;
+    saveSettings: (settings: MealReminderSettings) => Promise<void>;
+    onSettingsChanged: (
+      callback: (settings: MealReminderSettings) => void,
+    ) => () => void;
   };
 };

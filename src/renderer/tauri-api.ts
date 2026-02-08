@@ -3,8 +3,10 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 
 import {
+  DEFAULT_MEAL_REMINDER,
   DEFAULT_SAVE_DATA,
   type MaengguApi,
+  type MealReminderSettings,
   type SaveData,
   type SaveLoadResult,
 } from '../shared/types';
@@ -98,6 +100,33 @@ export const tauriMaengguApi: MaengguApi = {
       let unlisten: UnlistenFn | null = null;
 
       listen<string>('sprite_changed', (event) => {
+        callback(event.payload);
+      }).then((fn) => {
+        unlisten = fn;
+      });
+
+      return () => {
+        unlisten?.();
+      };
+    },
+  },
+  mealReminder: {
+    getSettings: async (): Promise<MealReminderSettings> => {
+      try {
+        return await invoke<MealReminderSettings>('get_meal_settings');
+      } catch {
+        return DEFAULT_MEAL_REMINDER;
+      }
+    },
+    saveSettings: async (settings: MealReminderSettings): Promise<void> => {
+      await invoke('save_meal_settings', { settings });
+    },
+    onSettingsChanged: (
+      callback: (settings: MealReminderSettings) => void,
+    ): (() => void) => {
+      let unlisten: UnlistenFn | null = null;
+
+      listen<MealReminderSettings>('meal_settings_changed', (event) => {
         callback(event.payload);
       }).then((fn) => {
         unlisten = fn;

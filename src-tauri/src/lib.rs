@@ -28,12 +28,42 @@ pub struct SaveDataStats {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct MealTime {
+    pub hour: u8,
+    pub minute: u8,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MealReminderSettings {
+    pub enabled: bool,
+    pub times: Vec<MealTime>,
+    pub message: String,
+}
+
+impl Default for MealReminderSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            times: vec![
+                MealTime { hour: 11, minute: 50 },
+                MealTime { hour: 17, minute: 50 },
+            ],
+            message: "맘마 10분전! ><".to_string(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SaveData {
     pub version: u8,
     pub snacks: u32,
     pub stats: SaveDataStats,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sprite_path: Option<String>,
+    #[serde(default)]
+    pub meal_reminder: Option<MealReminderSettings>,
 }
 
 impl Default for SaveData {
@@ -48,6 +78,7 @@ impl Default for SaveData {
                 session_playtime: 0,
             },
             sprite_path: None,
+            meal_reminder: None,
         }
     }
 }
@@ -121,7 +152,7 @@ fn snack_add(app: AppHandle, state: State<SnackState>, amount: Option<u32>) {
 #[tauri::command]
 fn snack_spend(app: AppHandle, state: State<SnackState>, amount: Option<u32>) -> bool {
     let amount = amount.unwrap_or(1);
-    
+
     let (success, new_snacks) = {
         let mut data = state.data.lock().unwrap();
         if data.snacks >= amount {
@@ -133,12 +164,28 @@ fn snack_spend(app: AppHandle, state: State<SnackState>, amount: Option<u32>) ->
             (false, data.snacks)
         }
     };
-    
+
     if success {
         app.emit("snack_update", new_snacks).ok();
     }
-    
+
     success
+}
+
+#[tauri::command]
+fn get_meal_settings(state: State<SnackState>) -> MealReminderSettings {
+    let data = state.data.lock().unwrap();
+    data.meal_reminder.clone().unwrap_or_default()
+}
+
+#[tauri::command]
+fn save_meal_settings(app: AppHandle, state: State<SnackState>, settings: MealReminderSettings) {
+    let mut data = state.data.lock().unwrap();
+    data.meal_reminder = Some(settings.clone());
+    save_to_file(&app, &data);
+
+    // Emit event to notify frontend of settings change
+    app.emit("meal_settings_changed", settings).ok();
 }
 
 /// Calculate bounding box that covers all monitors
@@ -275,10 +322,11 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     let quit_item = MenuItem::with_id(app, "quit", "끝내기", true, None::<&str>)?;
     let stats_item = MenuItem::with_id(app, "stats", "상태", true, None::<&str>)?;
     let summon_item = MenuItem::with_id(app, "summon", "맹구 부르기", true, None::<&str>)?;
+    let settings_item = MenuItem::with_id(app, "settings", "설정", true, None::<&str>)?;
     let bug_report_item = MenuItem::with_id(app, "bug_report", "버그 신고", true, None::<&str>)?;
     let sprite_item = MenuItem::with_id(app, "change_sprite", "스프라이트 변경", true, None::<&str>)?;
 
-    let menu = Menu::with_items(app, &[&summon_item, &sprite_item, &stats_item, &bug_report_item, &quit_item])?;
+    let menu = Menu::with_items(app, &[&summon_item, &sprite_item, &settings_item, &stats_item, &bug_report_item, &quit_item])?;
     
     let _tray = TrayIconBuilder::new()
         .menu(&menu)
@@ -312,6 +360,25 @@ fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                 "summon" => {
                     // Emit summon event to frontend
                     app.emit("summon", ()).ok();
+                }
+                "settings" => {
+                    // Open settings window or focus if already open
+                    if let Some(window) = app.get_webview_window("settings") {
+                        window.set_focus().ok();
+                    } else {
+                        let _settings_window = tauri::WebviewWindowBuilder::new(
+                            app,
+                            "settings",
+                            tauri::WebviewUrl::App("index.html?window=settings".into()),
+                        )
+                        .title("맹구 설정")
+                        .inner_size(400.0, 500.0)
+                        .resizable(false)
+                        .minimizable(false)
+                        .maximizable(false)
+                        .build()
+                        .ok();
+                    }
                 }
                 "bug_report" => {
                     if let Some(window) = app.get_webview_window("main") {
@@ -400,7 +467,7 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(SnackState::default())
-        .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend])
+        .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend, get_meal_settings, save_meal_settings])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
