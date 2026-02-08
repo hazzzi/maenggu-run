@@ -150,9 +150,9 @@
           "id": "bug-hidpi-render",
           "title": "[고해상도] 스프라이트 깨짐",
           "status": "blocked",
-          "blockedBy": "bug-report",
+          "blockedBy": "실제 버그 리포트 데이터 수집 대기",
           "symptom": "고해상도 모니터에서 픽셀이 일정하지 않게 보임",
-          "cause": "추가 조사 필요 - 버그 리포트 기능으로 환경 정보 수집 후 수정"
+          "cause": "추가 조사 필요 - 버그 리포트 기능은 완료. 실제 사용자 환경 정보 수집 후 원인 분석 예정"
         },
         {
           "id": "bug-report",
@@ -369,10 +369,9 @@
         {
           "id": "phase2",
           "title": "Phase 2: AI 스프라이트 생성",
-          "status": "blocked",
-          "blockedBy": "phase1",
+          "status": "planning",
           "goal": "사진 업로드 → AI가 스프라이트 팩 자동 생성",
-          "notes": "Phase 1 완료 후 상세 설계. AI 모델 선정, 프롬프트 설계, 생성 파이프라인 구축 필요.",
+          "notes": "Phase 1 완료. AI 모델 선정, 프롬프트 설계, 생성 파이프라인 구축 필요.",
           "items": []
         }
       ]
