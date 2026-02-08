@@ -1,26 +1,36 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-type MealTime = {
-  readonly hour: number;
-  readonly minute: number;
-};
-
-// 알림 시간 설정 (11:50, 17:50)
-const MEAL_TIMES: readonly MealTime[] = [
-  { hour: 11, minute: 50 },
-  { hour: 17, minute: 50 },
-];
-
-const REMINDER_MESSAGE = '맘마 10분전! ><';
+import {
+  DEFAULT_MEAL_REMINDER,
+  type MealReminderSettings,
+} from '../../shared/types';
 
 /**
  * 밥시간 알림 훅
- * 지정된 시간에 콜백 호출
+ * 설정에서 시간/메시지를 읽어와서 지정된 시간에 콜백 호출
  */
 export function useMealReminder(onReminder: (message: string) => void): void {
   const lastTriggeredRef = useRef<string | null>(null);
+  const [settings, setSettings] = useState<MealReminderSettings>(DEFAULT_MEAL_REMINDER);
 
+  // 설정 로드 및 변경 구독
   useEffect(() => {
+    // 초기 로드
+    window.maenggu?.mealReminder.getSettings().then(setSettings);
+
+    // 변경 구독
+    const unsubscribe = window.maenggu?.mealReminder.onSettingsChanged(setSettings);
+
+    return () => {
+      unsubscribe?.();
+    };
+  }, []);
+
+  // 시간 체크 로직
+  useEffect(() => {
+    // 비활성화면 스킵
+    if (!settings.enabled) return;
+
     const checkTime = (): void => {
       const now = new Date();
       const currentHour = now.getHours();
@@ -33,13 +43,13 @@ export function useMealReminder(onReminder: (message: string) => void): void {
       }
 
       // 알림 시간인지 확인
-      const isMealTime = MEAL_TIMES.some(
+      const isMealTime = settings.times.some(
         (time) => time.hour === currentHour && time.minute === currentMinute,
       );
 
       if (isMealTime) {
         lastTriggeredRef.current = currentKey;
-        onReminder(REMINDER_MESSAGE);
+        onReminder(settings.message);
       }
     };
 
@@ -51,15 +61,17 @@ export function useMealReminder(onReminder: (message: string) => void): void {
     const msUntilNextMinute =
       (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
     const initialTimeout = setTimeout(() => {
       checkTime();
       // 이후 매 분마다 체크
-      const interval = setInterval(checkTime, 60 * 1000);
-      return () => clearInterval(interval);
+      intervalId = setInterval(checkTime, 60 * 1000);
     }, msUntilNextMinute);
 
     return () => {
       clearTimeout(initialTimeout);
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [onReminder]);
+  }, [settings, onReminder]);
 }
