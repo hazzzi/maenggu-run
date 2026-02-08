@@ -1,4 +1,4 @@
-# AGENTS.md
+# CLAUDE.md
 
 ## Project Type
 
@@ -23,11 +23,14 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 ## Quick Commands (pnpm)
 
 - Install: `pnpm install`
-- Dev (electron-vite): `pnpm dev`
-- Build: `pnpm build`
-- Preview (if configured): `pnpm preview`
+- Dev (Tauri + Vite): `pnpm dev`
+- Build (Tauri): `pnpm build`
+- Dev (Vite only): `pnpm dev:vite`
+- Build (Vite only): `pnpm build:vite`
+- Preview: `pnpm preview`
 - Lint (oxlint): `pnpm lint`
 - Format (oxfmt): `pnpm fmt` (NOT `pnpm format`)
+- Typecheck: `pnpm typecheck`
 - Test (vitest): `pnpm test`
 
 ## Single Test (vitest)
@@ -39,25 +42,25 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 
 ## Process Boundaries
 
-- Main process: app lifecycle, windows, OS integration, filesystem
-- Preload: bridge safe APIs to renderer
-- Renderer: UI, state, interaction
-- Avoid direct Node APIs in renderer; use preload IPC instead
+- Rust backend (`src-tauri/src/`): app lifecycle, windows, OS integration, filesystem, tray menu
+- Renderer (`src/renderer/`): UI, state, interaction (React + Vite)
+- Shared (`src/shared/`): types and constants shared between layers
+- Renderer communicates with Rust via `@tauri-apps/api` (`invoke`, `listen`, `emit`)
 
-## IPC
+## IPC (Tauri Commands & Events)
 
-- Prefer typed, explicit IPC channels
-- Use request/response naming:
-  - `app:getState`, `app:saveState`
-- Validate payloads at boundaries
-- Keep IPC handlers in `src/main/ipc`
+- Rust → JS: `app.emit("event_name", payload)` + `listen("event_name", callback)`
+- JS → Rust: `invoke<T>("command_name", { args })` + `#[tauri::command]` handler
+- API abstraction layer: `src/renderer/tauri-api.ts` (`MaengguApi` interface)
+- Rust commands are registered in `src-tauri/src/lib.rs` → `invoke_handler`
+- Keep command/event names in `snake_case`
 
 ## Security
 
-- Disable `nodeIntegration` in renderer
-- Enable `contextIsolation`
-- Expose minimal APIs via `contextBridge`
+- Tauri capabilities: `src-tauri/capabilities/default.json` (최소 권한 원칙)
+- CSP는 `tauri.conf.json` → `app.security.csp`에서 설정
 - Never execute arbitrary strings or remote code
+- Rust command에서 사용자 입력 검증 필수
 
 ## macOS-Only Notes
 
@@ -86,7 +89,7 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 - Use relative imports within same domain
 - Use absolute/alias imports for cross-domain (if configured)
 - Group imports by:
-  1. Node/Electron
+  1. Tauri / Node built-ins
   2. External libs
   3. Internal modules
   4. Styles/assets
@@ -127,7 +130,7 @@ This repo builds a macOS Tauri app (migrated from Electron). Agents should follo
 ## Testing (vitest)
 
 - Write tests for shared logic and state reducers
-- Avoid Electron integration tests unless required
+- Avoid Tauri integration tests unless required
 - Keep tests deterministic; mock time where needed
 
 ## Linting (oxlint)
@@ -166,16 +169,19 @@ Other hygiene:
 3. Run lint/format/tests when requested
 4. Summarize changes and suggest next steps
 
-## Placeholder Scripts (assumed)
+## Scripts Reference
 
 If `package.json` differs, update this file:
 
-- `dev`: `electron-vite dev`
-- `build`: `electron-vite build`
-- `preview`: `electron-vite preview`
+- `dev`: `tauri dev`
+- `build`: `tauri build`
+- `dev:vite`: `vite`
+- `build:vite`: `tsc && vite build`
+- `preview`: `vite preview`
 - `lint`: `oxlint .`
-- `format`: `oxfmt .`
-- `test`: `vitest`
+- `fmt`: `oxfmt`
+- `typecheck`: `tsc -p tsconfig.json`
+- `test`: `vitest run`
 
 ## Git Workflow
 
