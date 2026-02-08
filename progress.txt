@@ -1334,3 +1334,36 @@ src/renderer/game/
 - sp-integrate-render ✅
 - sp-integrate-cleanup ✅
 - sp-settings ✅
+
+---
+
+## 2026-02-08 - ux-settings 완료
+
+**PRD**: ux-settings (설정 커스텀)
+
+**Completed**:
+- MealReminderSettings 타입 추가 (Rust + TS)
+  - enabled: boolean, times: MealTime[], message: string
+- get_meal_settings, save_meal_settings Tauri 커맨드 추가
+- 트레이 메뉴에 "설정" 항목 추가
+- WebviewWindowBuilder로 설정 창 열기 (?window=settings)
+- Settings.tsx 컴포넌트
+  - 알림 on/off 토글
+  - 시간 목록 (추가/삭제, 최대 5개)
+  - 메시지 입력
+  - 저장 버튼
+- index.tsx에서 쿼리 파라미터로 라우팅 분기
+- useMealReminder 수정: 하드코딩 → 설정에서 읽기 + 변경 구독
+
+**Files**:
+- src-tauri/src/lib.rs (MealTime, MealReminderSettings, get/save 커맨드)
+- src/shared/types.ts (MealTime, MealReminderSettings, DEFAULT_MEAL_REMINDER)
+- src/renderer/tauri-api.ts (mealReminder API)
+- src/renderer/Settings.tsx (new)
+- src/renderer/index.tsx (라우팅 분기)
+- src/renderer/hooks/useMealReminder.ts (설정 연동)
+
+**Feedback Loops**:
+- typecheck: ✅ pass
+- test: ✅ pass (87 tests)
+- cargo check: ✅ pass

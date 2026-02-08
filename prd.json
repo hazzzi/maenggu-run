@@ -199,9 +199,9 @@
         {
           "id": "ux-settings",
           "title": "설정 커스텀",
-          "status": "backlog",
+          "status": "done",
           "goal": "트레이 메뉴에서 설정 창 열어서 알림 시간/메시지 수정",
-          "notes": "다음 버전에서 진행. 설정 창 UI + save.json에 저장"
+          "solution": "Settings.tsx 컴포넌트 + WebviewWindow. MealReminderSettings 타입 (enabled, times[], message). ?window=settings 쿼리로 라우팅. save.json에 저장."
         }
       ]
     },
