@@ -123,7 +123,13 @@ describe('update', () => {
     it('should transition to eat on feed-success', () => {
       const state = createTestState();
 
-      const result = update(state, 16, [{ type: 'feed-success' }], bounds, mockPack);
+      const result = update(
+        state,
+        16,
+        [{ type: 'feed-success' }],
+        bounds,
+        mockPack,
+      );
 
       expect(result.state.anim.state).toBe('eat');
       expect(result.actions).toHaveLength(0); // No snack added
@@ -132,7 +138,13 @@ describe('update', () => {
     it('should do nothing on feed-fail', () => {
       const state = createTestState();
 
-      const result = update(state, 16, [{ type: 'feed-fail' }], bounds, mockPack);
+      const result = update(
+        state,
+        16,
+        [{ type: 'feed-fail' }],
+        bounds,
+        mockPack,
+      );
 
       expect(result.state.anim.state).toBe('idle');
     });

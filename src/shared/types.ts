@@ -84,6 +84,13 @@ export type Position = {
   readonly y: number;
 };
 
+export type MonitorRect = {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+};
+
 export type FacingDirection = 'left' | 'right';
 
 export type SaveLoadResult =
@@ -112,6 +119,9 @@ export type MaengguApi = {
   };
   summon: {
     onSummon: (callback: () => void) => () => void;
+  };
+  monitor: {
+    getMonitorRects: () => Promise<readonly MonitorRect[]>;
   };
   sprite: {
     onSpriteChanged: (callback: (path: string) => void) => () => void;

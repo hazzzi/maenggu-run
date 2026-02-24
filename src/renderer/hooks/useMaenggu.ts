@@ -1,7 +1,7 @@
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { type SpritePack } from '../../shared/types';
+import { type MonitorRect, type SpritePack } from '../../shared/types';
 import { MAX_DELTA_MS } from '../game/constants';
 import { createInitialState } from '../game/create-initial-state';
 import { loadSpritePack } from '../game/sprite-pack';
@@ -61,6 +61,7 @@ export function useMaenggu(
   const eventsRef = useRef<GameEvent[]>([]);
   const onFloatingTextRef = useRef(onFloatingText);
   const gameStateRef = useRef(gameState);
+  const monitorRectsRef = useRef<readonly MonitorRect[]>([]);
 
   // 최신 상태를 ref에 동기화
   useEffect(() => {
@@ -100,12 +101,23 @@ export function useMaenggu(
 
   // sprite_changed 이벤트 구독
   useEffect(() => {
-    const unsubscribe = window.maenggu.sprite.onSpriteChanged((path: string) => {
-      loadSpritePackFromPath(path);
-    });
+    const unsubscribe = window.maenggu.sprite.onSpriteChanged(
+      (path: string) => {
+        loadSpritePackFromPath(path);
+      },
+    );
 
     return unsubscribe;
   }, [loadSpritePackFromPath]);
+
+  // 모니터 정보 로딩 (앱 시작 시 1회)
+  useEffect(() => {
+    window.maenggu.monitor.getMonitorRects().then((rects) => {
+      if (rects.length > 0) {
+        monitorRectsRef.current = rects;
+      }
+    });
+  }, []);
 
   // summon 이벤트 구독
   useEffect(() => {
@@ -133,7 +145,10 @@ export function useMaenggu(
       const events = eventsRef.current;
       eventsRef.current = [];
 
-      const bounds = getWindowBounds();
+      const bounds = {
+        ...getWindowBounds(),
+        monitorRects: monitorRectsRef.current,
+      };
 
       // 상태 업데이트 (ref에서 직접 읽어서 setState 중복 호출 문제 회피)
       const result: UpdateResult = update(

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { type MonitorRect } from '../../shared/types';
 import { SPRITE_DISPLAY_SIZE } from './constants';
 import {
   clampPositionToBounds,
@@ -8,7 +9,7 @@ import {
 } from './target';
 
 describe('generateRandomTarget', () => {
-  it('should generate position within bounds', () => {
+  it('should generate position within bounds (no monitor rects)', () => {
     const bounds = { width: 800, height: 600 };
 
     for (let i = 0; i < 100; i++) {
@@ -18,6 +19,49 @@ describe('generateRandomTarget', () => {
       expect(target.x).toBeLessThanOrEqual(bounds.width - SPRITE_DISPLAY_SIZE);
       expect(target.y).toBeGreaterThanOrEqual(0);
       expect(target.y).toBeLessThanOrEqual(bounds.height - SPRITE_DISPLAY_SIZE);
+    }
+  });
+
+  it('should generate position within a monitor rect, not in dead zones', () => {
+    // 두 모니터: 왼쪽(0,0,1280x800), 오른쪽(1280,0,1920x1080)
+    // dead zone: x>=1280 && y>800 (오른쪽 모니터 하단 영역)
+    const monitorRects: MonitorRect[] = [
+      { x: 0, y: 0, width: 1280, height: 800 },
+      { x: 1280, y: 0, width: 1920, height: 1080 },
+    ];
+    const bounds = { width: 3200, height: 1080, monitorRects };
+
+    for (let i = 0; i < 200; i++) {
+      const target = generateRandomTarget(bounds);
+
+      const inFirstMonitor =
+        target.x >= 0 &&
+        target.x <= 1280 - SPRITE_DISPLAY_SIZE &&
+        target.y >= 0 &&
+        target.y <= 800 - SPRITE_DISPLAY_SIZE;
+      const inSecondMonitor =
+        target.x >= 1280 &&
+        target.x <= 3200 - SPRITE_DISPLAY_SIZE &&
+        target.y >= 0 &&
+        target.y <= 1080 - SPRITE_DISPLAY_SIZE;
+
+      expect(inFirstMonitor || inSecondMonitor).toBe(true);
+    }
+  });
+
+  it('should generate position within a single monitor rect', () => {
+    const monitorRects: MonitorRect[] = [
+      { x: 100, y: 50, width: 800, height: 600 },
+    ];
+    const bounds = { width: 1000, height: 700, monitorRects };
+
+    for (let i = 0; i < 100; i++) {
+      const target = generateRandomTarget(bounds);
+
+      expect(target.x).toBeGreaterThanOrEqual(100);
+      expect(target.x).toBeLessThanOrEqual(100 + 800 - SPRITE_DISPLAY_SIZE);
+      expect(target.y).toBeGreaterThanOrEqual(50);
+      expect(target.y).toBeLessThanOrEqual(50 + 600 - SPRITE_DISPLAY_SIZE);
     }
   });
 });
