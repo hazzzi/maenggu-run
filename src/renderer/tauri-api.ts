@@ -7,6 +7,7 @@ import {
   DEFAULT_SAVE_DATA,
   type MaengguApi,
   type MealReminderSettings,
+  type MonitorRect,
   type SaveData,
   type SaveLoadResult,
 } from '../shared/types';
@@ -93,6 +94,15 @@ export const tauriMaengguApi: MaengguApi = {
       return () => {
         unlisten?.();
       };
+    },
+  },
+  monitor: {
+    getMonitorRects: async (): Promise<readonly MonitorRect[]> => {
+      try {
+        return await invoke<MonitorRect[]>('get_monitor_rects');
+      } catch {
+        return [];
+      }
     },
   },
   sprite: {

@@ -188,6 +188,56 @@ fn save_meal_settings(app: AppHandle, state: State<SnackState>, settings: MealRe
     app.emit("meal_settings_changed", settings).ok();
 }
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MonitorRect {
+    pub x: i32,
+    pub y: i32,
+    pub width: u32,
+    pub height: u32,
+}
+
+#[tauri::command]
+fn get_monitor_rects(window: WebviewWindow) -> Vec<MonitorRect> {
+    let monitors = match window.available_monitors() {
+        Ok(m) => m,
+        Err(_) => return vec![],
+    };
+
+    if monitors.is_empty() {
+        return vec![];
+    }
+
+    // Calculate window origin (same logic as calculate_total_monitor_bounds)
+    let mut min_x = i32::MAX;
+    let mut min_y = i32::MAX;
+
+    for monitor in &monitors {
+        let pos = monitor.position();
+        min_x = min_x.min(pos.x);
+        min_y = min_y.min(pos.y);
+    }
+
+    monitors
+        .iter()
+        .map(|monitor| {
+            let pos = monitor.position();
+            let size = monitor.size();
+            let scale = monitor.scale_factor();
+
+            let logical_w = (size.width as f64 / scale) as u32;
+            let logical_h = (size.height as f64 / scale) as u32;
+
+            MonitorRect {
+                x: pos.x - min_x,
+                y: pos.y - min_y,
+                width: logical_w,
+                height: logical_h,
+            }
+        })
+        .collect()
+}
+
 /// Calculate bounding box that covers all monitors
 fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u32, u32)> {
     let monitors = window.available_monitors().ok()?;
@@ -467,7 +517,7 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(SnackState::default())
-        .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend, get_meal_settings, save_meal_settings])
+        .invoke_handler(tauri::generate_handler![load_save, snack_add, snack_spend, get_meal_settings, save_meal_settings, get_monitor_rects])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
