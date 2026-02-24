@@ -7,7 +7,9 @@ import {
 } from '../shared/types';
 
 function Settings(): JSX.Element {
-  const [settings, setSettings] = useState<MealReminderSettings>(DEFAULT_MEAL_REMINDER);
+  const [settings, setSettings] = useState<MealReminderSettings>(
+    DEFAULT_MEAL_REMINDER,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -24,7 +26,11 @@ function Settings(): JSX.Element {
     setSettings((prev) => ({ ...prev, message }));
   };
 
-  const handleTimeChange = (index: number, field: 'hour' | 'minute', value: number): void => {
+  const handleTimeChange = (
+    index: number,
+    field: 'hour' | 'minute',
+    value: number,
+  ): void => {
     setSettings((prev) => ({
       ...prev,
       times: prev.times.map((time, i) =>
@@ -118,7 +124,11 @@ function Settings(): JSX.Element {
       {/* 저장 버튼 */}
       <div style={styles.footer}>
         {message && <span style={styles.message}>{message}</span>}
-        <button onClick={handleSave} disabled={isSaving} style={styles.saveButton}>
+        <button
+          onClick={handleSave}
+          disabled={isSaving}
+          style={styles.saveButton}
+        >
           {isSaving ? '저장 중...' : '저장'}
         </button>
       </div>
@@ -133,7 +143,12 @@ type TimeInputProps = {
   readonly canRemove: boolean;
 };
 
-function TimeInput({ time, onChange, onRemove, canRemove }: TimeInputProps): JSX.Element {
+function TimeInput({
+  time,
+  onChange,
+  onRemove,
+  canRemove,
+}: TimeInputProps): JSX.Element {
   return (
     <div style={styles.timeRow}>
       <select

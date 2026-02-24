@@ -1,9 +1,5 @@
 import { type SpritePack } from '../../shared/types';
-import {
-  getFrameCount,
-  getFrameDuration,
-  isLoopingState,
-} from './sprite-pack';
+import { getFrameCount, getFrameDuration, isLoopingState } from './sprite-pack';
 import { type AnimationState, type AnimState } from './types';
 
 export function updateAnimation(

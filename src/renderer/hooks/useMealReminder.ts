@@ -11,7 +11,9 @@ import {
  */
 export function useMealReminder(onReminder: (message: string) => void): void {
   const lastTriggeredRef = useRef<string | null>(null);
-  const [settings, setSettings] = useState<MealReminderSettings>(DEFAULT_MEAL_REMINDER);
+  const [settings, setSettings] = useState<MealReminderSettings>(
+    DEFAULT_MEAL_REMINDER,
+  );
 
   // 설정 로드 및 변경 구독
   useEffect(() => {
@@ -19,7 +21,8 @@ export function useMealReminder(onReminder: (message: string) => void): void {
     window.maenggu?.mealReminder.getSettings().then(setSettings);
 
     // 변경 구독
-    const unsubscribe = window.maenggu?.mealReminder.onSettingsChanged(setSettings);
+    const unsubscribe =
+      window.maenggu?.mealReminder.onSettingsChanged(setSettings);
 
     return () => {
       unsubscribe?.();

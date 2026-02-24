@@ -101,7 +101,11 @@ describe('updateAnimation', () => {
       expect(result.isComplete).toBe(false);
 
       // Advance past frame 4 (last frame)
-      result = updateAnimation(result, ANIMATION_FRAME_DURATION_MS + 10, mockPack);
+      result = updateAnimation(
+        result,
+        ANIMATION_FRAME_DURATION_MS + 10,
+        mockPack,
+      );
       expect(result.isComplete).toBe(true);
       expect(result.frameIndex).toBe(4);
     });
