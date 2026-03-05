@@ -8,13 +8,15 @@ export type Bounds = {
   readonly monitorRects?: readonly MonitorRect[];
 };
 
-/** 위치가 특정 모니터 rect 안에 있는지 (스프라이트 크기 고려) */
+/** 스프라이트 중심점이 모니터 rect 안에 있는지 판정 */
 function isInMonitorRect(position: Position, rect: MonitorRect): boolean {
+  const cx = position.x + SPRITE_DISPLAY_SIZE / 2;
+  const cy = position.y + SPRITE_DISPLAY_SIZE / 2;
   return (
-    position.x >= rect.x &&
-    position.x + SPRITE_DISPLAY_SIZE <= rect.x + rect.width &&
-    position.y >= rect.y &&
-    position.y + SPRITE_DISPLAY_SIZE <= rect.y + rect.height
+    cx >= rect.x &&
+    cx < rect.x + rect.width &&
+    cy >= rect.y &&
+    cy < rect.y + rect.height
   );
 }
 

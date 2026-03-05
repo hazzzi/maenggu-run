@@ -140,6 +140,14 @@ describe('clampPositionToBounds', () => {
       expect(result.x).toBe(3200 + 1440 - SPRITE_DISPLAY_SIZE);
       expect(result.y).toBe(500);
     });
+
+    it('should allow seamless transition between vertically adjacent monitors', () => {
+      // M1(0,0,1280x800)과 M2(1280,200,1920x1080)의 수직 이음새
+      // 스프라이트 중심이 M1에 있으면 → M1에 속함
+      const halfSprite = SPRITE_DISPLAY_SIZE / 2;
+      const justInM1 = { x: 100, y: 800 - halfSprite - 1 };
+      expect(clampPositionToBounds(justInM1, staggeredBounds)).toEqual(justInM1);
+    });
   });
 });
 

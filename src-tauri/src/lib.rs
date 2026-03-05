@@ -208,14 +208,17 @@ fn get_monitor_rects(window: WebviewWindow) -> Vec<MonitorRect> {
         return vec![];
     }
 
-    // Calculate window origin (same logic as calculate_total_monitor_bounds)
+    // physical → logical 변환 후 최솟값 계산
     let mut min_x = i32::MAX;
     let mut min_y = i32::MAX;
 
     for monitor in &monitors {
         let pos = monitor.position();
-        min_x = min_x.min(pos.x);
-        min_y = min_y.min(pos.y);
+        let scale = monitor.scale_factor();
+        let logical_x = (pos.x as f64 / scale) as i32;
+        let logical_y = (pos.y as f64 / scale) as i32;
+        min_x = min_x.min(logical_x);
+        min_y = min_y.min(logical_y);
     }
 
     monitors
@@ -225,12 +228,14 @@ fn get_monitor_rects(window: WebviewWindow) -> Vec<MonitorRect> {
             let size = monitor.size();
             let scale = monitor.scale_factor();
 
+            let logical_x = (pos.x as f64 / scale) as i32;
+            let logical_y = (pos.y as f64 / scale) as i32;
             let logical_w = (size.width as f64 / scale) as u32;
             let logical_h = (size.height as f64 / scale) as u32;
 
             MonitorRect {
-                x: pos.x - min_x,
-                y: pos.y - min_y,
+                x: logical_x - min_x,
+                y: logical_y - min_y,
                 width: logical_w,
                 height: logical_h,
             }
@@ -238,37 +243,39 @@ fn get_monitor_rects(window: WebviewWindow) -> Vec<MonitorRect> {
         .collect()
 }
 
-/// Calculate bounding box that covers all monitors
+/// Calculate bounding box that covers all monitors (all values in logical coordinates)
 fn calculate_total_monitor_bounds(window: &WebviewWindow) -> Option<(i32, i32, u32, u32)> {
     let monitors = window.available_monitors().ok()?;
-    
+
     if monitors.is_empty() {
         return None;
     }
-    
+
     let mut min_x = i32::MAX;
     let mut min_y = i32::MAX;
     let mut max_x = i32::MIN;
     let mut max_y = i32::MIN;
-    
+
     for monitor in &monitors {
         let pos = monitor.position();
         let size = monitor.size();
         let scale = monitor.scale_factor();
 
-        // physical → logical 변환 (position은 이미 logical 좌표)
+        // physical → logical 변환 (position, size 모두)
+        let logical_x = (pos.x as f64 / scale) as i32;
+        let logical_y = (pos.y as f64 / scale) as i32;
         let logical_w = (size.width as f64 / scale) as i32;
         let logical_h = (size.height as f64 / scale) as i32;
 
-        min_x = min_x.min(pos.x);
-        min_y = min_y.min(pos.y);
-        max_x = max_x.max(pos.x + logical_w);
-        max_y = max_y.max(pos.y + logical_h);
+        min_x = min_x.min(logical_x);
+        min_y = min_y.min(logical_y);
+        max_x = max_x.max(logical_x + logical_w);
+        max_y = max_y.max(logical_y + logical_h);
     }
-    
+
     let width = (max_x - min_x) as u32;
     let height = (max_y - min_y) as u32;
-    
+
     Some((min_x, min_y, width, height))
 }
 
