@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# 버전 일치 검사: package.json이 단일 소스
+pkg_version=$(node -p "require('./package.json').version")
+tauri_version=$(node -p "require('./src-tauri/tauri.conf.json').version")
+cargo_version=$(grep '^version' src-tauri/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+
+if [[ "$pkg_version" != "$tauri_version" || "$pkg_version" != "$cargo_version" ]]; then
+  echo ""
+  echo "⚠️  버전 불일치!"
+  echo "  package.json:    $pkg_version"
+  echo "  tauri.conf.json: $tauri_version"
+  echo "  Cargo.toml:      $cargo_version"
+  echo ""
+  echo "→ pnpm sync-version 으로 동기화하세요"
+  echo ""
+  exit 1
+fi
+
+exit 0
