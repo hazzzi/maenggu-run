@@ -94,6 +94,53 @@ describe('clampPositionToBounds', () => {
     const result = clampPositionToBounds({ x: 100, y: 700 }, bounds);
     expect(result.y).toBe(bounds.height - SPRITE_DISPLAY_SIZE);
   });
+
+  describe('with staggered monitor rects', () => {
+    // 계단식 배치: 모니터1(0,0), 모니터2(1280,200), 모니터3(2560,400)
+    const staggeredRects: MonitorRect[] = [
+      { x: 0, y: 0, width: 1280, height: 800 },
+      { x: 1280, y: 200, width: 1920, height: 1080 },
+      { x: 3200, y: 400, width: 1440, height: 900 },
+    ];
+    const staggeredBounds = {
+      width: 4640,
+      height: 1480,
+      monitorRects: staggeredRects,
+    };
+
+    it('should not change position inside a monitor', () => {
+      const pos = { x: 100, y: 100 };
+      expect(clampPositionToBounds(pos, staggeredBounds)).toEqual(pos);
+    });
+
+    it('should not change position inside second monitor', () => {
+      const pos = { x: 1500, y: 300 };
+      expect(clampPositionToBounds(pos, staggeredBounds)).toEqual(pos);
+    });
+
+    it('should clamp dead zone position to nearest monitor', () => {
+      // (1400, 150)은 두 번째 모니터 위의 데드존
+      // 모니터1(0,0,1280x800)까지 거리: 120 (x축)
+      // 모니터2(1280,200,1920x1080)까지 거리: 50 (y축)
+      // → 모니터2가 더 가까우므로 y=200으로 클램핑
+      const result = clampPositionToBounds(
+        { x: 1400, y: 150 },
+        staggeredBounds,
+      );
+      expect(result.x).toBe(1400);
+      expect(result.y).toBe(200);
+    });
+
+    it('should clamp position far outside to nearest monitor edge', () => {
+      // (5000, 500)은 세 번째 모니터 오른쪽 바깥
+      const result = clampPositionToBounds(
+        { x: 5000, y: 500 },
+        staggeredBounds,
+      );
+      expect(result.x).toBe(3200 + 1440 - SPRITE_DISPLAY_SIZE);
+      expect(result.y).toBe(500);
+    });
+  });
 });
 
 describe('isPositionInBounds', () => {
@@ -121,5 +168,43 @@ describe('isPositionInBounds', () => {
 
   it('should return false for x exceeding bounds', () => {
     expect(isPositionInBounds({ x: 801, y: 100 }, bounds)).toBe(false);
+  });
+
+  describe('with staggered monitor rects', () => {
+    const staggeredRects: MonitorRect[] = [
+      { x: 0, y: 0, width: 1280, height: 800 },
+      { x: 1280, y: 200, width: 1920, height: 1080 },
+    ];
+    const staggeredBounds = {
+      width: 3200,
+      height: 1280,
+      monitorRects: staggeredRects,
+    };
+
+    it('should return true for position inside first monitor', () => {
+      expect(isPositionInBounds({ x: 100, y: 100 }, staggeredBounds)).toBe(
+        true,
+      );
+    });
+
+    it('should return true for position inside second monitor', () => {
+      expect(isPositionInBounds({ x: 1500, y: 300 }, staggeredBounds)).toBe(
+        true,
+      );
+    });
+
+    it('should return false for position in dead zone', () => {
+      // (1400, 0)은 두 번째 모니터 위의 데드존
+      expect(isPositionInBounds({ x: 1400, y: 0 }, staggeredBounds)).toBe(
+        false,
+      );
+    });
+
+    it('should return false for position below first monitor but left of second', () => {
+      // (100, 850)은 첫 번째 모니터 아래, 두 번째 모니터 왼쪽
+      expect(isPositionInBounds({ x: 100, y: 850 }, staggeredBounds)).toBe(
+        false,
+      );
+    });
   });
 });

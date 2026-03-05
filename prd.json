@@ -206,6 +206,24 @@
       ]
     },
     {
+      "id": "v0.2.5",
+      "title": "v0.2.5: 멀티모니터 데드존 수정",
+      "status": "done",
+      "background": "3모니터 계단식(staggered) 배치에서 맹구가 모니터 없는 영역(데드존)으로 이동하여 안 보이는 버그 제보.",
+      "goal": "비정렬 멀티모니터 배치에서도 맹구가 항상 실제 모니터 영역 안에 머물도록",
+      "items": [
+        {
+          "id": "bug-multimon-deadzone",
+          "title": "[멀티모니터] 계단식 배치에서 데드존에 빠짐",
+          "status": "done",
+          "symptom": "3모니터 계단식(staggered) 배치에서 맹구가 모니터 없는 영역(데드존)으로 이동하여 안 보임",
+          "cause": "clampPositionToBounds/isPositionInBounds가 전체 바운딩 박스(width×height)만 사용. 개별 모니터 rect를 무시하여 데드존을 유효 영역으로 판정",
+          "solution": "monitorRects가 있으면 개별 모니터 안에 있는지 확인, 데드존이면 가장 가까운 모니터로 snap. isInMonitorRect/clampToRect/distanceToRect 헬퍼 추가"
+        }
+      ],
+      "techDebt": "Bounds 타입이 width/height(바운딩 박스)와 monitorRects(실제 영역) 두 가지 진실을 optional로 공존시킴. 향후 SingleScreenBounds | MultiScreenBounds union type으로 분리하면 컴파일 타임에 불일치 방지 가능"
+    },
+    {
       "id": "v3-custom-sprite",
       "title": "v3: 커스텀 스프라이트",
       "status": "planning",

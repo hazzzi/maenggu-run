@@ -8,6 +8,35 @@ export type Bounds = {
   readonly monitorRects?: readonly MonitorRect[];
 };
 
+/** 위치가 특정 모니터 rect 안에 있는지 (스프라이트 크기 고려) */
+function isInMonitorRect(position: Position, rect: MonitorRect): boolean {
+  return (
+    position.x >= rect.x &&
+    position.x + SPRITE_DISPLAY_SIZE <= rect.x + rect.width &&
+    position.y >= rect.y &&
+    position.y + SPRITE_DISPLAY_SIZE <= rect.y + rect.height
+  );
+}
+
+/** 위치를 특정 모니터 rect 안으로 클램핑 */
+function clampToRect(position: Position, rect: MonitorRect): Position {
+  const maxX = rect.x + rect.width - SPRITE_DISPLAY_SIZE;
+  const maxY = rect.y + rect.height - SPRITE_DISPLAY_SIZE;
+  return {
+    x: Math.max(rect.x, Math.min(position.x, maxX)),
+    y: Math.max(rect.y, Math.min(position.y, maxY)),
+  };
+}
+
+/** position에서 rect까지의 최단 거리 (rect 내부면 0) */
+function distanceToRect(position: Position, rect: MonitorRect): number {
+  const cx = Math.max(rect.x, Math.min(position.x, rect.x + rect.width));
+  const cy = Math.max(rect.y, Math.min(position.y, rect.y + rect.height));
+  const dx = position.x - cx;
+  const dy = position.y - cy;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 export function generateRandomTarget(bounds: Bounds): Position {
   if (bounds.monitorRects && bounds.monitorRects.length > 0) {
     const rects = bounds.monitorRects;
@@ -49,6 +78,28 @@ export function clampPositionToBounds(
   position: Position,
   bounds: Bounds,
 ): Position {
+  if (bounds.monitorRects && bounds.monitorRects.length > 0) {
+    // 이미 어떤 모니터 안에 있으면 그대로 반환
+    for (const rect of bounds.monitorRects) {
+      if (isInMonitorRect(position, rect)) {
+        return position;
+      }
+    }
+
+    // 가장 가까운 모니터로 클램핑
+    let nearest = bounds.monitorRects[0];
+    let minDist = distanceToRect(position, nearest);
+    for (let i = 1; i < bounds.monitorRects.length; i++) {
+      const d = distanceToRect(position, bounds.monitorRects[i]);
+      if (d < minDist) {
+        minDist = d;
+        nearest = bounds.monitorRects[i];
+      }
+    }
+    return clampToRect(position, nearest);
+  }
+
+  // 폴백: 전체 bounds 사용
   const maxX = bounds.width - SPRITE_DISPLAY_SIZE;
   const maxY = bounds.height - SPRITE_DISPLAY_SIZE;
 
@@ -62,6 +113,10 @@ export function isPositionInBounds(
   position: Position,
   bounds: Bounds,
 ): boolean {
+  if (bounds.monitorRects && bounds.monitorRects.length > 0) {
+    return bounds.monitorRects.some((rect) => isInMonitorRect(position, rect));
+  }
+
   return (
     position.x >= 0 &&
     position.x <= bounds.width &&
