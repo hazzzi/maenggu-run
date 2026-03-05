@@ -59,7 +59,7 @@ function createTestState(
   };
 }
 
-const bounds = { width: 800, height: 600 };
+const bounds = { kind: 'single' as const, width: 800, height: 600 };
 
 describe('update', () => {
   describe('click event', () => {
