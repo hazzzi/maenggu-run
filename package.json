@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "postinstall": "git config core.hooksPath .githooks",
-    "dev": "tauri dev",
-    "build": "tauri build",
+    "sync-version": "node scripts/sync-version.mjs",
+    "dev": "node scripts/sync-version.mjs && tauri dev",
+    "build": "node scripts/sync-version.mjs && tauri build",
     "dev:vite": "vite",
     "build:vite": "tsc && vite build",
     "lint": "oxlint .",
