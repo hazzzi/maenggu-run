@@ -4,7 +4,7 @@ import { type MovementState } from './types';
 import { startMovement, stopMovement, updateMovement } from './update-movement';
 
 describe('updateMovement', () => {
-  const bounds = { width: 800, height: 600 };
+  const bounds = { kind: 'single' as const, width: 800, height: 600 };
 
   it('should not move when target is null', () => {
     const state: MovementState = {

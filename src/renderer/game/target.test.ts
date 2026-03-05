@@ -3,14 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { type MonitorRect } from '../../shared/types';
 import { SPRITE_DISPLAY_SIZE } from './constants';
 import {
+  type Bounds,
   clampPositionToBounds,
   generateRandomTarget,
   isPositionInBounds,
 } from './target';
 
 describe('generateRandomTarget', () => {
-  it('should generate position within bounds (no monitor rects)', () => {
-    const bounds = { width: 800, height: 600 };
+  it('should generate position within bounds (single screen)', () => {
+    const bounds: Bounds = { kind: 'single', width: 800, height: 600 };
 
     for (let i = 0; i < 100; i++) {
       const target = generateRandomTarget(bounds);
@@ -23,13 +24,11 @@ describe('generateRandomTarget', () => {
   });
 
   it('should generate position within a monitor rect, not in dead zones', () => {
-    // 두 모니터: 왼쪽(0,0,1280x800), 오른쪽(1280,0,1920x1080)
-    // dead zone: x>=1280 && y>800 (오른쪽 모니터 하단 영역)
     const monitorRects: MonitorRect[] = [
       { x: 0, y: 0, width: 1280, height: 800 },
       { x: 1280, y: 0, width: 1920, height: 1080 },
     ];
-    const bounds = { width: 3200, height: 1080, monitorRects };
+    const bounds: Bounds = { kind: 'multi', monitorRects };
 
     for (let i = 0; i < 200; i++) {
       const target = generateRandomTarget(bounds);
@@ -53,7 +52,7 @@ describe('generateRandomTarget', () => {
     const monitorRects: MonitorRect[] = [
       { x: 100, y: 50, width: 800, height: 600 },
     ];
-    const bounds = { width: 1000, height: 700, monitorRects };
+    const bounds: Bounds = { kind: 'multi', monitorRects };
 
     for (let i = 0; i < 100; i++) {
       const target = generateRandomTarget(bounds);
@@ -67,7 +66,7 @@ describe('generateRandomTarget', () => {
 });
 
 describe('clampPositionToBounds', () => {
-  const bounds = { width: 800, height: 600 };
+  const bounds: Bounds = { kind: 'single', width: 800, height: 600 };
 
   it('should not change position within bounds', () => {
     const position = { x: 100, y: 100 };
@@ -87,24 +86,22 @@ describe('clampPositionToBounds', () => {
 
   it('should clamp x exceeding bounds', () => {
     const result = clampPositionToBounds({ x: 900, y: 100 }, bounds);
-    expect(result.x).toBe(bounds.width - SPRITE_DISPLAY_SIZE);
+    expect(result.x).toBe(800 - SPRITE_DISPLAY_SIZE);
   });
 
   it('should clamp y exceeding bounds', () => {
     const result = clampPositionToBounds({ x: 100, y: 700 }, bounds);
-    expect(result.y).toBe(bounds.height - SPRITE_DISPLAY_SIZE);
+    expect(result.y).toBe(600 - SPRITE_DISPLAY_SIZE);
   });
 
   describe('with staggered monitor rects', () => {
-    // 계단식 배치: 모니터1(0,0), 모니터2(1280,200), 모니터3(2560,400)
     const staggeredRects: MonitorRect[] = [
       { x: 0, y: 0, width: 1280, height: 800 },
       { x: 1280, y: 200, width: 1920, height: 1080 },
       { x: 3200, y: 400, width: 1440, height: 900 },
     ];
-    const staggeredBounds = {
-      width: 4640,
-      height: 1480,
+    const staggeredBounds: Bounds = {
+      kind: 'multi',
       monitorRects: staggeredRects,
     };
 
@@ -119,10 +116,6 @@ describe('clampPositionToBounds', () => {
     });
 
     it('should clamp dead zone position to nearest monitor', () => {
-      // (1400, 150)은 두 번째 모니터 위의 데드존
-      // 모니터1(0,0,1280x800)까지 거리: 120 (x축)
-      // 모니터2(1280,200,1920x1080)까지 거리: 50 (y축)
-      // → 모니터2가 더 가까우므로 y=200으로 클램핑
       const result = clampPositionToBounds(
         { x: 1400, y: 150 },
         staggeredBounds,
@@ -132,7 +125,6 @@ describe('clampPositionToBounds', () => {
     });
 
     it('should clamp position far outside to nearest monitor edge', () => {
-      // (5000, 500)은 세 번째 모니터 오른쪽 바깥
       const result = clampPositionToBounds(
         { x: 5000, y: 500 },
         staggeredBounds,
@@ -142,17 +134,17 @@ describe('clampPositionToBounds', () => {
     });
 
     it('should allow seamless transition between vertically adjacent monitors', () => {
-      // M1(0,0,1280x800)과 M2(1280,200,1920x1080)의 수직 이음새
-      // 스프라이트 중심이 M1에 있으면 → M1에 속함
       const halfSprite = SPRITE_DISPLAY_SIZE / 2;
       const justInM1 = { x: 100, y: 800 - halfSprite - 1 };
-      expect(clampPositionToBounds(justInM1, staggeredBounds)).toEqual(justInM1);
+      expect(clampPositionToBounds(justInM1, staggeredBounds)).toEqual(
+        justInM1,
+      );
     });
   });
 });
 
 describe('isPositionInBounds', () => {
-  const bounds = { width: 800, height: 600 };
+  const bounds: Bounds = { kind: 'single', width: 800, height: 600 };
 
   it('should return true for position inside bounds', () => {
     expect(isPositionInBounds({ x: 100, y: 100 }, bounds)).toBe(true);
@@ -183,9 +175,8 @@ describe('isPositionInBounds', () => {
       { x: 0, y: 0, width: 1280, height: 800 },
       { x: 1280, y: 200, width: 1920, height: 1080 },
     ];
-    const staggeredBounds = {
-      width: 3200,
-      height: 1280,
+    const staggeredBounds: Bounds = {
+      kind: 'multi',
       monitorRects: staggeredRects,
     };
 
@@ -202,14 +193,12 @@ describe('isPositionInBounds', () => {
     });
 
     it('should return false for position in dead zone', () => {
-      // (1400, 0)은 두 번째 모니터 위의 데드존
       expect(isPositionInBounds({ x: 1400, y: 0 }, staggeredBounds)).toBe(
         false,
       );
     });
 
     it('should return false for position below first monitor but left of second', () => {
-      // (100, 850)은 첫 번째 모니터 아래, 두 번째 모니터 왼쪽
       expect(isPositionInBounds({ x: 100, y: 850 }, staggeredBounds)).toBe(
         false,
       );

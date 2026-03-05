@@ -5,7 +5,7 @@ import { type MonitorRect, type SpritePack } from '../../shared/types';
 import { MAX_DELTA_MS } from '../game/constants';
 import { createInitialState } from '../game/create-initial-state';
 import { loadSpritePack } from '../game/sprite-pack';
-import { getWindowBounds } from '../game/target';
+import { type Bounds, getWindowBounds } from '../game/target';
 import {
   type GameAction,
   type GameEvent,
@@ -145,10 +145,11 @@ export function useMaenggu(
       const events = eventsRef.current;
       eventsRef.current = [];
 
-      const bounds = {
-        ...getWindowBounds(),
-        monitorRects: monitorRectsRef.current,
-      };
+      const rects = monitorRectsRef.current;
+      const bounds: Bounds =
+        rects.length > 0
+          ? { kind: 'multi', monitorRects: rects }
+          : getWindowBounds();
 
       // 상태 업데이트 (ref에서 직접 읽어서 setState 중복 호출 문제 회피)
       const result: UpdateResult = update(
